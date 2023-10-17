@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
-  const CustomBottomNavBar({super.key});
+  final int currentIndex;
+  final Function(int) onTap;
+
+  const CustomBottomNavBar({
+    Key? key,
+    required this.currentIndex,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +31,8 @@ class CustomBottomNavBar extends StatelessWidget {
           label: 'Mes progrès',
         ),
       ],
+      currentIndex: currentIndex,
+      onTap: onTap,
       selectedItemColor: Colors.blue, // Highlight color for active tab
       unselectedItemColor: Colors.grey, // Non-active items color
       backgroundColor: Colors.white,
