@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'chart.dart';
-import 'components/todays_workout.dart';
-import 'components/welcome_banner.dart';
-import 'components/bottom_nav_bar.dart';
+import 'package:k_sport_front/components/weekly_activity.dart';
+import '../components/schedule.dart';
+import '../components/todays_workout.dart';
+import '../components/welcome_banner.dart';
+import '../components/bottom_nav_bar.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -19,6 +20,12 @@ class DashboardState extends State<Dashboard> {
         centerTitle: true,
         title: Image.network('https://via.placeholder.com/100x30',
             fit: BoxFit.cover, height: 30), // placeholder logo
+        leading: IconButton(
+          icon: const Icon(Icons.account_circle),
+          onPressed: () {
+            // Handle profile interactions
+          },
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -32,12 +39,6 @@ class DashboardState extends State<Dashboard> {
               // Handle notifications
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {
-              // Handle profile interactions
-            },
-          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -47,15 +48,15 @@ class DashboardState extends State<Dashboard> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const WelcomeBanner(),
+              ScheduleComponent(
+                onDayTapped: (int index) {},
+              ),
               const SizedBox(height: 20),
-              const SizedBox(height: 20),
-              const Text("Entraînement aujourd'hui",
-                  style: TextStyle(fontSize: 20)),
               TodaysWorkout(),
               const SizedBox(height: 20),
-              const Text("Nombre de séances par semaine",
-                  style: TextStyle(fontSize: 20)),
-              const ProgressChart(),
+              const WeeklyActivity(
+                progress: [false, true, false, true, true, true, true],
+              ),
             ],
           ),
         ),

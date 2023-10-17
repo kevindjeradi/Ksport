@@ -26,8 +26,7 @@ class CustomBottomNavBar extends StatelessWidget {
       ],
       selectedItemColor: Colors.blue, // Highlight color for active tab
       unselectedItemColor: Colors.grey, // Non-active items color
-      backgroundColor: Colors
-          .white, // Optional, in case you want to explicitly set the background color
+      backgroundColor: Colors.white,
     );
   }
 }

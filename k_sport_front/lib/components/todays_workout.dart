@@ -13,19 +13,27 @@ class TodaysWorkout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: workouts.length,
-      itemBuilder: (context, index) {
-        final workout = workouts[index];
-        return ListTile(
-          leading: Image.network('https://via.placeholder.com/100x30',
-              fit: BoxFit.cover, height: 30),
-          title: Text(workout['name']),
-          subtitle:
-              Text('${workout['series']} séries x ${workout['reps']} reps'),
-        );
-      },
+    return Column(
+      children: [
+        const Text("Entraînement du jour", style: TextStyle(fontSize: 20)),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: workouts.length,
+            itemBuilder: (context, index) {
+              final workout = workouts[index];
+              return ListTile(
+                leading: Image.network('https://via.placeholder.com/100x30',
+                    fit: BoxFit.cover, height: 30),
+                title: Text(workout['name']),
+                subtitle: Text(
+                    '${workout['series']} séries x ${workout['reps']} reps'),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

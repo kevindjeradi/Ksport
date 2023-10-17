@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dashboard.dart';
+import 'views/dashboard.dart';
 
 void main() => runApp(const MyApp());
 
@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Musculation App',
+      title: 'K Sports',
       theme: ThemeData(
         brightness: Brightness.light,
         primarySwatch: Colors.blue,
