@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/navigation/top_app_bar.dart';
 import 'package:k_sport_front/components/workouts/workout_card.dart';
 import 'package:k_sport_front/models/exercices.dart';
 import 'package:k_sport_front/services/fetch_exercices.dart'; // Make sure this is the correct path to the service
@@ -11,6 +12,7 @@ class ExercisesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const CustomAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
