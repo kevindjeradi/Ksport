@@ -3,13 +3,11 @@ import 'package:k_sport_front/components/navigation/top_app_bar.dart';
 
 class WorkoutCardDetail extends StatelessWidget {
   final String title;
-  final String description;
   final Image image;
 
   const WorkoutCardDetail({
     super.key,
     required this.title,
-    required this.description,
     required this.image,
   });
 
@@ -43,10 +41,10 @@ class WorkoutCardDetail extends StatelessWidget {
               child: image,
             ),
             const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(fontSize: 16),
-            )
+            // Text(
+            //   description,
+            //   style: const TextStyle(fontSize: 16),
+            // )
           ],
         ),
       ),

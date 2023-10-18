@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/workouts/workout_card.dart';
 import 'package:k_sport_front/components/workouts/workout_card_detail.dart';
-import 'package:k_sport_front/models/workout.dart';
+import 'package:k_sport_front/models/exercices.dart';
 
-class WorkoutGrid extends StatelessWidget {
-  final List<Workout> workouts;
+class ExerciceGrid extends StatelessWidget {
+  final List<Exercice> exercices;
 
-  const WorkoutGrid({Key? key, required this.workouts}) : super(key: key);
+  const ExerciceGrid({Key? key, required this.exercices}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -15,19 +15,17 @@ class WorkoutGrid extends StatelessWidget {
       padding: const EdgeInsets.all(10.0),
       crossAxisSpacing: 10.0,
       mainAxisSpacing: 10.0,
-      children: workouts.map((workout) {
+      children: exercices.map((exercice) {
         return WorkoutCard(
-          image: Image.network(workout.imageUrl),
-          label: workout.label,
+          image: Image.network(exercice.imageUrl),
+          label: exercice.label,
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => WorkoutCardDetail(
-                  title: workout.detailTitle,
-                  image: Image.network(workout.imageUrl),
-                  description: workout.detailDescription,
-                ),
+                    title: exercice.detailTitle,
+                    image: Image.network(exercice.imageUrl)),
               ),
             );
           },
