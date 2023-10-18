@@ -15,16 +15,22 @@ class WorkoutCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => onTap(),
-      child: Column(
+      child: Stack(
+        alignment: Alignment.center,
         children: <Widget>[
-          Expanded(
-            child: image,
+          image,
+          Positioned(
+            bottom: 0,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                backgroundColor: Colors
+                    .black54, // This adds a slight background for better readability.
+                fontSize: 16, // Adjust the font size as necessary.
+              ),
+            ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.white),
-          )
         ],
       ),
     );

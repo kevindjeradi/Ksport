@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/navigation/bottom_nav_bar.dart';
+import 'package:k_sport_front/components/navigation/top_app_bar.dart';
 import 'package:k_sport_front/views/progress_page.dart';
 import 'package:k_sport_front/views/routine_creator_page.dart';
 import 'package:k_sport_front/views/workouts_page.dart';
 import 'package:k_sport_front/views/dashboard.dart';
-import '../components/bottom_nav_bar.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -25,31 +26,7 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Image.network('https://via.placeholder.com/100x30',
-            fit: BoxFit.cover, height: 30), // placeholder logo
-        leading: IconButton(
-          icon: const Icon(Icons.account_circle),
-          onPressed: () {
-            // Handle profile interactions
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {
-              // Search functionality
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () {
-              // Handle notifications
-            },
-          ),
-        ],
-      ),
+      appBar: const CustomAppBar(),
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
