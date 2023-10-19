@@ -9,7 +9,6 @@ Future<List<Muscle>> fetchMuscles() async {
     List<dynamic> responseBody = json.decode(response.body);
     return responseBody.map((muscle) => Muscle.fromJson(muscle)).toList();
   } else {
-    print("\n\n\n${response.statusCode}\n\n\n");
     throw Exception('Failed to load workouts');
   }
 }
