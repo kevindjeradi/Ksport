@@ -3,6 +3,7 @@ class Exercice {
   final String imageUrl;
   final String label;
   final String detailTitle;
+  final String muscleLabel;
   final String detailDescription;
 
   Exercice({
@@ -10,6 +11,7 @@ class Exercice {
     required this.imageUrl,
     required this.label,
     required this.detailTitle,
+    required this.muscleLabel,
     required this.detailDescription,
   });
 
@@ -19,6 +21,7 @@ class Exercice {
       imageUrl: json['imageUrl'],
       label: json['label'],
       detailTitle: json['detailTitle'],
+      muscleLabel: json['muscleLabel'],
       detailDescription: json['detailDescription'],
     );
   }

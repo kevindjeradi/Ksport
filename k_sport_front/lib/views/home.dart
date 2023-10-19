@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/navigation/bottom_nav_bar.dart';
 import 'package:k_sport_front/components/navigation/top_app_bar.dart';
-import 'package:k_sport_front/views/muscles_page.dart';
 import 'package:k_sport_front/views/progress_page.dart';
 import 'package:k_sport_front/views/routine_creator_page.dart';
 import 'package:k_sport_front/views/dashboard.dart';
+import 'package:k_sport_front/views/workout_page/muscles_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});

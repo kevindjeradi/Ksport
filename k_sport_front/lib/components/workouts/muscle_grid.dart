@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/workouts/workout_card.dart';
 import 'package:k_sport_front/models/muscles.dart';
-import 'package:k_sport_front/views/exercice_page.dart';
+import 'package:k_sport_front/views/workout_page/exercice_page.dart';
 
 class MuscleGrid extends StatelessWidget {
   final List<Muscle> muscles;
@@ -24,7 +24,7 @@ class MuscleGrid extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (context) => ExercisesPage(
-                    muscleId: muscle.id
+                    muscleLabel: muscle.label
                         .toString()), // Passing the muscle ID to the new page
               ),
             );
