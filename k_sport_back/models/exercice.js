@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const exerciseSchema = new mongoose.Schema({
-    muscleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Muscle' },
     imageUrl: String,
     label: {
         type: String,
@@ -11,7 +10,8 @@ const exerciseSchema = new mongoose.Schema({
         type: String,
         unique: true  // <-- This ensures uniqueness
     },
-    detailDescription: String
+    detailDescription: String,
+    muscleLabel: { type: String, required: true }
 });
 
 module.exports = mongoose.model('Exercise', exerciseSchema);

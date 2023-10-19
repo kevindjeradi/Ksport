@@ -3,10 +3,17 @@ const Exercise = require('../models/Exercice');
 
 const router = express.Router();
 
-// GET all exercises
+// GET all exercises or filter by muscleLabel
 router.get('/exercises', async (req, res) => {
     try {
-        const exercises = await Exercise.find();
+        const query = {};
+
+        // If muscleLabel is provided in the query, filter by it
+        if (req.query.muscleLabel) {
+            query.muscleLabel = req.query.muscleLabel;
+        }
+
+        const exercises = await Exercise.find(query);  // Use the query object to filter results
         res.json(exercises);
     } catch (error) {
         res.status(500).json({ error: error.message });
