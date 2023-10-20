@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const musclesRoutes = require('./routes/musclesRoutes');
 const exercicesRoutes = require('./routes/exercicesRoutes');
+const trainingRoutes = require('./routes/trainingRoutes');
 
 const app = express();
 const PORT = 3000;
@@ -19,9 +20,10 @@ mongoose.connect(dbURI, {
 .catch(err => console.error('Could not connect to MongoDB', err));
 
 app.use(cors());
-app.use(express.json()); // <- Place it here
+app.use(express.json());
 app.use('/', musclesRoutes);
 app.use('/', exercicesRoutes);
+app.use('/', trainingRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
