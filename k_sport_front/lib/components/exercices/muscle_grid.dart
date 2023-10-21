@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:k_sport_front/components/workouts/workout_card.dart';
+import 'package:k_sport_front/components/exercices/workout_card.dart';
 import 'package:k_sport_front/models/muscles.dart';
 import 'package:k_sport_front/views/workout_page/exercice_page.dart';
 

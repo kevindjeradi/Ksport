@@ -19,12 +19,12 @@ class CustomBottomNavBar extends StatelessWidget {
           label: 'Accueil',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.fitness_center),
-          label: 'Workouts',
+          icon: Icon(Icons.add_box),
+          label: 'Exercices',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.add_box),
-          label: 'Routine Creator',
+          icon: Icon(Icons.fitness_center),
+          label: 'Entrainements',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.show_chart),

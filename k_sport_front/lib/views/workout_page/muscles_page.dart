@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:k_sport_front/components/workouts/muscle_grid.dart';
+import 'package:k_sport_front/components/exercices/muscle_grid.dart';
 import 'package:k_sport_front/models/muscles.dart';
 import 'package:k_sport_front/services/fetch_muscles.dart';
 

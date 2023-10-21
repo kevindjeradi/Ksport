@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
-import 'package:k_sport_front/components/workouts/workout_card.dart';
-import 'package:k_sport_front/components/workouts/workout_card_detail.dart';
+import 'package:k_sport_front/components/exercices/workout_card.dart';
+import 'package:k_sport_front/components/exercices/workout_card_detail.dart';
 import 'package:k_sport_front/models/exercices.dart';
 import 'package:k_sport_front/services/fetch_exercices.dart'; // Make sure this is the correct path to the service
 
