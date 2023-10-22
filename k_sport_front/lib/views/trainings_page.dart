@@ -27,6 +27,8 @@ class TrainingsPageState extends State<TrainingsPage> {
     if (response.statusCode == 200) {
       setState(() {
         var jsonResponse = jsonDecode(response.body);
+        print("\n\n$jsonResponse\n\n");
+
         trainings = jsonResponse
             .map<Training>((training) => Training.fromJson(training))
             .toList();

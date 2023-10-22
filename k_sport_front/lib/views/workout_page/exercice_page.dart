@@ -21,7 +21,7 @@ class ExercisesPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: FutureBuilder<List<Exercice>>(
-          future: fetchExercices(muscleLabel),
+          future: fetchExercicesByMuscle(muscleLabel),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
