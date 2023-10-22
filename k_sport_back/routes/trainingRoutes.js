@@ -27,6 +27,26 @@ router.get('/trainings/:id', async (req, res) => {
 // POST (create) a new training
 router.post('/trainings', async (req, res) => {
     try {
+        const { name, description, exercises } = req.body;
+
+        // Validate name and description
+        if (!name || !description) {
+            return res.status(400).json({ error: "Name and Description are required." });
+        }
+
+        // Validate exercises
+        if (!exercises || !Array.isArray(exercises) || exercises.length === 0) {
+            return res.status(400).json({ error: "Exercises array is required and should not be empty." });
+        }
+
+        for (let exercise of exercises) {
+            if (!exercise.exerciseId || typeof exercise.repetitions !== "number" || exercise.repetitions <= 0 ||
+                typeof exercise.sets !== "number" || exercise.sets <= 0 ||
+                typeof exercise.restTime !== "number" || exercise.restTime <= 0) {
+                return res.status(400).json({ error: "Invalid exercise data." });
+            }
+        }
+
         const training = new Training(req.body);
         const savedTraining = await training.save();
         res.status(201).json(savedTraining);
