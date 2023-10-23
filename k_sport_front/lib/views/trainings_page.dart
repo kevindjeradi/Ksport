@@ -47,16 +47,19 @@ class TrainingsPageState extends State<TrainingsPage> {
       body: Column(
         children: [
           Expanded(child: _buildTrainingList(trainings)),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const TrainingForm()),
-              ).then((_) {
-                _fetchTrainings();
-              });
-            },
-            child: const Text('Créer un nouvel entraînement'),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TrainingForm()),
+                ).then((_) {
+                  _fetchTrainings();
+                });
+              },
+              child: const Text('Créer un nouvel entraînement'),
+            ),
           )
         ],
       ),
