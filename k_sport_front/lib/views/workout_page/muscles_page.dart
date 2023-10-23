@@ -1,23 +1,35 @@
+//muscles_page.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/exercices/muscle_grid.dart';
+import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/models/muscles.dart';
-import 'package:k_sport_front/services/fetch_muscles.dart';
+import 'package:k_sport_front/services/api.dart';
 
 class MusclesPage extends StatelessWidget {
-  const MusclesPage({super.key});
+  final bool isSelectionMode;
+  const MusclesPage({super.key, this.isSelectionMode = false});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: isSelectionMode
+          ? const ReturnAppBar(
+              bgColor: Colors.blue,
+              barTitle: "Choisir un muscle",
+              color: Colors.white)
+          : null,
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            const Text('Choisir un muscle',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            isSelectionMode
+                ? const SizedBox()
+                : const Text('Choisir un muscle',
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Expanded(
               child: FutureBuilder<List<Muscle>>(
-                future: fetchMuscles(),
+                future: Api.fetchMuscles(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -26,7 +38,9 @@ class MusclesPage extends StatelessWidget {
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text('No workouts found.'));
                   } else {
-                    return MuscleGrid(muscles: snapshot.data!);
+                    return MuscleGrid(
+                        muscles: snapshot.data!,
+                        isSelectionMode: isSelectionMode);
                   }
                 },
               ),
