@@ -19,14 +19,17 @@ class MusclesPage extends StatelessWidget {
               color: Colors.white)
           : null,
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             isSelectionMode
                 ? const SizedBox()
-                : const Text('Choisir un muscle',
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                : const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Choisir un muscle',
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
+                  ),
             Expanded(
               child: FutureBuilder<List<Muscle>>(
                 future: Api.fetchMuscles(),

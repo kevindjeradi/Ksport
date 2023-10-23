@@ -1,12 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
+import 'package:k_sport_front/components/trainings/exercise_fields_list.dart';
+import 'package:k_sport_front/components/trainings/training_form_input.dart';
 import 'package:k_sport_front/models/training.dart';
+import 'package:k_sport_front/services/training_service.dart';
+import 'package:k_sport_front/views/workout_page/muscles_page.dart'; // You should import MusclesPage
 
 class TrainingForm extends StatefulWidget {
   final Training? editingTraining;
-
   const TrainingForm({Key? key, this.editingTraining}) : super(key: key);
 
   @override
@@ -18,7 +19,8 @@ class TrainingFormState extends State<TrainingForm> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _goalController;
-  List<Map<String, TextEditingController>> _exerciseControllers = [];
+  final List<Map<String, TextEditingController>> _exerciseControllers = [];
+  final TrainingService _trainingService = TrainingService();
 
   @override
   void initState() {
@@ -32,9 +34,9 @@ class TrainingFormState extends State<TrainingForm> {
 
     if (widget.editingTraining != null) {
       for (var exercise in widget.editingTraining!.exercises) {
-        print('\n----------------$exercise\n');
         _exerciseControllers.add({
           'label': TextEditingController(text: exercise['label']),
+          'exerciseId': TextEditingController(text: exercise['exerciseId']),
           'repetitions':
               TextEditingController(text: exercise['repetitions'].toString()),
           'sets': TextEditingController(text: exercise['sets'].toString()),
@@ -43,62 +45,33 @@ class TrainingFormState extends State<TrainingForm> {
         });
       }
     } else {
-      _addExercise(); // By default, add one exercise field
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _addExercise(); // By default, add one exercise field
+      });
     }
   }
 
-  Future<List<Map<String, dynamic>>> _fetchExercises() async {
-    final response =
-        await http.get(Uri.parse('http://10.0.2.2:3000/exercises'));
-    if (response.statusCode == 200) {
-      return List<Map<String, dynamic>>.from(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to load exercises');
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    _goalController.dispose();
+    for (var controllerMap in _exerciseControllers) {
+      for (var controller in controllerMap.values) {
+        controller.dispose();
+      }
     }
+    super.dispose();
   }
 
-  void _showExerciseDialog() async {
-    List<Map<String, dynamic>> exercises = await _fetchExercises();
-
-    if (mounted) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Select an Exercise'),
-            content: SizedBox(
-              width: double.maxFinite,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: exercises.length,
-                itemBuilder: (context, index) {
-                  final exerciseName =
-                      exercises[index]['label'] ?? 'Unknown Exercise';
-                  final exerciseId = (exercises[index]['_id'] ?? -1).toString();
-                  print(
-                      "\n\n----------------------------------------$exerciseId");
-                  return ListTile(
-                    title: Text(exerciseName),
-                    onTap: () {
-                      print('Tapped exercise ID: $exerciseId');
-                      setState(() {
-                        _exerciseControllers.last['label']!.text = exerciseName;
-                        _exerciseControllers.last['exerciseId']!.text =
-                            exerciseId;
-                      });
-                      print(
-                          'Set exercise ID: ${_exerciseControllers.last['exerciseId']!.text}');
-                      Navigator.pop(context);
-                    },
-                  );
-                },
-              ),
-            ),
-          );
-        },
-      );
-    } else {
-      print("if mounted is false !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  void _navigateToMusclesPage() async {
+    final selectedExercise = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const MusclesPage(isSelectionMode: true)));
+    if (selectedExercise != null) {
+      _exerciseControllers.last['label']!.text = selectedExercise.label;
+      _exerciseControllers.last['exerciseId']!.text = selectedExercise.id;
     }
   }
 
@@ -112,7 +85,7 @@ class TrainingFormState extends State<TrainingForm> {
         'restTime': TextEditingController(),
       });
     });
-    _showExerciseDialog();
+    _navigateToMusclesPage();
   }
 
   void _removeExercise(int index) {
@@ -131,135 +104,59 @@ class TrainingFormState extends State<TrainingForm> {
             ? 'Nouvel entrainement'
             : 'Modifier un entrainement'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: "Nom de l'entrainement",
-                  prefixIcon: Icon(Icons.title),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TrainingFormInput(
+                        controller: _nameController,
+                        label: "Nom de l'entrainement",
+                        icon: Icons.title,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Veuillez entrer un nom pour l'entrainement";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 8.0),
+                      TrainingFormInput(
+                          controller: _descriptionController,
+                          label: 'Description',
+                          icon: Icons.description),
+                      const SizedBox(height: 8.0),
+                      TrainingFormInput(
+                          controller: _goalController,
+                          label: 'Objectif',
+                          icon: Icons.flash_on),
+                      const SizedBox(height: 16.0),
+                      ExerciseFieldsList(
+                        exerciseControllers: _exerciseControllers,
+                        addExerciseCallback: _addExercise,
+                        removeExerciseCallback: _removeExercise,
+                      ),
+                    ],
+                  ),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Veuillez entrer un nom pour l'entrainement";
-                  }
-                  return null;
-                },
               ),
-              const SizedBox(height: 8.0),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  prefixIcon: Icon(Icons.description),
-                ),
-              ),
-              const SizedBox(height: 8.0),
-              TextFormField(
-                controller: _goalController,
-                decoration: const InputDecoration(
-                  labelText: 'Objectif',
-                  prefixIcon: Icon(Icons.flash_on),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              ..._buildExerciseFields(),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text("Sauvegarder l'entrainement"),
-              )
-            ],
+            ),
           ),
-        ),
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: CustomElevatedButton(
+              onPressed: _submitForm,
+              label: "Sauvegarder l'entrainement",
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  List<Widget> _buildExerciseFields() {
-    List<Widget> exerciseFields = [];
-    for (int i = 0; i < _exerciseControllers.length; i++) {
-      exerciseFields.add(Card(
-        elevation: 3.0,
-        margin: const EdgeInsets.only(bottom: 16.0),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _exerciseControllers[i]['label'],
-                decoration:
-                    const InputDecoration(label: Center(child: Text("nom"))),
-                readOnly: true,
-              ),
-              // TextFormField(
-              //   controller: _exerciseControllers[i]['exerciseId'],
-              //   decoration: const InputDecoration(
-              //       label: Center(child: Text("Exercise ID"))),
-              //   readOnly: true,
-              // ),
-              TextFormField(
-                controller: _exerciseControllers[i]['repetitions'],
-                decoration: const InputDecoration(
-                    label: Center(child: Text("repetitions"))),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      int.tryParse(value) == null ||
-                      int.parse(value) <= 0) {
-                    return 'Enter a valid number for repetitions';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _exerciseControllers[i]['sets'],
-                decoration:
-                    const InputDecoration(label: Center(child: Text("sets"))),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      int.tryParse(value) == null ||
-                      int.parse(value) <= 0) {
-                    return 'Enter a valid number for sets';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _exerciseControllers[i]['restTime'],
-                decoration: const InputDecoration(
-                    label: Center(child: Text("Rest Time (in seconds)"))),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null ||
-                      value.isEmpty ||
-                      int.tryParse(value) == null ||
-                      int.parse(value) <= 0) {
-                    return 'Enter a valid number for rest time';
-                  }
-                  return null;
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Remove Exercise'),
-                onPressed: () => _removeExercise(i),
-              )
-            ],
-          ),
-        ),
-      ));
-    }
-    exerciseFields.add(ElevatedButton(
-      onPressed: _addExercise,
-      child: const Text('Add New Exercise'),
-    ));
-    return exerciseFields;
   }
 
   void _submitForm() async {
@@ -275,58 +172,26 @@ class TrainingFormState extends State<TrainingForm> {
         });
       }
 
-      final data = {
+      Map<String, dynamic> data = {
         'name': _nameController.text,
         'description': _descriptionController.text,
-        'exercises': exercisesData,
         'goal': _goalController.text,
+        'exercises': exercisesData,
       };
 
-      if (widget.editingTraining == null) {
-        final response = await http.post(
-          Uri.parse('http://10.0.2.2:3000/trainings'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(data),
-        );
-        if (response.statusCode == 201) {
+      try {
+        final response =
+            await _trainingService.saveTraining(data, widget.editingTraining);
+        if (response.statusCode == 200 || response.statusCode == 201) {
           if (mounted) {
             Navigator.pop(context);
           }
         } else {
-          print('Error occurred. HTTP status: ${response.statusCode}');
-          print('Response body: ${response.body}');
-          // Optionally show an error dialog to the user
+          print('Error saving the training: ${response.body}');
         }
-      } else {
-        final response = await http.put(
-          Uri.parse(
-              'http://10.0.2.2:3000/trainings/${widget.editingTraining!.id}'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(data),
-        );
-        if (response.statusCode == 200) {
-          if (mounted) {
-            Navigator.pop(context);
-          }
-        } else {
-          // Handle error
-        }
+      } catch (e) {
+        print('Error saving the training: $e');
       }
-    } else {
-      print("form not valid");
     }
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _descriptionController.dispose();
-    _goalController.dispose();
-    for (var controllerMap in _exerciseControllers) {
-      controllerMap.forEach((key, controller) {
-        controller.dispose();
-      });
-    }
-    super.dispose();
   }
 }
