@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const checkAuth = require('./middleware/auth');
 const musclesRoutes = require('./routes/musclesRoutes');
 const exercicesRoutes = require('./routes/exercicesRoutes');
 const trainingRoutes = require('./routes/trainingRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 const PORT = 3000;
@@ -21,9 +23,10 @@ mongoose.connect(dbURI, {
 
 app.use(cors());
 app.use(express.json());
-app.use('/', musclesRoutes);
-app.use('/', exercicesRoutes);
-app.use('/', trainingRoutes);
+app.use('/', checkAuth, musclesRoutes);
+app.use('/', checkAuth, exercicesRoutes);
+app.use('/', checkAuth, trainingRoutes);
+app.use('/', userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
