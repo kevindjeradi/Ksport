@@ -1,8 +1,10 @@
 // login_page.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/services/token_service.dart';
 import 'package:k_sport_front/services/user_service.dart';
 import 'package:k_sport_front/views/auth/register_page.dart';
+import 'package:k_sport_front/views/home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -68,7 +70,7 @@ class LoginPageState extends State<LoginPage> {
       if (response.containsKey('token')) {
         await TokenService().saveToken(response['token']);
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/home');
+          CustomNavigation.pushReplacement(context, const Home());
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Successfully logged in!'),
           ));

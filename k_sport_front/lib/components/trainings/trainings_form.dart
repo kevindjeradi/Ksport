@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/trainings/exercise_fields_list.dart';
 import 'package:k_sport_front/components/trainings/training_form_input.dart';

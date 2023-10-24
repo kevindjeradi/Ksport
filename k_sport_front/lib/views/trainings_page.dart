@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/trainings/trainings_form.dart';
 import 'package:k_sport_front/models/training.dart';
@@ -57,16 +58,12 @@ class TrainingsPageState extends State<TrainingsPage> {
             const SizedBox(height: 12.0),
             CustomElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TrainingForm()),
-                ).then((_) {
-                  _fetchTrainings();
-                });
+                CustomNavigation.push(context, const TrainingForm())
+                    .then((_) => _fetchTrainings());
               },
               label: 'Créer un nouvel entraînement',
             ),
-            const SizedBox(height: 8.0), // bottom spacing
+            const SizedBox(height: 8.0),
           ],
         ),
       ),
@@ -96,14 +93,9 @@ class TrainingsPageState extends State<TrainingsPage> {
             },
           ),
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      TrainingForm(editingTraining: trainings[index])),
-            ).then((_) {
-              _fetchTrainings();
-            });
+            CustomNavigation.push(
+                    context, TrainingForm(editingTraining: trainings[index]))
+                .then((_) => _fetchTrainings());
           },
         );
       },

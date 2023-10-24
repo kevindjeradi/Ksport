@@ -1,5 +1,6 @@
 // exercice_page.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/components/exercices/workout_card.dart';
 import 'package:k_sport_front/components/exercices/workout_card_detail.dart';
@@ -50,17 +51,14 @@ class ExercisesPage extends StatelessWidget {
                         Navigator.of(context)
                             .pop(exercise); // Pop the MusclesPage
                       } else {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => WorkoutCardDetail(
+                        CustomNavigation.push(
+                            context,
+                            WorkoutCardDetail(
                               title: exercise.detailTitle,
                               muscleLabel: exercise.muscleLabel,
                               image: Image.network(exercise.imageUrl),
                               description: exercise.detailDescription,
-                            ),
-                          ),
-                        );
+                            ));
                       }
                     },
                   );
