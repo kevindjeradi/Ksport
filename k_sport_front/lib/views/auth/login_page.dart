@@ -24,15 +24,11 @@ class LoginPageState extends State<LoginPage> {
 
   void _validateFields() {
     setState(() {
-      showError = (_passwordController.text.isEmpty ||
-              _usernameController.text.isEmpty) ||
-          (_passwordController.text.length < 4 ||
-              _usernameController.text.length < 4);
+      showError = _passwordController.text.isEmpty ||
+          _usernameController.text.isEmpty ||
+          _passwordController.text.length < 4 ||
+          _usernameController.text.length < 4;
     });
-
-    if (_usernameController.text.length >= 4 && !_passwordFocus.hasFocus) {
-      _passwordFocus.requestFocus();
-    }
 
     validationNotifier.value = _usernameController.text.isNotEmpty &&
         _usernameController.text.length >= 4 &&
@@ -115,6 +111,7 @@ class LoginPageState extends State<LoginPage> {
                     TextField(
                       controller: _usernameController,
                       focusNode: _usernameFocus,
+                      onSubmitted: (_) => _passwordFocus.requestFocus(),
                       decoration: InputDecoration(
                         labelText: 'Pseudo',
                         errorText: showError &&
@@ -136,6 +133,11 @@ class LoginPageState extends State<LoginPage> {
                     TextField(
                       controller: _passwordController,
                       focusNode: _passwordFocus,
+                      onSubmitted: (_) {
+                        if (validationNotifier.value) {
+                          _login();
+                        }
+                      },
                       obscureText: !_passwordVisible,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
