@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -66,47 +67,80 @@ router.get('/user/details', async (req, res) => {
     }
 });
 
-// Update a specific day's training for a user
-router.put('/user/schedule/:day', async (req, res) => {
+// Update a user's training for a specific day
+router.post('/user/updateTrainingForDay', async (req, res) => {
+    const { day, trainingId } = req.body;
+    const dayMapping = {
+        0: 'lundi',
+        1: 'mardi',
+        2: 'mercredi',
+        3: 'jeudi',
+        4: 'vendredi',
+        5: 'samedi',
+        6: 'dimanche'
+    };
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, JWT_SECRET);
         const userId = decoded.userId;
-
-        const day = req.params.day;
-        const { trainingId } = req.body;
-
         const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+
+        if (!mongoose.Types.ObjectId.isValid(trainingId)) {
+            return res.status(400).json({ error: 'Invalid trainingId format' });
         }
-
-        user.trainingsSchedule[day] = trainingId;
-        await user.save();
-
-        res.json({ message: "Updated successfully" });
+        console.log("Day:", day);
+        console.log("Training ID:", trainingId);
+        console.log("Updated User:", user);
+        const dayString = dayMapping[day];
+        console.log("DayString:", dayString);
+        if (dayString) 
+        {
+            user.trainingsSchedule[dayString] = new mongoose.Types.ObjectId(trainingId);
+            user.markModified('trainingsSchedule');
+            await user.save();
+            const updatedUser = await User.findById(userId);
+            console.log("User After Update:", updatedUser);
+        }
+        else {
+            console.error("Invalid day value:", day);
+        }
+        res.status(200).json({ message: 'Training updated successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// Fetch user's training schedule
-router.get('/user/schedule', async (req, res) => {
+  // Get a user's training for a specific day
+router.get('/user/getTrainingForDay/:day', async (req, res) => {
+    const day = req.params.day;
     try {
         const token = req.headers.authorization.split(' ')[1];
+        print("------------------token in getTrainingForDay route " + token)
+
         const decoded = jwt.verify(token, JWT_SECRET);
         const userId = decoded.userId;
-
-        const user = await User.findById(userId).populate('trainingsSchedule.lundi').populate('trainingsSchedule.mardi')...; // populate for other days
-        if (!user) {
-            return res.status(404).json({ error: 'User not found' });
-        }
-
-        res.json(user.trainingsSchedule);
+        const user = await User.findById(userId).populate(`trainingsSchedule.${day}`);
+        res.status(200).json(user.trainingsSchedule[day]);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
+  // Delete a user's training for a specific day
+router.delete('/user/deleteTrainingForDay/:day', async (req, res) => {
+    const day = req.params.day;
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        print("------------------token in delete route " + token)
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const userId = decoded.userId;
+        const user = await User.findById(userId);
+        user.trainingsSchedule[day] = null;
+        await user.save();
+        res.status(200).json({ message: 'Training deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = router;
