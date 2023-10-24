@@ -15,6 +15,15 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    trainingsSchedule: {
+        lundi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
+        mardi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
+        mercredi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
+        jeudi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
+        vendredi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
+        samedi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
+        dimanche: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
+    },
     trainings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Training' }],
     profileImage: String
 });

@@ -56,8 +56,6 @@ class Api {
 
       // Populate the UserProvider with the fetched details
       userProvider.setUserData(userDetails);
-      print(
-          "\n-------------in populateUserProvider: ${userProvider.username}-------------\n");
     } catch (error) {
       print("Error populating UserProvider: $error");
     }

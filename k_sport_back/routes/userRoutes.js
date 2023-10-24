@@ -66,4 +66,47 @@ router.get('/user/details', async (req, res) => {
     }
 });
 
+// Update a specific day's training for a user
+router.put('/user/schedule/:day', async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const userId = decoded.userId;
+
+        const day = req.params.day;
+        const { trainingId } = req.body;
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        user.trainingsSchedule[day] = trainingId;
+        await user.save();
+
+        res.json({ message: "Updated successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Fetch user's training schedule
+router.get('/user/schedule', async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const userId = decoded.userId;
+
+        const user = await User.findById(userId).populate('trainingsSchedule.lundi').populate('trainingsSchedule.mardi')...; // populate for other days
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json(user.trainingsSchedule);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 module.exports = router;
