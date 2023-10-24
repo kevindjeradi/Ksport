@@ -1,10 +1,13 @@
 // login_page.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
+import 'package:k_sport_front/provider/user_provider.dart';
+import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/services/token_service.dart';
 import 'package:k_sport_front/services/user_service.dart';
 import 'package:k_sport_front/views/auth/register_page.dart';
 import 'package:k_sport_front/views/home.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -68,7 +71,16 @@ class LoginPageState extends State<LoginPage> {
           _usernameController.text, _passwordController.text);
       _loading = false;
       if (response.containsKey('token')) {
+        // saving token
         await TokenService().saveToken(response['token']);
+        if (mounted) {
+          // Fetch user details
+          final userProvider =
+              Provider.of<UserProvider>(context, listen: false);
+          await Api.populateUserProvider(userProvider);
+          print(
+              "\n-------------in login page: ${userProvider.username}-------------\n");
+        }
         if (mounted) {
           CustomNavigation.pushReplacement(context, const Home());
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

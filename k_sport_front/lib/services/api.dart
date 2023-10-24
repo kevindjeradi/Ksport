@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:k_sport_front/models/exercices.dart';
 import 'package:k_sport_front/models/muscles.dart';
+import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/token_service.dart';
+import 'package:k_sport_front/services/user_service.dart';
 
 class Api {
   static final TokenService _tokenService = TokenService();
+  static final _userService = UserService();
 
   static Future<http.Response> get(String url) async {
     final token = await _tokenService.getToken();
@@ -43,6 +46,21 @@ class Api {
       },
       body: jsonEncode(data),
     );
+  }
+
+  static Future<void> populateUserProvider(UserProvider userProvider) async {
+    try {
+      // Fetch user details using the stored token
+      Map<String, dynamic> userDetails =
+          await _userService.fetchUserDetails(_tokenService);
+
+      // Populate the UserProvider with the fetched details
+      userProvider.setUserData(userDetails);
+      print(
+          "\n-------------in populateUserProvider: ${userProvider.username}-------------\n");
+    } catch (error) {
+      print("Error populating UserProvider: $error");
+    }
   }
 
   static Future<List<Muscle>> fetchMuscles() async {

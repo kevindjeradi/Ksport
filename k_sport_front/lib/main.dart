@@ -1,14 +1,18 @@
 // main.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/provider/auth_notifier.dart';
+import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/auth/register_page.dart';
 import 'package:k_sport_front/views/home.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(
-      ChangeNotifierProvider(
-        create: (context) => AuthNotifier(),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => AuthNotifier()),
+          ChangeNotifierProvider(create: (context) => UserProvider()),
+        ],
         child: const MyApp(),
       ),
     );

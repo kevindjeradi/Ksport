@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/provider/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class WelcomeBanner extends StatelessWidget {
-  final String name = "Kevin"; // replace with dynamic value later
-
   const WelcomeBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    print(
+        "\n-------------in welcome banner: ${userProvider.username}-------------\n");
+
     return Container(
       margin: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
@@ -33,7 +37,7 @@ class WelcomeBanner extends StatelessWidget {
                       NetworkImage('https://via.placeholder.com/80'),
                 ),
                 const SizedBox(width: 10),
-                Text('Hey ! Bonne journée $name!'),
+                Text('Hey ! Bonne journée ${userProvider.username}!'),
               ],
             ),
             const SizedBox(height: 10),
