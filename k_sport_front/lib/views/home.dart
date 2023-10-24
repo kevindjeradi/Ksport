@@ -15,6 +15,7 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
   int _currentIndex = 0;
+  PageController _pageController = PageController();
 
   final List<Widget> _pages = [
     const Dashboard(),
@@ -24,21 +25,47 @@ class HomeState extends State<Home> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+
+    // Listen to page changes to update currentIndex
+    _pageController.addListener(() {
+      setState(() {
+        _currentIndex = _pageController.page!.round();
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const CustomAppBar(),
-      body: IndexedStack(
-        index: _currentIndex,
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
         children: _pages,
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          _pageController.animateToPage(
+            index,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 }
