@@ -14,6 +14,8 @@ class LoginPage extends StatefulWidget {
 class LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final FocusNode _usernameFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
   bool _passwordVisible = false;
   bool showError = false;
   bool _loading = false;
@@ -27,6 +29,11 @@ class LoginPageState extends State<LoginPage> {
           (_passwordController.text.length < 4 ||
               _usernameController.text.length < 4);
     });
+
+    if (_usernameController.text.length >= 4 && !_passwordFocus.hasFocus) {
+      _passwordFocus.requestFocus();
+    }
+
     validationNotifier.value = _usernameController.text.isNotEmpty &&
         _usernameController.text.length >= 4 &&
         _passwordController.text.isNotEmpty &&
@@ -44,6 +51,8 @@ class LoginPageState extends State<LoginPage> {
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
+    _usernameFocus.dispose();
+    _passwordFocus.dispose();
     validationNotifier.dispose();
     super.dispose();
   }
@@ -105,6 +114,7 @@ class LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 32),
                     TextField(
                       controller: _usernameController,
+                      focusNode: _usernameFocus,
                       decoration: InputDecoration(
                         labelText: 'Pseudo',
                         errorText: showError &&
@@ -125,6 +135,7 @@ class LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 16),
                     TextField(
                       controller: _passwordController,
+                      focusNode: _passwordFocus,
                       obscureText: !_passwordVisible,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
