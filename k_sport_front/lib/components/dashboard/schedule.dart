@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/models/training.dart';
+import 'package:k_sport_front/services/api.dart';
 
 class ScheduleComponent extends StatefulWidget {
   final Function(int) onDayTapped; // Callback for when a day is tapped
+  final Function(int, Training?) onTrainingAssigned;
 
-  const ScheduleComponent({Key? key, required this.onDayTapped})
+  const ScheduleComponent(
+      {Key? key, required this.onDayTapped, required this.onTrainingAssigned})
       : super(key: key);
 
   @override
@@ -12,8 +17,32 @@ class ScheduleComponent extends StatefulWidget {
 
 class ScheduleComponentState extends State<ScheduleComponent> {
   List<Status> weekStatuses = [];
+  List<Training> trainings = [];
+  List<Training?> weekTrainings = List.filled(7, null);
 
-  // Constant list of day names
+  _fetchTrainings() async {
+    final response = await Api.get('http://10.0.2.2:3000/trainings');
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      setState(() {
+        trainings = data.map((item) => Training.fromJson(item)).toList();
+      });
+    } else {
+      print('Error fetching trainings');
+    }
+  }
+
+  _fetchTrainingForDay(int day) async {
+    try {
+      final trainingData = await Api.fetchTrainingForDay(day.toString());
+      setState(() {
+        weekTrainings[day - 1] = Training.fromJson(trainingData);
+      });
+    } catch (e) {
+      print("Error fetching training for day $day: $e");
+    }
+  }
+
   static const List<String> dayNames = [
     'Lun',
     'Mar',
@@ -27,10 +56,12 @@ class ScheduleComponentState extends State<ScheduleComponent> {
   @override
   void initState() {
     super.initState();
+    _fetchTrainings();
     int today = DateTime.now().weekday;
     weekStatuses = List.generate(7, (index) {
+      _fetchTrainingForDay(index + 1);
       if (index < today - 1) {
-        return Status.checked; // or Status.crossed for past days
+        return Status.checked;
       } else if (index == today - 1) {
         return Status.current;
       } else {
@@ -71,7 +102,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
 
   Widget _buildDay(int index, Status status) {
     String dayName = dayNames[index];
-
+    Training? currentTraining = weekTrainings[index];
     Color bgColor;
     IconData icon = Icons.circle;
     Color textColor = Colors.white;
@@ -82,10 +113,6 @@ class ScheduleComponentState extends State<ScheduleComponent> {
       case Status.checked:
         bgColor = Colors.red;
         icon = Icons.check_circle;
-        break;
-      case Status.crossed:
-        bgColor = Colors.blue;
-        icon = Icons.cancel;
         break;
       case Status.current:
         bgColor = Colors.white;
@@ -100,8 +127,39 @@ class ScheduleComponentState extends State<ScheduleComponent> {
         break;
     }
 
-    return GestureDetector(
-      onTap: () => widget.onDayTapped(index),
+    return InkWell(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Assign Training for $dayName'),
+              content: DropdownButton<Training>(
+                value: currentTraining,
+                items: trainings.map((Training training) {
+                  return DropdownMenuItem<Training>(
+                    value: training,
+                    child: Text(training.name),
+                  );
+                }).toList(),
+                onChanged: (Training? newValue) {
+                  setState(() {
+                    weekTrainings[index] = newValue;
+                  });
+                  widget.onTrainingAssigned(index + 1, newValue);
+                },
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+        widget.onDayTapped(index + 1);
+      },
       child: Container(
         width: 45,
         height: 55,
@@ -124,4 +182,4 @@ class ScheduleComponentState extends State<ScheduleComponent> {
   }
 }
 
-enum Status { checked, crossed, current, comming }
+enum Status { checked, current, comming }
