@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/trainings/trainings_form.dart';
 import 'package:k_sport_front/models/training.dart';
+import 'package:k_sport_front/services/api.dart';
 
 class TrainingsPage extends StatefulWidget {
   const TrainingsPage({super.key});
@@ -23,8 +24,9 @@ class TrainingsPageState extends State<TrainingsPage> {
   }
 
   _fetchTrainings() async {
-    final response =
-        await http.get(Uri.parse('http://10.0.2.2:3000/trainings'));
+    final response = await Api.get('http://10.0.2.2:3000/trainings');
+    print(
+        "\n\n---------------response code: ${response.statusCode}---------------\n\n");
     if (response.statusCode == 200) {
       setState(() {
         var jsonResponse = jsonDecode(response.body);

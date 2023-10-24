@@ -1,7 +1,17 @@
+// main.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/provider/auth_notifier.dart';
+import 'package:k_sport_front/views/auth/login_page.dart';
+import 'package:k_sport_front/views/auth/register_page.dart';
 import 'package:k_sport_front/views/home.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(
+      ChangeNotifierProvider(
+        create: (context) => AuthNotifier(),
+        child: const MyApp(),
+      ),
+    );
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -20,7 +30,20 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const Home(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Consumer<AuthNotifier>(
+              builder: (context, auth, child) {
+                if (auth.isAuthenticated) {
+                  return const Home();
+                } else {
+                  return const LoginPage();
+                }
+              },
+            ),
+        '/register': (context) => const RegisterPage(),
+        '/home': (context) => const Home(),
+      },
     );
   }
 }

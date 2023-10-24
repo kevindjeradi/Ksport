@@ -2,8 +2,49 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:k_sport_front/models/exercices.dart';
 import 'package:k_sport_front/models/muscles.dart';
+import 'package:k_sport_front/services/token_service.dart';
 
 class Api {
+  static final TokenService _tokenService = TokenService();
+
+  static Future<http.Response> get(String url) async {
+    final token = await _tokenService.getToken();
+    print("\n\n--------------token in Api.get: $token--------------\n\n");
+    return http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+  }
+
+  static Future<http.Response> post(
+      String url, Map<String, dynamic> data) async {
+    final token = await _tokenService.getToken();
+    return http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(data),
+    );
+  }
+
+  static Future<http.Response> put(
+      String url, Map<String, dynamic> data) async {
+    final token = await _tokenService.getToken();
+    return http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(data),
+    );
+  }
+
   static Future<List<Muscle>> fetchMuscles() async {
     final response = await http.get(Uri.parse('http://10.0.2.2:3000/muscles'));
 
@@ -41,19 +82,11 @@ class Api {
   }
 
   static Future<http.Response> postTraining(Map<String, dynamic> data) {
-    return http.post(
-      Uri.parse('http://10.0.2.2:3000/trainings'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
+    return post('http://10.0.2.2:3000/trainings', data);
   }
 
   static Future<http.Response> updateTraining(
       String id, Map<String, dynamic> data) {
-    return http.put(
-      Uri.parse('http://10.0.2.2:3000/trainings/$id'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(data),
-    );
+    return put('http://10.0.2.2:3000/trainings/$id', data);
   }
 }
