@@ -10,8 +10,15 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    dateJoined: {
+        type: Date,
+        default: Date.now
+    },
+    trainings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Training' }],
+    profileImage: String
 });
+
 
 // Hash the password before saving
 userSchema.pre('save', async function (next) {
@@ -26,4 +33,4 @@ userSchema.methods.isCorrectPassword = async function (password) {
     return bcrypt.compare(password, this.password);
 };
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Users', userSchema);
