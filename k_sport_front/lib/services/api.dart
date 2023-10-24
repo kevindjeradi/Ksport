@@ -25,6 +25,7 @@ class Api {
   static Future<http.Response> post(
       String url, Map<String, dynamic> data) async {
     final token = await _tokenService.getToken();
+    print("token in post $token");
     return http.post(
       Uri.parse(url),
       headers: {
@@ -104,5 +105,30 @@ class Api {
   static Future<http.Response> updateTraining(
       String id, Map<String, dynamic> data) {
     return put('http://10.0.2.2:3000/trainings/$id', data);
+  }
+
+  static Future<Map<String, dynamic>> fetchTrainingForDay(String day) async {
+    final response =
+        await get('http://10.0.2.2:3000/user/getTrainingForDay/$day');
+    if (response.statusCode == 200) {
+      return Map<String, dynamic>.from(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to load training for $day');
+    }
+  }
+
+  static Future<void> deleteTrainingForDay(String day) async {
+    final token = await _tokenService.getToken();
+
+    final response = await http.delete(
+      Uri.parse('http://10.0.2.2:3000/user/deleteTrainingForDay/$day'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete training for $day');
+    }
   }
 }
