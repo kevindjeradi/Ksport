@@ -41,4 +41,29 @@ router.post('/login', async (req, res) => {
     res.json({ token });
 });
 
+router.get('/user/details', async (req, res) => {
+    // Verify the token and extract the userId
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const userId = decoded.userId;
+
+        // Find the user by their ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Return the required details
+        const userDetails = {
+            username: user.username,
+            dateJoined: user.dateJoined,
+            profileImage: user.profileImage
+        };
+        res.json(userDetails);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;
