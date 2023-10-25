@@ -133,8 +133,27 @@ class ScheduleComponentState extends State<ScheduleComponent> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Assign Training for $dayName'),
-              content: DropdownButton<Training>(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15), // Set rounded corners
+              ),
+              backgroundColor:
+                  Colors.blueGrey[50], // Set a custom background color
+              title: Row(
+                children: [
+                  const Icon(Icons.assignment),
+                  const SizedBox(width: 10),
+                  Text(
+                    dayName,
+                    style: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              content: DropdownButtonFormField<Training>(
+                decoration: const InputDecoration(
+                  labelText: 'Choisir un entraînement',
+                  border: OutlineInputBorder(),
+                ),
                 value: currentTraining,
                 items: trainings.map((Training training) {
                   return DropdownMenuItem<Training>(
@@ -152,7 +171,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK'),
+                  child: const Text('OK', style: TextStyle(color: Colors.blue)),
                 ),
               ],
             );
