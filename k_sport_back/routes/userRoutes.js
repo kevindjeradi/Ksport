@@ -113,15 +113,22 @@ router.post('/user/updateTrainingForDay', async (req, res) => {
   // Get a user's training for a specific day
 router.get('/user/getTrainingForDay/:day', async (req, res) => {
     const day = req.params.day;
+
     try {
         const token = req.headers.authorization.split(' ')[1];
-        print("------------------token in getTrainingForDay route " + token)
+        console.log("------------------token in getTrainingForDay route " + token)
 
         const decoded = jwt.verify(token, JWT_SECRET);
         const userId = decoded.userId;
         const user = await User.findById(userId).populate(`trainingsSchedule.${day}`);
-        res.status(200).json(user.trainingsSchedule[day]);
+        console.log("in get /user/getTrainingForDay/:day --> day = " + day + "------------------user trainingsSchedule[day] --> " + user.trainingsSchedule[day])
+        if (user.trainingsSchedule[day])
+        {
+            res.status(200).json(user.trainingsSchedule[day]);
+        }
+        res.status(200).json({});
     } catch (error) {
+        console.log("error in getTrainingForDay route")
         res.status(500).json({ error: error.message });
     }
 });
