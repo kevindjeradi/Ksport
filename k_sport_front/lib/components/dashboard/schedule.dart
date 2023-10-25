@@ -19,47 +19,65 @@ class ScheduleComponentState extends State<ScheduleComponent> {
   List<Status> weekStatuses = [];
   List<Training> trainings = [];
   List<Training?> weekTrainings = List.filled(7, null);
+  bool isLoading = false;
+  String errorMessage = '';
 
   _fetchTrainings() async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
     final response = await Api.get('http://10.0.2.2:3000/trainings');
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       setState(() {
         trainings = data.map((item) => Training.fromJson(item)).toList();
+        isLoading = false;
       });
     } else {
-      print('Error fetching trainings');
+      setState(() {
+        isLoading = false;
+        errorMessage = 'Error fetching trainings';
+      });
     }
   }
 
   _fetchTrainingForDay(int day) async {
+    setState(() {
+      isLoading = true;
+      errorMessage = '';
+    });
     try {
-      final trainingData = await Api.fetchTrainingForDay(day.toString());
+      print("\n\nday -> $day / daynames -> ${dayNames[day - 1].toLowerCase()}");
+      final trainingData =
+          await Api.fetchTrainingForDay(dayNames[day - 1].toLowerCase());
+      print('Response data: $trainingData');
+
+      // Define a placeholder Training object
+      final emptyTraining =
+          Training(id: '', name: '', description: '', exercises: [], goal: '');
+
       setState(() {
-        weekTrainings[day - 1] = Training.fromJson(trainingData);
+        if (trainingData.isEmpty) {
+          weekTrainings[day - 1] = emptyTraining;
+        } else {
+          weekTrainings[day - 1] = Training.fromJson(trainingData);
+        }
+        isLoading = false;
       });
-    } catch (e) {
-      print("Error fetching training for day $day: $e");
+    } catch (e, s) {
+      print('Error: $e');
+      print('StackTrace: $s');
+      setState(() {
+        isLoading = false;
+        errorMessage = "Error fetching training for day $day: $e";
+      });
     }
   }
 
-  static const List<String> dayNames = [
-    'Lun',
-    'Mar',
-    'Mer',
-    'Jeu',
-    'Ven',
-    'Sam',
-    'Dim'
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchTrainings();
+  _fetchAllTrainingsForTheWeek() async {
     int today = DateTime.now().weekday;
-    weekStatuses = List.generate(7, (index) {
-      _fetchTrainingForDay(index + 1);
+    List<Status> newWeekStatuses = List.generate(7, (index) {
       if (index < today - 1) {
         return Status.checked;
       } else if (index == today - 1) {
@@ -68,6 +86,31 @@ class ScheduleComponentState extends State<ScheduleComponent> {
         return Status.comming;
       }
     });
+
+    for (int index = 0; index < 7; index++) {
+      await _fetchTrainingForDay(index + 1);
+    }
+
+    setState(() {
+      weekStatuses = newWeekStatuses;
+    });
+  }
+
+  static const List<String> dayNames = [
+    'Lundi',
+    'Mardi',
+    'Mercredi',
+    'Jeudi',
+    'Vendredi',
+    'Samedi',
+    'Dimanche'
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchTrainings();
+    _fetchAllTrainingsForTheWeek();
   }
 
   @override
@@ -140,7 +183,11 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                   Colors.blueGrey[50], // Set a custom background color
               title: Row(
                 children: [
-                  const Icon(Icons.assignment),
+                  const Icon(
+                    Icons.assignment,
+                    color: Colors.black,
+                    size: 24.0,
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     dayName,
@@ -149,31 +196,55 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                   ),
                 ],
               ),
-              content: DropdownButtonFormField<Training>(
-                decoration: const InputDecoration(
-                  labelText: 'Choisir un entraînement',
-                  border: OutlineInputBorder(),
-                ),
-                value: currentTraining,
-                items: trainings.map((Training training) {
-                  return DropdownMenuItem<Training>(
-                    value: training,
-                    child: Text(training.name),
-                  );
-                }).toList(),
-                onChanged: (Training? newValue) {
-                  setState(() {
-                    weekTrainings[index] = newValue;
-                  });
-                  widget.onTrainingAssigned(index + 1, newValue);
-                },
-              ),
+              content: isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : errorMessage.isNotEmpty
+                      ? Text(errorMessage)
+                      : Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Entrainement actuel: ${currentTraining?.name ?? "Aucun"}',
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 16),
+                            ),
+                            const SizedBox(height: 20),
+                            DropdownButtonFormField<Training>(
+                              decoration: const InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 10.0),
+                                labelText: 'Modifier l\'entrainement du jour',
+                                border: OutlineInputBorder(),
+                              ),
+                              value: currentTraining != null &&
+                                      trainings.contains(currentTraining)
+                                  ? trainings.firstWhere(
+                                      (element) => element == currentTraining)
+                                  : null,
+                              items: trainings.map((Training training) {
+                                return DropdownMenuItem<Training>(
+                                  value: training,
+                                  child: Text(training.name),
+                                );
+                              }).toList(),
+                              onChanged: (Training? newValue) {
+                                setState(() {
+                                  weekTrainings[index] = newValue;
+                                });
+                                widget.onTrainingAssigned(index + 1, newValue);
+                              },
+                            )
+                          ],
+                        ),
               actions: <Widget>[
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: const Text('OK', style: TextStyle(color: Colors.blue)),
                 ),
               ],
+              contentPadding: const EdgeInsets.all(20),
+              insetPadding: const EdgeInsets.all(20),
             );
           },
         );
@@ -189,7 +260,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text(dayName, style: TextStyle(color: textColor)),
+            Text(dayName.substring(0, 3), style: TextStyle(color: textColor)),
             const SizedBox(width: 5),
             icon != Icons.circle
                 ? Icon(icon, size: 18, color: textColor)
