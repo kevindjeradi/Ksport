@@ -1,7 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/models/training.dart';
-import 'package:k_sport_front/services/api.dart';
+import 'package:k_sport_front/services/training_service.dart';
 
 class ScheduleComponent extends StatefulWidget {
   final Function(int) onDayTapped; // Callback for when a day is tapped
@@ -22,78 +21,52 @@ class ScheduleComponentState extends State<ScheduleComponent> {
   bool isLoading = false;
   String errorMessage = '';
 
-  _fetchTrainings() async {
-    setState(() {
-      isLoading = true;
-      errorMessage = '';
-    });
-    final response = await Api.get('http://10.0.2.2:3000/trainings');
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      setState(() {
-        trainings = data.map((item) => Training.fromJson(item)).toList();
-        isLoading = false;
-      });
-    } else {
-      setState(() {
-        isLoading = false;
-        errorMessage = 'Error fetching trainings';
-      });
+  Future<void> _fetchTrainings() async {
+    try {
+      setState(() => isLoading = true);
+      trainings = await TrainingService.fetchTrainings();
+    } catch (e) {
+      errorMessage = 'Error fetching trainings';
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
-  _fetchTrainingForDay(int day) async {
-    setState(() {
-      isLoading = true;
-      errorMessage = '';
-    });
+  Future<void> _fetchTrainingForDay(int day) async {
     try {
-      print("\n\nday -> $day / daynames -> ${dayNames[day - 1].toLowerCase()}");
-      final trainingData =
-          await Api.fetchTrainingForDay(dayNames[day - 1].toLowerCase());
-      print('Response data: $trainingData');
-
-      // Define a placeholder Training object
-      final emptyTraining =
-          Training(id: '', name: '', description: '', exercises: [], goal: '');
-
-      setState(() {
-        if (trainingData.isEmpty) {
-          weekTrainings[day - 1] = emptyTraining;
-        } else {
-          weekTrainings[day - 1] = Training.fromJson(trainingData);
-        }
-        isLoading = false;
-      });
-    } catch (e, s) {
-      print('Error: $e');
-      print('StackTrace: $s');
-      setState(() {
-        isLoading = false;
-        errorMessage = "Error fetching training for day $day: $e";
-      });
+      setState(() => isLoading = true);
+      Training? training =
+          await TrainingService.fetchTrainingForDay(dayNames[day - 1]);
+      weekTrainings[day - 1] = training;
+    } catch (e) {
+      errorMessage = "Error fetching training for day $day";
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
   _fetchAllTrainingsForTheWeek() async {
-    int today = DateTime.now().weekday;
-    List<Status> newWeekStatuses = List.generate(7, (index) {
-      if (index < today - 1) {
-        return Status.checked;
-      } else if (index == today - 1) {
-        return Status.current;
-      } else {
-        return Status.comming;
+    try {
+      setState(() => isLoading = true);
+      int today = DateTime.now().weekday;
+      weekStatuses = List.generate(7, (index) {
+        if (index < today - 1) {
+          return Status.checked;
+        } else if (index == today - 1) {
+          return Status.current;
+        } else {
+          return Status.comming;
+        }
+      });
+
+      for (int index = 0; index < 7; index++) {
+        await _fetchTrainingForDay(index + 1);
       }
-    });
-
-    for (int index = 0; index < 7; index++) {
-      await _fetchTrainingForDay(index + 1);
+    } catch (e) {
+      errorMessage = "Error fetching trainings for the week";
+    } finally {
+      setState(() => isLoading = false);
     }
-
-    setState(() {
-      weekStatuses = newWeekStatuses;
-    });
   }
 
   static const List<String> dayNames = [
@@ -130,15 +103,16 @@ class ScheduleComponentState extends State<ScheduleComponent> {
             ],
           ),
           const SizedBox(height: 10),
-          if (isLoading) const Center(child: CircularProgressIndicator()),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: weekStatuses
-                .asMap()
-                .entries
-                .map((entry) => _buildDay(entry.key, entry.value))
-                .toList(),
-          ),
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: weekStatuses
+                      .asMap()
+                      .entries
+                      .map((entry) => _buildDay(entry.key, entry.value))
+                      .toList(),
+                ),
           // Error Message
           if (errorMessage.isNotEmpty)
             Padding(
@@ -154,16 +128,12 @@ class ScheduleComponentState extends State<ScheduleComponent> {
   Widget _buildDay(int index, Status status) {
     String dayName = dayNames[index];
     Training? currentTraining = weekTrainings[index];
-    bool isEmpty = false;
+    bool isEmpty = currentTraining?.name.isEmpty ?? true;
     Color bgColor;
     IconData icon = Icons.circle;
     Color textColor = Colors.white;
     BoxBorder containerBorder =
         Border.all(width: 1.0, color: const Color(0xFFFFFFFF));
-
-    if (currentTraining!.name.isEmpty) {
-      isEmpty = true;
-    }
 
     switch (status) {
       case Status.checked:
@@ -232,7 +202,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                         const TextSpan(
                                             text: 'Aujourd\'hui, c\'est '),
                                         TextSpan(
-                                          text: currentTraining.name
+                                          text: currentTraining?.name
                                               .toUpperCase(),
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
