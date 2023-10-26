@@ -3,7 +3,7 @@ import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/services/training_service.dart';
 
 class ScheduleComponent extends StatefulWidget {
-  final Function(int) onDayTapped; // Callback for when a day is tapped
+  final Function(int) onDayTapped;
   final Function(int, Training?) onTrainingAssigned;
 
   const ScheduleComponent(
@@ -113,7 +113,6 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                       .map((entry) => _buildDay(entry.key, entry.value))
                       .toList(),
                 ),
-          // Error Message
           if (errorMessage.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 10),
@@ -161,10 +160,9 @@ class ScheduleComponentState extends State<ScheduleComponent> {
             return AlertDialog(
               elevation: 5,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15), // Set rounded corners
+                borderRadius: BorderRadius.circular(15),
               ),
-              backgroundColor:
-                  Colors.blueGrey[50], // Set a custom background color
+              backgroundColor: Colors.blueGrey[50],
               title: Row(
                 children: [
                   const Icon(
