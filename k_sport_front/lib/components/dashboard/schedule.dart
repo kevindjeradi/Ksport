@@ -130,6 +130,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
             ],
           ),
           const SizedBox(height: 10),
+          if (isLoading) const Center(child: CircularProgressIndicator()),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: weekStatuses
@@ -138,6 +139,13 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                 .map((entry) => _buildDay(entry.key, entry.value))
                 .toList(),
           ),
+          // Error Message
+          if (errorMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(errorMessage,
+                  style: const TextStyle(color: Colors.red, fontSize: 14)),
+            ),
         ],
       ),
     );
@@ -146,11 +154,16 @@ class ScheduleComponentState extends State<ScheduleComponent> {
   Widget _buildDay(int index, Status status) {
     String dayName = dayNames[index];
     Training? currentTraining = weekTrainings[index];
+    bool isEmpty = false;
     Color bgColor;
     IconData icon = Icons.circle;
     Color textColor = Colors.white;
     BoxBorder containerBorder =
         Border.all(width: 1.0, color: const Color(0xFFFFFFFF));
+
+    if (currentTraining!.name.isEmpty) {
+      isEmpty = true;
+    }
 
     switch (status) {
       case Status.checked:
@@ -176,6 +189,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
+              elevation: 5,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15), // Set rounded corners
               ),
@@ -204,11 +218,31 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Entrainement actuel: ${currentTraining?.name ?? "Aucun"}',
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 16),
-                            ),
+                            isEmpty
+                                ? const Text(
+                                    'Aucun entrainement selectionné',
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 16),
+                                  )
+                                : RichText(
+                                    text: TextSpan(
+                                      style: const TextStyle(
+                                          fontSize: 16, color: Colors.black),
+                                      children: <TextSpan>[
+                                        const TextSpan(
+                                            text: 'Aujourd\'hui, c\'est '),
+                                        TextSpan(
+                                          text: currentTraining.name
+                                              .toUpperCase(),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Colors.blue,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                             const SizedBox(height: 20),
                             DropdownButtonFormField<Training>(
                               decoration: const InputDecoration(
@@ -217,8 +251,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                 labelText: 'Modifier l\'entrainement du jour',
                                 border: OutlineInputBorder(),
                               ),
-                              value: currentTraining != null &&
-                                      trainings.contains(currentTraining)
+                              value: trainings.contains(currentTraining)
                                   ? trainings.firstWhere(
                                       (element) => element == currentTraining)
                                   : null,
