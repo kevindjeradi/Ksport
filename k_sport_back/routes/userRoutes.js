@@ -91,7 +91,7 @@ router.post('/user/updateTrainingForDay', async (req, res) => {
         console.log("Day:", day);
         console.log("Training ID:", trainingId);
         console.log("Updated User:", user);
-        const dayString = dayMapping[day];
+        const dayString = dayMapping[day - 1];
         console.log("DayString:", dayString);
         if (dayString) 
         {
@@ -99,7 +99,7 @@ router.post('/user/updateTrainingForDay', async (req, res) => {
             user.markModified('trainingsSchedule');
             await user.save();
             const updatedUser = await User.findById(userId);
-            console.log("User After Update:", updatedUser);
+            console.log("training of user After Update:", updatedUser.trainings);
         }
         else {
             console.error("Invalid day value:", day);
