@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/models/training.dart';
-import 'package:k_sport_front/services/training_service.dart';
+import 'package:k_sport_front/provider/schedule_training_provider.dart';
+import 'package:provider/provider.dart';
 
 class ScheduleComponent extends StatefulWidget {
   final Function(int) onDayTapped;
@@ -15,118 +16,75 @@ class ScheduleComponent extends StatefulWidget {
 }
 
 class ScheduleComponentState extends State<ScheduleComponent> {
-  List<Status> weekStatuses = [];
-  List<Training> trainings = [];
-  List<Training?> weekTrainings = List.filled(7, null);
-  bool isLoading = false;
-  String errorMessage = '';
-
-  Future<void> _fetchTrainings() async {
-    try {
-      setState(() => isLoading = true);
-      trainings = await TrainingService.fetchTrainings();
-    } catch (e) {
-      errorMessage = 'Error fetching trainings';
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  Future<void> _fetchTrainingForDay(int day) async {
-    try {
-      setState(() => isLoading = true);
-      Training? training =
-          await TrainingService.fetchTrainingForDay(dayNames[day - 1]);
-      weekTrainings[day - 1] = training;
-    } catch (e) {
-      errorMessage = "Error fetching training for day $day";
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  _fetchAllTrainingsForTheWeek() async {
-    try {
-      setState(() => isLoading = true);
-      int today = DateTime.now().weekday;
-      weekStatuses = List.generate(7, (index) {
-        if (index < today - 1) {
-          return Status.checked;
-        } else if (index == today - 1) {
-          return Status.current;
-        } else {
-          return Status.comming;
-        }
-      });
-
-      for (int index = 0; index < 7; index++) {
-        await _fetchTrainingForDay(index + 1);
-      }
-    } catch (e) {
-      errorMessage = "Error fetching trainings for the week";
-    } finally {
-      setState(() => isLoading = false);
-    }
-  }
-
-  static const List<String> dayNames = [
-    'Lundi',
-    'Mardi',
-    'Mercredi',
-    'Jeudi',
-    'Vendredi',
-    'Samedi',
-    'Dimanche'
-  ];
+  List<Status> weekStatuses = List.filled(7, Status.comming);
 
   @override
   void initState() {
     super.initState();
-    _fetchTrainings();
-    _fetchAllTrainingsForTheWeek();
+    int today = DateTime.now().weekday;
+    weekStatuses = List.generate(7, (index) {
+      if (index < today - 1) {
+        return Status.checked;
+      } else if (index == today - 1) {
+        return Status.current;
+      } else {
+        return Status.comming;
+      }
+    });
+
+    final trainingProvider =
+        Provider.of<ScheduleTrainingProvider>(context, listen: false);
+    trainingProvider.fetchTrainings();
+    trainingProvider.fetchAllTrainingsForTheWeek();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Planning',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              Text('cette semaine',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600])),
-            ],
-          ),
-          const SizedBox(height: 10),
-          isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: weekStatuses
-                      .asMap()
-                      .entries
-                      .map((entry) => _buildDay(entry.key, entry.value))
-                      .toList(),
-                ),
-          if (errorMessage.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Text(errorMessage,
-                  style: const TextStyle(color: Colors.red, fontSize: 14)),
+    return Consumer<ScheduleTrainingProvider>(
+        builder: (context, trainingProvider, child) {
+      return Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Planning',
+                    style:
+                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text('cette semaine',
+                    style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+              ],
             ),
-        ],
-      ),
-    );
+            const SizedBox(height: 10),
+            trainingProvider.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: weekStatuses
+                        .asMap()
+                        .entries
+                        .map((entry) =>
+                            _buildDay(entry.key, entry.value, trainingProvider))
+                        .toList(),
+                  ),
+            if (trainingProvider.errorMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(trainingProvider.errorMessage,
+                    style: const TextStyle(color: Colors.red, fontSize: 14)),
+              ),
+          ],
+        ),
+      );
+    });
   }
 
-  Widget _buildDay(int index, Status status) {
-    String dayName = dayNames[index];
-    Training? currentTraining = weekTrainings[index];
+  Widget _buildDay(
+      int index, Status status, ScheduleTrainingProvider trainingProvider) {
+    String dayName = ScheduleTrainingProvider.dayNames[index];
+    Training? currentTraining = trainingProvider.weekTrainings[index];
     bool isEmpty = currentTraining?.name.isEmpty ?? true;
     Color bgColor;
     IconData icon = Icons.circle;
@@ -178,10 +136,10 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                   ),
                 ],
               ),
-              content: isLoading
+              content: trainingProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
-                  : errorMessage.isNotEmpty
-                      ? Text(errorMessage)
+                  : trainingProvider.errorMessage.isNotEmpty
+                      ? Text(trainingProvider.errorMessage)
                       : Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,11 +177,8 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                 labelText: 'Modifier l\'entrainement du jour',
                                 border: OutlineInputBorder(),
                               ),
-                              value: trainings.contains(currentTraining)
-                                  ? trainings.firstWhere(
-                                      (element) => element == currentTraining)
-                                  : null,
-                              items: trainings.map((Training training) {
+                              items: trainingProvider.trainings
+                                  .map((Training training) {
                                 return DropdownMenuItem<Training>(
                                   value: training,
                                   child: Text(training.name),
@@ -231,7 +186,8 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                               }).toList(),
                               onChanged: (Training? newValue) {
                                 setState(() {
-                                  weekTrainings[index] = newValue;
+                                  trainingProvider.weekTrainings[index] =
+                                      newValue;
                                 });
                                 widget.onTrainingAssigned(index + 1, newValue);
                               },
