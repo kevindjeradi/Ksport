@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/services/training_service.dart';
 
-class TrainingProvider with ChangeNotifier {
+class ScheduleTrainingProvider with ChangeNotifier {
   List<Training?> weekTrainings = List.filled(7, null);
   List<Training> trainings = [];
   bool isLoading = false;
