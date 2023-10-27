@@ -1,7 +1,7 @@
 // main.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/provider/auth_notifier.dart';
-import 'package:k_sport_front/provider/training_provider.dart';
+import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/auth/register_page.dart';
@@ -13,7 +13,8 @@ void main() => runApp(
         providers: [
           ChangeNotifierProvider(create: (context) => AuthNotifier()),
           ChangeNotifierProvider(create: (context) => UserProvider()),
-          ChangeNotifierProvider(create: (context) => TrainingProvider()),
+          ChangeNotifierProvider(
+              create: (context) => ScheduleTrainingProvider()),
         ],
         child: const MyApp(),
       ),
