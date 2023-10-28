@@ -204,22 +204,24 @@ class RestTimer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Stack(
-          children: [
-            const Center(
-              child: Text(
-                'Temps de repos',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Expanded(
+                child: Text(
+                  'Temps de repos',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            Positioned(
-              right: 0,
-              child: IconButton(
+              IconButton(
                 icon: const Icon(Icons.close),
                 onPressed: () => stopTimer(),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         GestureDetector(
           onTap: () => toggleTimer(),
