@@ -40,6 +40,7 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   provider: ^6.0.5
   intl: ^0.18.1
+  circular_countdown_timer: ^0.2.3
 
 dev_dependencies:
   flutter_test:
