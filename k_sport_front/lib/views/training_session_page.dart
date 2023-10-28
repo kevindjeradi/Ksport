@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
+import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -49,10 +50,12 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     final restTime = _getRestTimeForCurrentExercise();
     print("restTime: $restTime");
     if (restTime > 0) {
-      setState(() {
-        _isResting = true;
-      });
-      _controller.restart(duration: restTime);
+      if (mounted) {
+        setState(() {
+          _isResting = true;
+        });
+        _controller.restart(duration: restTime);
+      }
     }
   }
 
@@ -122,9 +125,10 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
         : null;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Séance d\'entrainement'),
-      ),
+      appBar: const ReturnAppBar(
+          bgColor: Colors.blue,
+          barTitle: "Séance d'entrainement",
+          color: Colors.white),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: exercises.isEmpty
@@ -132,27 +136,6 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (!_isResting)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _currentExerciseIndex > 0
-                              ? _goToPreviousExercise
-                              : null,
-                          child: const Text('Précédent'),
-                        ),
-                        ElevatedButton(
-                          onPressed:
-                              _currentExerciseIndex < exercises.length - 1
-                                  ? _goToNextExercise
-                                  : _finishTrainingSession,
-                          child: _currentExerciseIndex < exercises.length - 1
-                              ? const Text('Suivant')
-                              : const Text('Terminer'),
-                        ),
-                      ],
-                    ),
                   if (_isResting)
                     RestTimer(
                       controller: _controller,
@@ -176,6 +159,28 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                     ExerciseInfoCard(
                       exercise: exercise,
                       startRestTimer: _startRestTimer,
+                    ),
+                  const SizedBox(height: 20),
+                  if (!_isResting)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _currentExerciseIndex > 0
+                              ? _goToPreviousExercise
+                              : null,
+                          child: const Text('Précédent'),
+                        ),
+                        ElevatedButton(
+                          onPressed:
+                              _currentExerciseIndex < exercises.length - 1
+                                  ? _goToNextExercise
+                                  : _finishTrainingSession,
+                          child: _currentExerciseIndex < exercises.length - 1
+                              ? const Text('Suivant')
+                              : const Text('Terminer'),
+                        ),
+                      ],
                     ),
                   const SizedBox(height: 20),
                   _isResting
