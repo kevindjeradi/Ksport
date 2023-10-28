@@ -31,11 +31,12 @@ class ScheduleComponentState extends State<ScheduleComponent> {
         return Status.comming;
       }
     });
-
-    final trainingProvider =
-        Provider.of<ScheduleTrainingProvider>(context, listen: false);
-    trainingProvider.fetchTrainings();
-    trainingProvider.fetchAllTrainingsForTheWeek();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final trainingProvider =
+          Provider.of<ScheduleTrainingProvider>(context, listen: false);
+      trainingProvider.fetchTrainings();
+      trainingProvider.fetchAllTrainingsForTheWeek();
+    });
   }
 
   @override

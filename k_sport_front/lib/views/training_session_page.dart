@@ -140,7 +140,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                           onPressed: _currentExerciseIndex > 0
                               ? _goToPreviousExercise
                               : null,
-                          child: const Text('Prècédent'),
+                          child: const Text('Précédent'),
                         ),
                         ElevatedButton(
                           onPressed:
