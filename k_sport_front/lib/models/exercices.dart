@@ -5,6 +5,7 @@ class Exercice {
   final String detailTitle;
   final String muscleLabel;
   final String detailDescription;
+  int restTime;
 
   Exercice({
     required this.id,
@@ -13,6 +14,7 @@ class Exercice {
     required this.detailTitle,
     required this.muscleLabel,
     required this.detailDescription,
+    this.restTime = 0,
   });
 
   factory Exercice.fromJson(Map<String, dynamic> json) {
