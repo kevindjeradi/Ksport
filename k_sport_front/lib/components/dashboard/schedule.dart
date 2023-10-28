@@ -121,20 +121,82 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                 borderRadius: BorderRadius.circular(15),
               ),
               backgroundColor: Colors.blueGrey[50],
-              title: Row(
-                children: [
-                  const Icon(
-                    Icons.assignment,
-                    color: Colors.black,
-                    size: 24.0,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    dayName,
-                    style: const TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                ],
+              titlePadding: EdgeInsets.zero,
+              title: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Stack(
+                  alignment: Alignment.centerLeft,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.assignment,
+                          color: Colors.black,
+                          size: 24.0,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          dayName,
+                          style: const TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    Positioned(
+                      right: 0,
+                      child: TextButton(
+                        onPressed: () {
+                          if (trainingProvider.todayWorkouts.isEmpty) {
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text('Aucun entrainement à supprimer'),
+                            ));
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title:
+                                        const Text('Supprimer l\'entrainement'),
+                                    content: const Text(
+                                        'Voulez vous supprimer l\'entrainement prévu ?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.of(context).pop(),
+                                        child: const Text('Non'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          // Call deleteTrainingForDay method from provider
+                                          trainingProvider
+                                              .deleteTrainingForDay(index);
+
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                            content: Text(
+                                                'Entrainement prévu supprimé!'),
+                                          ));
+
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text('Oui',
+                                            style:
+                                                TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
+                                  );
+                                });
+                          }
+                        },
+                        child: const Text("suppr",
+                            style: TextStyle(color: Colors.red)),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               content: trainingProvider.isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -150,23 +212,25 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                     style: TextStyle(
                                         color: Colors.black, fontSize: 16),
                                   )
-                                : RichText(
-                                    text: TextSpan(
-                                      style: const TextStyle(
-                                          fontSize: 16, color: Colors.black),
-                                      children: <TextSpan>[
-                                        const TextSpan(
-                                            text: 'Aujourd\'hui, c\'est '),
-                                        TextSpan(
-                                          text: currentTraining?.name
-                                              .toUpperCase(),
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                            color: Colors.blue,
+                                : Center(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                            fontSize: 16, color: Colors.black),
+                                        children: <TextSpan>[
+                                          const TextSpan(
+                                              text: 'Aujourd\'hui, c\'est '),
+                                          TextSpan(
+                                            text: currentTraining?.name
+                                                .toUpperCase(),
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Colors.blue,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                             const SizedBox(height: 20),
