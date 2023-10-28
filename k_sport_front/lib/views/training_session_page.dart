@@ -16,6 +16,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   bool _isPaused = false;
   final CountDownController _controller = CountDownController();
 
+  // Method to start the next exercise
   void _startNextExercise() {
     final provider =
         Provider.of<ScheduleTrainingProvider>(context, listen: false);
@@ -27,6 +28,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     }
   }
 
+  // Method to start the rest timer
   void _startRestTimer() {
     final restTime = _getRestTimeForCurrentExercise();
     print("restTime: $restTime");
@@ -38,6 +40,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     }
   }
 
+  // Method to get the rest time for the current exercise
   int _getRestTimeForCurrentExercise() {
     final provider =
         Provider.of<ScheduleTrainingProvider>(context, listen: false);
@@ -48,6 +51,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     return 0;
   }
 
+  // Method to toggle the timer between paused and running
   void _toggleTimer() {
     if (_isPaused) {
       _controller.resume();
@@ -60,6 +64,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     });
   }
 
+  // Method called when the timer finishes
   void _onTimerFinish() {
     setState(() {
       _currentExerciseIndex++;
@@ -81,75 +86,107 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_isResting)
-              GestureDetector(
-                onTap: _toggleTimer,
-                child: Center(
-                  child: CircularCountDownTimer(
-                    duration: _isResting ? _getRestTimeForCurrentExercise() : 0,
-                    initialDuration: 0,
-                    controller: _controller,
-                    width: MediaQuery.of(context).size.width / 2,
-                    height: MediaQuery.of(context).size.height / 2,
-                    ringColor: Colors.grey[300]!,
-                    ringGradient: null,
-                    fillColor: Colors.purpleAccent[100]!,
-                    fillGradient: null,
-                    backgroundColor: Colors.purple[500],
-                    backgroundGradient: null,
-                    strokeWidth: 20.0,
-                    strokeCap: StrokeCap.round,
-                    textStyle: const TextStyle(
-                      fontSize: 33.0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+        child: exercises.isEmpty
+            ? const Center(child: CircularProgressIndicator()) // Loading state
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (_isResting)
+                    RestTimer(
+                      controller: _controller,
+                      restTime: _getRestTimeForCurrentExercise(),
+                      isPaused: _isPaused,
+                      toggleTimer: _toggleTimer,
+                      onTimerFinish: _onTimerFinish,
                     ),
-                    textFormat: CountdownTextFormat.S,
-                    isReverse: true,
-                    isReverseAnimation: false,
-                    isTimerTextShown: true,
-                    autoStart: _isResting,
-                    onStart: () {
-                      print('Countdown Started');
-                    },
-                    onComplete: () {
-                      print('Countdown Ended');
-                      _onTimerFinish();
-                    },
+                  if (!_isResting && exercise == null)
+                    const WorkoutCompletedMessage(),
+                  if (!_isResting && exercise != null)
+                    ExerciseInfoCard(exercise: exercise),
+                  if (!_isResting && exercise != null)
+                    RestTimerButton(startRestTimer: _startRestTimer),
+                  const SizedBox(height: 20),
+                  ExerciseProgressIndicator(
+                    currentExerciseIndex: _currentExerciseIndex,
+                    totalExercises: exercises.length,
                   ),
-                ),
+                ],
               ),
-            if (!_isResting && exercise == null)
-              const Center(
-                child: Text(
-                  'Workout Completed!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ),
-            const SizedBox(height: 20),
-            Text(
-              'Exercise $_currentExerciseIndex/${exercises.length}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            if (!_isResting && exercise != null)
-              ExerciseInfoCard(exercise: exercise),
-            const SizedBox(height: 20),
-            if (!_isResting && exercise != null)
-              ElevatedButton(
-                onPressed: _startRestTimer,
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: const TextStyle(fontSize: 18),
-                ),
-                child: const Text('Start Rest Timer'),
-              ),
-          ],
+      ),
+    );
+  }
+}
+
+class RestTimer extends StatelessWidget {
+  final CountDownController controller;
+  final int restTime;
+  final bool isPaused;
+  final Function toggleTimer;
+  final Function onTimerFinish;
+
+  const RestTimer({
+    Key? key,
+    required this.controller,
+    required this.restTime,
+    required this.isPaused,
+    required this.toggleTimer,
+    required this.onTimerFinish,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => toggleTimer(),
+      child: Center(
+        child: CircularCountDownTimer(
+          duration: restTime,
+          initialDuration: 0,
+          controller: controller,
+          width: MediaQuery.of(context).size.width / 2,
+          height: MediaQuery.of(context).size.height / 2,
+          ringColor: Colors.grey[300]!,
+          fillColor: Colors.purpleAccent[100]!,
+          backgroundColor: Colors.purple[500],
+          strokeWidth: 20.0,
+          strokeCap: StrokeCap.round,
+          textStyle: TextStyle(
+            fontSize: 33.0,
+            color: isPaused ? Colors.red : Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          textFormat: CountdownTextFormat.S,
+          isReverse: true,
+          isTimerTextShown: true,
+          autoStart: true,
+          onStart: () => print('Countdown Started'),
+          onComplete: () {
+            print('Countdown Ended');
+            onTimerFinish();
+          },
         ),
+      ),
+    );
+  }
+}
+
+class WorkoutCompletedMessage extends StatelessWidget {
+  const WorkoutCompletedMessage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Column(
+        children: [
+          Text(
+            'Congratulations!',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'You have completed your workout',
+            style: TextStyle(fontSize: 18),
+          ),
+        ],
       ),
     );
   }
@@ -201,6 +238,59 @@ class InfoRow extends StatelessWidget {
           Text(value, style: const TextStyle(fontSize: 18)),
         ],
       ),
+    );
+  }
+}
+
+class RestTimerButton extends StatelessWidget {
+  final Function startRestTimer;
+
+  const RestTimerButton({Key? key, required this.startRestTimer})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => startRestTimer(),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green, // Active color
+        disabledForegroundColor: Colors.grey.withOpacity(0.38),
+        disabledBackgroundColor:
+            Colors.grey.withOpacity(0.12), // Disabled color
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        textStyle: const TextStyle(fontSize: 18),
+      ),
+      child: const Text('Start Rest Timer'),
+    );
+  }
+}
+
+class ExerciseProgressIndicator extends StatelessWidget {
+  final int currentExerciseIndex;
+  final int totalExercises;
+
+  const ExerciseProgressIndicator({
+    Key? key,
+    required this.currentExerciseIndex,
+    required this.totalExercises,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        LinearProgressIndicator(
+          value: totalExercises > 0 ? currentExerciseIndex / totalExercises : 0,
+          minHeight: 10,
+          backgroundColor: Colors.grey[300],
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+        ),
+        const SizedBox(height: 10),
+        Text(
+          'Exercise $currentExerciseIndex/$totalExercises',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ],
     );
   }
 }
