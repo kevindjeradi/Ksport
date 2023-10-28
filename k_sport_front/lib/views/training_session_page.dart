@@ -80,6 +80,12 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     });
   }
 
+  void _stopTimer() {
+    setState(() {
+      _isResting = false;
+    });
+  }
+
   // Method called when the timer finishes
   void _onTimerFinish() {
     setState(() {
@@ -141,16 +147,18 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                       isPaused: _isPaused,
                       toggleTimer: _toggleTimer,
                       onTimerFinish: _onTimerFinish,
+                      stopTimer: _stopTimer,
                     ),
                   if (!_isResting && exercise == null)
                     const WorkoutCompletedMessage(),
                   if (!_isResting && exercise != null)
-                    ExerciseInfoCard(exercise: exercise),
-                  if (!_isResting && exercise != null)
-                    RestTimerButton(startRestTimer: _startRestTimer),
+                    ExerciseInfoCard(
+                      exercise: exercise,
+                      startRestTimer: _startRestTimer,
+                    ),
                   const SizedBox(height: 20),
                   ExerciseProgressIndicator(
-                    currentExerciseIndex: _currentExerciseIndex,
+                    currentExerciseIndex: _currentExerciseIndex + 1,
                     totalExercises: exercises.length,
                   ),
                 ],
@@ -166,6 +174,7 @@ class RestTimer extends StatelessWidget {
   final bool isPaused;
   final Function toggleTimer;
   final Function onTimerFinish;
+  final Function stopTimer;
 
   const RestTimer({
     Key? key,
@@ -174,51 +183,69 @@ class RestTimer extends StatelessWidget {
     required this.isPaused,
     required this.toggleTimer,
     required this.onTimerFinish,
+    required this.stopTimer,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => toggleTimer(),
-      child: Center(
-        child: Stack(
-          alignment: Alignment.center,
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CircularCountDownTimer(
-              duration: restTime,
-              initialDuration: 0,
-              controller: controller,
-              width: MediaQuery.of(context).size.width / 2,
-              height: MediaQuery.of(context).size.height / 2,
-              ringColor: Colors.grey[300]!,
-              fillColor: Colors.purpleAccent[100]!,
-              backgroundColor: Colors.purple[500],
-              strokeWidth: 20.0,
-              strokeCap: StrokeCap.round,
-              textStyle: TextStyle(
-                fontSize: 33.0,
-                color: isPaused ? Colors.red : Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-              textFormat: CountdownTextFormat.S,
-              isReverse: true,
-              isTimerTextShown: true,
-              autoStart: true,
-              onStart: () => print('Countdown Started'),
-              onComplete: () {
-                print('Countdown Ended');
-                onTimerFinish();
-              },
+            const Text(
+              'Temps de repos',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            if (isPaused)
-              const Icon(
-                Icons.pause,
-                size: 50,
-                color: Colors.white,
-              ),
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () => stopTimer(),
+            ),
           ],
         ),
-      ),
+        GestureDetector(
+          onTap: () => toggleTimer(),
+          child: Center(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircularCountDownTimer(
+                  duration: restTime,
+                  initialDuration: 0,
+                  controller: controller,
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: MediaQuery.of(context).size.height / 2,
+                  ringColor: Colors.grey[300]!,
+                  fillColor: Colors.purpleAccent[100]!,
+                  backgroundColor: Colors.purple[500],
+                  strokeWidth: 20.0,
+                  strokeCap: StrokeCap.round,
+                  textStyle: TextStyle(
+                    fontSize: 33.0,
+                    color: isPaused ? Colors.red : Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textFormat: CountdownTextFormat.S,
+                  isReverse: true,
+                  isTimerTextShown: true,
+                  autoStart: true,
+                  onStart: () => print('Countdown Started'),
+                  onComplete: () {
+                    print('Countdown Ended');
+                    onTimerFinish();
+                  },
+                ),
+                if (isPaused)
+                  const Icon(
+                    Icons.pause,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -248,8 +275,11 @@ class WorkoutCompletedMessage extends StatelessWidget {
 
 class ExerciseInfoCard extends StatelessWidget {
   final Map<String, dynamic> exercise;
+  final Function startRestTimer;
 
-  const ExerciseInfoCard({Key? key, required this.exercise}) : super(key: key);
+  const ExerciseInfoCard(
+      {Key? key, required this.exercise, required this.startRestTimer})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -268,6 +298,7 @@ class ExerciseInfoCard extends StatelessWidget {
             InfoRow(label: 'Sets', value: exercise['series'].toString()),
             InfoRow(label: 'Reps', value: exercise['reps'].toString()),
             InfoRow(label: 'Rest', value: '${exercise['restTime']}s'),
+            RestTimerButton(startRestTimer: startRestTimer),
           ],
         ),
       ),
