@@ -124,28 +124,31 @@ router.get('/user/getTrainingForDay/:day', async (req, res) => {
         console.log("in get /user/getTrainingForDay/:day --> day = " + day + "------------------user trainingsSchedule[day] --> " + user.trainingsSchedule[day])
         if (user.trainingsSchedule[day])
         {
-            res.status(200).json(user.trainingsSchedule[day]);
+            return res.status(200).json(user.trainingsSchedule[day]);
         }
-        res.status(200).json({});
+        return res.status(200).json({});
     } catch (error) {
         console.log("error in getTrainingForDay route")
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
 });
 
   // Delete a user's training for a specific day
 router.delete('/user/deleteTrainingForDay/:day', async (req, res) => {
     const day = req.params.day;
+    console.log("\n--------->" + day + "\n")
     try {
         const token = req.headers.authorization.split(' ')[1];
-        print("------------------token in delete route " + token)
+        console.log("------------------token in delete route " + token)
         const decoded = jwt.verify(token, JWT_SECRET);
         const userId = decoded.userId;
         const user = await User.findById(userId);
         user.trainingsSchedule[day] = null;
+        console.log("\n\n-------------->user trainingsSchedule[day] -->" + user.trainingsSchedule[day])
         await user.save();
         res.status(200).json({ message: 'Training deleted successfully' });
     } catch (error) {
+        console.log("\n\n-------------->user trainingsSchedule[day] -->" + user.trainingsSchedule[day])
         res.status(500).json({ error: error.message });
     }
 });
