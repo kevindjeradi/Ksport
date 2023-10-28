@@ -61,6 +61,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     final provider =
         Provider.of<ScheduleTrainingProvider>(context, listen: false);
     final exercises = provider.todayWorkouts;
+
     if (_currentExerciseIndex < exercises.length) {
       return exercises[_currentExerciseIndex]['restTime'];
     }
@@ -69,29 +70,41 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
 
   // Method to toggle the timer between paused and running
   void _toggleTimer() {
-    if (_isPaused) {
-      _controller.resume();
-    } else {
-      _controller.pause();
-    }
+    if (mounted) {
+      if (_isPaused) {
+        _controller.resume();
+      } else {
+        _controller.pause();
+      }
 
-    setState(() {
-      _isPaused = !_isPaused;
-    });
+      setState(() {
+        _isPaused = !_isPaused;
+      });
+    }
   }
 
   void _stopTimer() {
-    setState(() {
-      _isResting = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isResting = false;
+      });
+    }
   }
 
   // Method called when the timer finishes
   void _onTimerFinish() {
-    setState(() {
-      _currentExerciseIndex++;
-      _startNextExercise();
-    });
+    final provider =
+        Provider.of<ScheduleTrainingProvider>(context, listen: false);
+    final exercises = provider.todayWorkouts;
+
+    if (_currentExerciseIndex < exercises.length - 1) {
+      setState(() {
+        _currentExerciseIndex++;
+        _startNextExercise();
+      });
+    } else {
+      _finishTrainingSession();
+    }
   }
 
   void _finishTrainingSession() {
@@ -110,7 +123,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Training Session'),
+        title: const Text('Séance d\'entrainement'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -127,7 +140,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                           onPressed: _currentExerciseIndex > 0
                               ? _goToPreviousExercise
                               : null,
-                          child: const Text('Previous'),
+                          child: const Text('Prècédent'),
                         ),
                         ElevatedButton(
                           onPressed:
@@ -135,8 +148,8 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                                   ? _goToNextExercise
                                   : _finishTrainingSession,
                           child: _currentExerciseIndex < exercises.length - 1
-                              ? const Text('Next')
-                              : const Text('Finish'),
+                              ? const Text('Suivant')
+                              : const Text('Terminer'),
                         ),
                       ],
                     ),
@@ -154,7 +167,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                   const SizedBox(height: 20),
                   if (!_isResting && exercise != null)
                     Text(
-                      'Exercise ${_currentExerciseIndex + 1}/${exercises.length}',
+                      'Exercice ${_currentExerciseIndex + 1}/${exercises.length}',
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -169,8 +182,11 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                       ? ExerciseProgressIndicator(
                           currentExerciseIndex: _currentExerciseIndex + 1,
                           totalExercises: exercises.length,
-                          exerciseName: exercises[_currentExerciseIndex + 1]
-                              ['name'])
+                          exerciseName:
+                              _currentExerciseIndex + 1 < exercises.length
+                                  ? exercises[_currentExerciseIndex + 1]['name']
+                                  : "",
+                        )
                       : ExerciseProgressIndicator(
                           currentExerciseIndex: _currentExerciseIndex + 1,
                           totalExercises: exercises.length,
@@ -279,12 +295,12 @@ class WorkoutCompletedMessage extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Congratulations!',
+            'Bravo !',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 10),
           Text(
-            'You have completed your workout',
+            'Tu as terminé ta séance !',
             style: TextStyle(fontSize: 18),
           ),
         ],
@@ -358,14 +374,13 @@ class RestTimerButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => startRestTimer(),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green, // Active color
+        backgroundColor: Colors.blue,
         disabledForegroundColor: Colors.grey.withOpacity(0.38),
-        disabledBackgroundColor:
-            Colors.grey.withOpacity(0.12), // Disabled color
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        disabledBackgroundColor: Colors.grey.withOpacity(0.12),
+        padding: const EdgeInsets.all(15),
         textStyle: const TextStyle(fontSize: 18),
       ),
-      child: const Text('Start Rest Timer'),
+      child: const Text('lancer le repos'),
     );
   }
 }
@@ -393,7 +408,8 @@ class ExerciseProgressIndicator extends StatelessWidget {
           valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
         ),
         const SizedBox(height: 10),
-        if (exerciseName.isNotEmpty)
+        if (exerciseName.isNotEmpty &&
+            currentExerciseIndex + 1 < totalExercises)
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
