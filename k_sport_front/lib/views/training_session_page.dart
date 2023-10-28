@@ -115,7 +115,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: exercises.isEmpty
-            ? const Center(child: CircularProgressIndicator()) // Loading state
+            ? const Center(child: CircularProgressIndicator())
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -151,16 +151,30 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                     ),
                   if (!_isResting && exercise == null)
                     const WorkoutCompletedMessage(),
+                  const SizedBox(height: 20),
+                  if (!_isResting && exercise != null)
+                    Text(
+                      'Exercise ${_currentExerciseIndex + 1}/${exercises.length}',
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  const SizedBox(height: 20),
                   if (!_isResting && exercise != null)
                     ExerciseInfoCard(
                       exercise: exercise,
                       startRestTimer: _startRestTimer,
                     ),
                   const SizedBox(height: 20),
-                  ExerciseProgressIndicator(
-                    currentExerciseIndex: _currentExerciseIndex + 1,
-                    totalExercises: exercises.length,
-                  ),
+                  _isResting
+                      ? ExerciseProgressIndicator(
+                          currentExerciseIndex: _currentExerciseIndex + 1,
+                          totalExercises: exercises.length,
+                          exerciseName: exercises[_currentExerciseIndex + 1]
+                              ['name'])
+                      : ExerciseProgressIndicator(
+                          currentExerciseIndex: _currentExerciseIndex + 1,
+                          totalExercises: exercises.length,
+                        ),
                 ],
               ),
       ),
@@ -190,16 +204,20 @@ class RestTimer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Stack(
           children: [
-            const Text(
-              'Temps de repos',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            const Center(
+              child: Text(
+                'Temps de repos',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
             ),
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () => stopTimer(),
+            Positioned(
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => stopTimer(),
+              ),
             ),
           ],
         ),
@@ -291,7 +309,7 @@ class ExerciseInfoCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Exercise: ${exercise['name']}',
+              '${exercise['name']}',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
@@ -353,11 +371,13 @@ class RestTimerButton extends StatelessWidget {
 class ExerciseProgressIndicator extends StatelessWidget {
   final int currentExerciseIndex;
   final int totalExercises;
+  final String exerciseName;
 
   const ExerciseProgressIndicator({
     Key? key,
     required this.currentExerciseIndex,
     required this.totalExercises,
+    this.exerciseName = "",
   }) : super(key: key);
 
   @override
@@ -371,10 +391,14 @@ class ExerciseProgressIndicator extends StatelessWidget {
           valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
         ),
         const SizedBox(height: 10),
-        Text(
-          'Exercise $currentExerciseIndex/$totalExercises',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
+        if (exerciseName.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Prochain exercice : $exerciseName",
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
       ],
     );
   }
