@@ -1,7 +1,8 @@
-// training_provider.dart
+// schedule_training_provider.dart
 
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/models/training.dart';
+import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/services/training_service.dart';
 
 class ScheduleTrainingProvider with ChangeNotifier {
@@ -70,7 +71,6 @@ class ScheduleTrainingProvider with ChangeNotifier {
   }
 
   List<Map<String, dynamic>> get todayWorkouts {
-    // Assuming weekTrainings has the training data for each day of the week
     final today = DateTime.now().weekday -
         1; // DateTime.now().weekday returns 1 for Monday, 2 for Tuesday, etc.
     final trainingOfToday = weekTrainings[today];
@@ -81,6 +81,7 @@ class ScheduleTrainingProvider with ChangeNotifier {
                 'name': exercise['label'],
                 'series': exercise['sets'],
                 'reps': exercise['repetitions'],
+                'restTime': exercise['restTime'],
               })
           .toList();
     }
@@ -93,5 +94,26 @@ class ScheduleTrainingProvider with ChangeNotifier {
       return weekTrainings[dayIndex];
     }
     return null;
+  }
+
+  Future<void> deleteTrainingForDay(int dayIndex) async {
+    // Get the day name from dayNames list
+    String dayName = dayNames[dayIndex].toLowerCase();
+    try {
+      isLoading = true;
+      notifyListeners();
+      // Delete training from the database
+      await Api.deleteTrainingForDay(dayName);
+
+      // Remove training from weekTrainings list
+      weekTrainings[dayIndex] = null;
+
+      isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      errorMessage = "Error deleting training for day $dayName\n\n$e";
+      isLoading = false;
+      notifyListeners();
+    }
   }
 }
