@@ -16,6 +16,22 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   bool _isPaused = false;
   final CountDownController _controller = CountDownController();
 
+  void _goToNextExercise() {
+    setState(() {
+      _currentExerciseIndex++;
+      _startNextExercise();
+    });
+  }
+
+  void _goToPreviousExercise() {
+    if (_currentExerciseIndex > 0) {
+      setState(() {
+        _currentExerciseIndex--;
+        _startNextExercise();
+      });
+    }
+  }
+
   // Method to start the next exercise
   void _startNextExercise() {
     final provider =
@@ -72,6 +88,12 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     });
   }
 
+  void _finishTrainingSession() {
+    // Implement the logic to finish the training session
+    print('Training Session Finished');
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ScheduleTrainingProvider>();
@@ -91,6 +113,27 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  if (!_isResting)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: _currentExerciseIndex > 0
+                              ? _goToPreviousExercise
+                              : null,
+                          child: const Text('Previous'),
+                        ),
+                        ElevatedButton(
+                          onPressed:
+                              _currentExerciseIndex < exercises.length - 1
+                                  ? _goToNextExercise
+                                  : _finishTrainingSession,
+                          child: _currentExerciseIndex < exercises.length - 1
+                              ? const Text('Next')
+                              : const Text('Finish'),
+                        ),
+                      ],
+                    ),
                   if (_isResting)
                     RestTimer(
                       controller: _controller,
@@ -138,31 +181,42 @@ class RestTimer extends StatelessWidget {
     return GestureDetector(
       onTap: () => toggleTimer(),
       child: Center(
-        child: CircularCountDownTimer(
-          duration: restTime,
-          initialDuration: 0,
-          controller: controller,
-          width: MediaQuery.of(context).size.width / 2,
-          height: MediaQuery.of(context).size.height / 2,
-          ringColor: Colors.grey[300]!,
-          fillColor: Colors.purpleAccent[100]!,
-          backgroundColor: Colors.purple[500],
-          strokeWidth: 20.0,
-          strokeCap: StrokeCap.round,
-          textStyle: TextStyle(
-            fontSize: 33.0,
-            color: isPaused ? Colors.red : Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-          textFormat: CountdownTextFormat.S,
-          isReverse: true,
-          isTimerTextShown: true,
-          autoStart: true,
-          onStart: () => print('Countdown Started'),
-          onComplete: () {
-            print('Countdown Ended');
-            onTimerFinish();
-          },
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            CircularCountDownTimer(
+              duration: restTime,
+              initialDuration: 0,
+              controller: controller,
+              width: MediaQuery.of(context).size.width / 2,
+              height: MediaQuery.of(context).size.height / 2,
+              ringColor: Colors.grey[300]!,
+              fillColor: Colors.purpleAccent[100]!,
+              backgroundColor: Colors.purple[500],
+              strokeWidth: 20.0,
+              strokeCap: StrokeCap.round,
+              textStyle: TextStyle(
+                fontSize: 33.0,
+                color: isPaused ? Colors.red : Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              textFormat: CountdownTextFormat.S,
+              isReverse: true,
+              isTimerTextShown: true,
+              autoStart: true,
+              onStart: () => print('Countdown Started'),
+              onComplete: () {
+                print('Countdown Ended');
+                onTimerFinish();
+              },
+            ),
+            if (isPaused)
+              const Icon(
+                Icons.pause,
+                size: 50,
+                color: Colors.white,
+              ),
+          ],
         ),
       ),
     );
