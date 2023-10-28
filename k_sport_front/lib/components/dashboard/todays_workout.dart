@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
+import 'package:k_sport_front/views/training_session_page.dart';
 import 'package:provider/provider.dart';
 
 class TodaysWorkout extends StatefulWidget {
@@ -55,31 +57,43 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
     final trainingProvider = context.watch<ScheduleTrainingProvider>();
     final workouts = trainingProvider.todayWorkouts;
 
-    return Column(
-      children: [
-        const Text("Entraînement du jour", style: TextStyle(fontSize: 20)),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: isLoading
-              ? const CircularProgressIndicator()
-              : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: workouts.length,
-                  itemBuilder: (context, index) {
-                    final workout = workouts[index];
-                    return ListTile(
-                      leading: Image.network(
-                          'https://via.placeholder.com/100x30',
-                          fit: BoxFit.cover,
-                          height: 30),
-                      title: Text(workout['name']),
-                      subtitle: Text(
-                          '${workout['series']} séries x ${workout['reps']} reps'),
-                    );
-                  },
-                ),
-        ),
-      ],
+    return InkWell(
+      onTap: () {
+        CustomNavigation.push(context, const TrainingSessionPage());
+      },
+      child: Column(
+        children: [
+          workouts.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text("Aucun entrainement prévu aujourd'hui",
+                      style: TextStyle(fontSize: 20)),
+                )
+              : const Text("Entraînement du jour",
+                  style: TextStyle(fontSize: 20)),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: isLoading
+                ? const CircularProgressIndicator()
+                : ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: workouts.length,
+                    itemBuilder: (context, index) {
+                      final workout = workouts[index];
+                      return ListTile(
+                        leading: Image.network(
+                            'https://via.placeholder.com/100x30',
+                            fit: BoxFit.cover,
+                            height: 30),
+                        title: Text(workout['name']),
+                        subtitle: Text(
+                            '${workout['series']} séries x ${workout['reps']} reps'),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
