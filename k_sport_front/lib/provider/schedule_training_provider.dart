@@ -8,6 +8,7 @@ import 'package:k_sport_front/services/training_service.dart';
 class ScheduleTrainingProvider with ChangeNotifier {
   List<Training?> weekTrainings = List.filled(7, null);
   List<Training> trainings = [];
+  int currentSet = 1;
   bool isLoading = false;
   String errorMessage = '';
   static const List<String> dayNames = [
@@ -115,5 +116,11 @@ class ScheduleTrainingProvider with ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  // Method to update the current set
+  void updateCurrentSet(int newSet) {
+    currentSet = newSet;
+    notifyListeners();
   }
 }
