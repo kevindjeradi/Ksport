@@ -28,6 +28,15 @@ class _TimerPageState extends State<TimerPage> {
   final CountDownController _controller = CountDownController();
   bool _isPaused = false;
 
+// Method to skip the rest time and go to the next exercise
+  void _skipTimer() {
+    if (mounted) {
+      _controller.pause();
+      Navigator.of(context).pop();
+      widget.onTimerFinish();
+    }
+  }
+
 // Method to toggle the timer between paused and running
   void _toggleTimer() {
     if (mounted) {
@@ -65,6 +74,7 @@ class _TimerPageState extends State<TimerPage> {
             },
             isPaused: _isPaused,
             toggleTimer: _toggleTimer,
+            skipTimer: _skipTimer,
           ),
           const SizedBox(height: 20),
           ExerciseProgressIndicator(
@@ -85,6 +95,7 @@ class RestTimer extends StatelessWidget {
   final Function toggleTimer;
   final Function onTimerFinish;
   final Function stopTimer;
+  final Function skipTimer;
 
   const RestTimer({
     Key? key,
@@ -94,6 +105,7 @@ class RestTimer extends StatelessWidget {
     required this.toggleTimer,
     required this.onTimerFinish,
     required this.stopTimer,
+    required this.skipTimer,
   }) : super(key: key);
 
   @override
@@ -102,19 +114,24 @@ class RestTimer extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
+          child: Stack(
             children: [
-              const Expanded(
-                child: Text(
-                  'Temps de repos',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              const Align(
+                alignment: Alignment.center,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    'Temps de repos',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => stopTimer(),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => stopTimer(),
+                ),
               ),
             ],
           ),
@@ -160,6 +177,10 @@ class RestTimer extends StatelessWidget {
               ],
             ),
           ),
+        ),
+        ElevatedButton(
+          onPressed: () => skipTimer(),
+          child: const Text('Passer le repos'),
         ),
       ],
     );
