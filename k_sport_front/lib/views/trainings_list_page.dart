@@ -8,14 +8,14 @@ import 'package:k_sport_front/components/trainings/trainings_form.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/services/api.dart';
 
-class TrainingsPage extends StatefulWidget {
-  const TrainingsPage({super.key});
+class TrainingsListPage extends StatefulWidget {
+  const TrainingsListPage({super.key});
 
   @override
-  TrainingsPageState createState() => TrainingsPageState();
+  TrainingsListPageState createState() => TrainingsListPageState();
 }
 
-class TrainingsPageState extends State<TrainingsPage> {
+class TrainingsListPageState extends State<TrainingsListPage> {
   List<Training> trainings = [];
 
   @override

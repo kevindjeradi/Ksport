@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
-import 'package:k_sport_front/views/timer_page.dart';
+import 'package:k_sport_front/views/training_session/timer_page.dart';
 import 'package:provider/provider.dart';
 
 class TrainingSessionPage extends StatefulWidget {

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/navigation/bottom_nav_bar.dart';
 import 'package:k_sport_front/components/navigation/top_app_bar.dart';
 import 'package:k_sport_front/views/progress_page.dart';
-import 'package:k_sport_front/views/trainings_page.dart';
 import 'package:k_sport_front/views/dashboard.dart';
+import 'package:k_sport_front/views/trainings_list_page.dart';
 import 'package:k_sport_front/views/workout_page/muscles_page.dart';
 
 class Home extends StatefulWidget {
@@ -20,7 +20,7 @@ class HomeState extends State<Home> {
   final List<Widget> _pages = [
     const Dashboard(),
     const MusclesPage(),
-    const TrainingsPage(),
+    const TrainingsListPage(),
     const ProgressPage(),
   ];
 
