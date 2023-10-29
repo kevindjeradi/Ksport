@@ -30,7 +30,6 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
 
   void _startRestTimer() {
     final restTime = _getRestTimeForCurrentExercise();
-    print("restTime: $restTime");
     if (restTime > 0) {
       final provider =
           Provider.of<ScheduleTrainingProvider>(context, listen: false);
@@ -75,14 +74,23 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     final provider =
         Provider.of<ScheduleTrainingProvider>(context, listen: false);
     final exercises = provider.todayWorkouts;
+    int currentSet = provider.currentSet;
+    final totalSets = exercises[_currentExerciseIndex]['series'];
 
     if (_currentExerciseIndex < exercises.length - 1) {
-      setState(() {
-        _currentExerciseIndex++;
-        // _startNextExercise();
-      });
+      if (currentSet < totalSets) {
+        provider.updateCurrentSet(currentSet + 1);
+      } else {
+        provider.updateCurrentSet(1);
+        _goToNextExercise();
+      }
     } else {
-      _finishTrainingSession();
+      if (currentSet < totalSets) {
+        provider.updateCurrentSet(currentSet + 1);
+      } else {
+        provider.updateCurrentSet(1);
+        _finishTrainingSession();
+      }
     }
   }
 
@@ -123,9 +131,9 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                   const SizedBox(height: 20),
                   if (exercise != null)
                     ExerciseInfoCard(
-                      exercise: exercise,
-                      startRestTimer: _startRestTimer,
-                    ),
+                        exercise: exercise,
+                        startRestTimer: _startRestTimer,
+                        currentSet: provider.currentSet),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,9 +192,13 @@ class WorkoutCompletedMessage extends StatelessWidget {
 class ExerciseInfoCard extends StatelessWidget {
   final Map<String, dynamic> exercise;
   final Function startRestTimer;
+  final int currentSet;
 
   const ExerciseInfoCard(
-      {Key? key, required this.exercise, required this.startRestTimer})
+      {Key? key,
+      required this.exercise,
+      required this.startRestTimer,
+      required this.currentSet})
       : super(key: key);
 
   @override
@@ -203,9 +215,11 @@ class ExerciseInfoCard extends StatelessWidget {
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            InfoRow(label: 'Sets', value: exercise['series'].toString()),
-            InfoRow(label: 'Reps', value: exercise['reps'].toString()),
-            InfoRow(label: 'Rest', value: '${exercise['restTime']}s'),
+            InfoRow(
+                label: 'Séries',
+                value: "$currentSet / ${exercise['series'].toString()}"),
+            InfoRow(label: 'Répétitions', value: exercise['reps'].toString()),
+            InfoRow(label: 'Repos', value: '${exercise['restTime']}s'),
             RestTimerButton(startRestTimer: startRestTimer),
           ],
         ),
