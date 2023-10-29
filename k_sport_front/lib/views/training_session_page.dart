@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
+import 'package:k_sport_front/views/timer_page.dart';
 import 'package:provider/provider.dart';
 
 class TrainingSessionPage extends StatefulWidget {
@@ -13,14 +13,10 @@ class TrainingSessionPage extends StatefulWidget {
 
 class TrainingSessionPageState extends State<TrainingSessionPage> {
   int _currentExerciseIndex = 0;
-  bool _isResting = false;
-  bool _isPaused = false;
-  final CountDownController _controller = CountDownController();
 
   void _goToNextExercise() {
     setState(() {
       _currentExerciseIndex++;
-      _startNextExercise();
     });
   }
 
@@ -28,34 +24,37 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     if (_currentExerciseIndex > 0) {
       setState(() {
         _currentExerciseIndex--;
-        _startNextExercise();
       });
     }
   }
 
-  // Method to start the next exercise
-  void _startNextExercise() {
-    final provider =
-        Provider.of<ScheduleTrainingProvider>(context, listen: false);
-    final exercises = provider.todayWorkouts;
-    if (_currentExerciseIndex < exercises.length) {
-      setState(() {
-        _isResting = false;
-      });
-    }
-  }
-
-  // Method to start the rest timer
   void _startRestTimer() {
     final restTime = _getRestTimeForCurrentExercise();
     print("restTime: $restTime");
     if (restTime > 0) {
-      if (mounted) {
-        setState(() {
-          _isResting = true;
-        });
-        _controller.restart(duration: restTime);
-      }
+      final provider =
+          Provider.of<ScheduleTrainingProvider>(context, listen: false);
+      final exercises = provider.todayWorkouts;
+
+      final currentExercise = exercises[_currentExerciseIndex];
+
+      final nextExercise = _currentExerciseIndex < exercises.length - 1
+          ? exercises[_currentExerciseIndex + 1]
+          : null;
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TimerPage(
+            restTime: restTime,
+            onTimerFinish: _onTimerFinish,
+            currentExercise: currentExercise,
+            nextExercise: nextExercise ?? {},
+            totalExercises: exercises.length,
+            currentExerciseIndex: _currentExerciseIndex,
+          ),
+        ),
+      );
     }
   }
 
@@ -71,29 +70,6 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     return 0;
   }
 
-  // Method to toggle the timer between paused and running
-  void _toggleTimer() {
-    if (mounted) {
-      if (_isPaused) {
-        _controller.resume();
-      } else {
-        _controller.pause();
-      }
-
-      setState(() {
-        _isPaused = !_isPaused;
-      });
-    }
-  }
-
-  void _stopTimer() {
-    if (mounted) {
-      setState(() {
-        _isResting = false;
-      });
-    }
-  }
-
   // Method called when the timer finishes
   void _onTimerFinish() {
     final provider =
@@ -103,7 +79,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     if (_currentExerciseIndex < exercises.length - 1) {
       setState(() {
         _currentExerciseIndex++;
-        _startNextExercise();
+        // _startNextExercise();
       });
     } else {
       _finishTrainingSession();
@@ -136,157 +112,48 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (_isResting)
-                    RestTimer(
-                      controller: _controller,
-                      restTime: _getRestTimeForCurrentExercise(),
-                      isPaused: _isPaused,
-                      toggleTimer: _toggleTimer,
-                      onTimerFinish: _onTimerFinish,
-                      stopTimer: _stopTimer,
-                    ),
-                  if (!_isResting && exercise == null)
-                    const WorkoutCompletedMessage(),
+                  if (exercise == null) const WorkoutCompletedMessage(),
                   const SizedBox(height: 20),
-                  if (!_isResting && exercise != null)
+                  if (exercise != null)
                     Text(
                       'Exercice ${_currentExerciseIndex + 1}/${exercises.length}',
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   const SizedBox(height: 20),
-                  if (!_isResting && exercise != null)
+                  if (exercise != null)
                     ExerciseInfoCard(
                       exercise: exercise,
                       startRestTimer: _startRestTimer,
                     ),
                   const SizedBox(height: 20),
-                  if (!_isResting)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _currentExerciseIndex > 0
-                              ? _goToPreviousExercise
-                              : null,
-                          child: const Text('Précédent'),
-                        ),
-                        ElevatedButton(
-                          onPressed:
-                              _currentExerciseIndex < exercises.length - 1
-                                  ? _goToNextExercise
-                                  : _finishTrainingSession,
-                          child: _currentExerciseIndex < exercises.length - 1
-                              ? const Text('Suivant')
-                              : const Text('Terminer'),
-                        ),
-                      ],
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: _currentExerciseIndex > 0
+                            ? _goToPreviousExercise
+                            : null,
+                        child: const Text('Précédent'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _currentExerciseIndex < exercises.length - 1
+                            ? _goToNextExercise
+                            : _finishTrainingSession,
+                        child: _currentExerciseIndex < exercises.length - 1
+                            ? const Text('Suivant')
+                            : const Text('Terminer'),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20),
-                  _isResting
-                      ? ExerciseProgressIndicator(
-                          currentExerciseIndex: _currentExerciseIndex + 1,
-                          totalExercises: exercises.length,
-                          exerciseName:
-                              _currentExerciseIndex + 1 < exercises.length
-                                  ? exercises[_currentExerciseIndex + 1]['name']
-                                  : "",
-                        )
-                      : ExerciseProgressIndicator(
-                          currentExerciseIndex: _currentExerciseIndex + 1,
-                          totalExercises: exercises.length,
-                        ),
+                  ExerciseProgressIndicator(
+                    currentExerciseIndex: _currentExerciseIndex + 1,
+                    totalExercises: exercises.length,
+                  ),
                 ],
               ),
       ),
-    );
-  }
-}
-
-class RestTimer extends StatelessWidget {
-  final CountDownController controller;
-  final int restTime;
-  final bool isPaused;
-  final Function toggleTimer;
-  final Function onTimerFinish;
-  final Function stopTimer;
-
-  const RestTimer({
-    Key? key,
-    required this.controller,
-    required this.restTime,
-    required this.isPaused,
-    required this.toggleTimer,
-    required this.onTimerFinish,
-    required this.stopTimer,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Expanded(
-                child: Text(
-                  'Temps de repos',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => stopTimer(),
-              ),
-            ],
-          ),
-        ),
-        GestureDetector(
-          onTap: () => toggleTimer(),
-          child: Center(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                CircularCountDownTimer(
-                  duration: restTime,
-                  initialDuration: 0,
-                  controller: controller,
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: MediaQuery.of(context).size.height / 2,
-                  ringColor: Colors.grey[300]!,
-                  fillColor: Colors.purpleAccent[100]!,
-                  backgroundColor: Colors.purple[500],
-                  strokeWidth: 20.0,
-                  strokeCap: StrokeCap.round,
-                  textStyle: TextStyle(
-                    fontSize: 33.0,
-                    color: isPaused ? Colors.red : Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textFormat: CountdownTextFormat.S,
-                  isReverse: true,
-                  isTimerTextShown: true,
-                  autoStart: true,
-                  onStart: () => print('Countdown Started'),
-                  onComplete: () {
-                    print('Countdown Ended');
-                    onTimerFinish();
-                  },
-                ),
-                if (isPaused)
-                  const Icon(
-                    Icons.pause,
-                    size: 50,
-                    color: Colors.white,
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -386,43 +253,6 @@ class RestTimerButton extends StatelessWidget {
         textStyle: const TextStyle(fontSize: 18),
       ),
       child: const Text('lancer le repos'),
-    );
-  }
-}
-
-class ExerciseProgressIndicator extends StatelessWidget {
-  final int currentExerciseIndex;
-  final int totalExercises;
-  final String exerciseName;
-
-  const ExerciseProgressIndicator({
-    Key? key,
-    required this.currentExerciseIndex,
-    required this.totalExercises,
-    this.exerciseName = "",
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        LinearProgressIndicator(
-          value: totalExercises > 0 ? currentExerciseIndex / totalExercises : 0,
-          minHeight: 10,
-          backgroundColor: Colors.grey[300],
-          valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
-        ),
-        const SizedBox(height: 10),
-        if (exerciseName.isNotEmpty &&
-            currentExerciseIndex + 1 < totalExercises)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              "Prochain exercice : $exerciseName",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
-      ],
     );
   }
 }
