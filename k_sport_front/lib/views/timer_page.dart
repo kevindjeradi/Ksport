@@ -1,5 +1,6 @@
 import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 
 class TimerPage extends StatefulWidget {
@@ -59,30 +60,34 @@ class _TimerPageState extends State<TimerPage> {
           bgColor: Colors.blue,
           barTitle: widget.currentExercise['name'],
           color: Colors.white),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          RestTimer(
-            controller: _controller,
-            restTime: widget.restTime,
-            onTimerFinish: () {
-              Navigator.of(context).pop();
-              widget.onTimerFinish();
-            },
-            stopTimer: () {
-              Navigator.of(context).pop();
-            },
-            isPaused: _isPaused,
-            toggleTimer: _toggleTimer,
-            skipTimer: _skipTimer,
-          ),
-          const SizedBox(height: 20),
-          ExerciseProgressIndicator(
-            currentExerciseIndex: widget.currentExerciseIndex + 1,
-            totalExercises: widget.totalExercises,
-            exerciseName: widget.nextExercise['name'] ?? "Fin de la séance",
-          ),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            RestTimer(
+              controller: _controller,
+              restTime: widget.restTime,
+              onTimerFinish: () {
+                Navigator.of(context).pop();
+                widget.onTimerFinish();
+              },
+              stopTimer: () {
+                Navigator.of(context).pop();
+              },
+              isPaused: _isPaused,
+              toggleTimer: _toggleTimer,
+              skipTimer: _skipTimer,
+            ),
+            const SizedBox(height: 20),
+            ExerciseProgressIndicator(
+              currentExerciseIndex: widget.currentExerciseIndex + 1,
+              totalExercises: widget.totalExercises,
+              nextExerciseName:
+                  widget.nextExercise['name'] ?? "Fin de la séance",
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -148,9 +153,9 @@ class RestTimer extends StatelessWidget {
                   controller: controller,
                   width: MediaQuery.of(context).size.width / 2,
                   height: MediaQuery.of(context).size.height / 2,
-                  ringColor: Colors.grey[300]!,
-                  fillColor: Colors.purpleAccent[100]!,
-                  backgroundColor: Colors.purple[500],
+                  ringColor: Colors.blue[100]!,
+                  fillColor: Colors.blueAccent,
+                  backgroundColor: Colors.blue[600],
                   strokeWidth: 20.0,
                   strokeCap: StrokeCap.round,
                   textStyle: TextStyle(
@@ -158,7 +163,7 @@ class RestTimer extends StatelessWidget {
                     color: isPaused ? Colors.red : Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
-                  textFormat: CountdownTextFormat.S,
+                  textFormat: CountdownTextFormat.MM_SS,
                   isReverse: true,
                   isTimerTextShown: true,
                   autoStart: true,
@@ -178,9 +183,12 @@ class RestTimer extends StatelessWidget {
             ),
           ),
         ),
-        ElevatedButton(
+        const SizedBox(height: 20),
+        CustomElevatedButton(
           onPressed: () => skipTimer(),
-          child: const Text('Passer le repos'),
+          label: 'Passer le repos',
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
         ),
       ],
     );
@@ -190,41 +198,46 @@ class RestTimer extends StatelessWidget {
 class ExerciseProgressIndicator extends StatelessWidget {
   final int currentExerciseIndex;
   final int totalExercises;
-  final String exerciseName;
+  final String nextExerciseName;
 
   const ExerciseProgressIndicator({
     Key? key,
     required this.currentExerciseIndex,
     required this.totalExercises,
-    this.exerciseName = "",
+    this.nextExerciseName = "",
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        LinearProgressIndicator(
-          value: totalExercises > 0 ? currentExerciseIndex / totalExercises : 0,
-          minHeight: 10,
-          backgroundColor: Colors.grey[300],
-          valueColor: const AlwaysStoppedAnimation<Color>(Colors.green),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: LinearProgressIndicator(
+            value:
+                totalExercises > 0 ? currentExerciseIndex / totalExercises : 0,
+            minHeight: 20,
+            backgroundColor: Colors.grey[300],
+            valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+          ),
         ),
         const SizedBox(height: 10),
-        if (exerciseName.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: currentExerciseIndex > totalExercises
-                ? Text(
-                    "Prochain exercice : $exerciseName",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  )
-                : Text(
-                    exerciseName,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+        if (nextExerciseName.isNotEmpty)
+          currentExerciseIndex < totalExercises
+              ? Text(
+                  "Prochain exercice : $nextExerciseName",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
-          ),
+                )
+              : Text(
+                  nextExerciseName,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                )
       ],
     );
   }
