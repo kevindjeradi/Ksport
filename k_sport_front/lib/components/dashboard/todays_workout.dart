@@ -32,19 +32,10 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
       String day =
           DateFormat('EEEE', 'fr_FR').format(DateTime.now()).toLowerCase();
       if (mounted) {
-        // Get training of the day directly from the provider
         training = await TrainingService.fetchTrainingForDay(day);
-        if (training != null) {
-          print("not nullllllll");
-          setState(() {
-            isLoading = false;
-          });
-        } else {
-          print("null");
-          setState(() {
-            isLoading = false;
-          });
-        }
+        setState(() {
+          isLoading = false;
+        });
       }
     } catch (e) {
       print('Error: $e');
@@ -58,6 +49,8 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
   Widget build(BuildContext context) {
     final trainingProvider = context.watch<ScheduleTrainingProvider>();
     workouts = trainingProvider.todayWorkouts;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
     return InkWell(
       onTap: () {
@@ -70,13 +63,17 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
       child: Column(
         children: [
           workouts.isEmpty
-              ? const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Text("Aucun entrainement prévu aujourd'hui",
-                      style: TextStyle(fontSize: 20)),
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    "Aucun entrainement prévu aujourd'hui",
+                    style: textTheme.titleLarge,
+                  ),
                 )
-              : const Text("Entraînement du jour",
-                  style: TextStyle(fontSize: 20)),
+              : Text(
+                  "Entraînement du jour",
+                  style: textTheme.titleLarge,
+                ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: isLoading
@@ -88,12 +85,18 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
                       final workout = workouts[index];
                       return ListTile(
                         leading: Image.network(
-                            'https://via.placeholder.com/100x30',
-                            fit: BoxFit.cover,
-                            height: 30),
-                        title: Text(workout['name']),
+                          'https://via.placeholder.com/100x30',
+                          fit: BoxFit.cover,
+                          height: 30,
+                        ),
+                        title: Text(
+                          workout['name'],
+                          style: textTheme.bodyLarge,
+                        ),
                         subtitle: Text(
-                            '${workout['series']} séries x ${workout['reps']} reps'),
+                          '${workout['series']} séries x ${workout['reps']} reps',
+                          style: textTheme.bodySmall,
+                        ),
                       );
                     },
                   ),
