@@ -41,12 +41,16 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
   Widget build(BuildContext context) {
     const int showerTime = 15;
     final int trainingDuration = calculateTrainingDuration(widget.training);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
     return Scaffold(
-      appBar: const ReturnAppBar(
-          bgColor: Colors.blue,
-          barTitle: "Résumé de la séance",
-          color: Colors.white),
+      appBar: ReturnAppBar(
+        bgColor: colorScheme.primary,
+        barTitle: "Résumé de la séance",
+        color: colorScheme.onPrimary,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -54,7 +58,7 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
             children: [
               Card(
                 elevation: 5,
-                shadowColor: Colors.blue.withOpacity(0.5),
+                shadowColor: colorScheme.primary.withOpacity(0.5),
                 margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -67,31 +71,28 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                       Center(
                         child: Text(
                           "Séance ${widget.training.name}",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                          style: textTheme.headlineSmall,
                         ),
                       ),
                       const SizedBox(height: 20),
-                      const Row(
+                      Row(
                         children: [
-                          Icon(Icons.shower, color: Colors.blue),
-                          SizedBox(width: 8),
+                          Icon(Icons.shower, color: colorScheme.primary),
+                          const SizedBox(width: 8),
                           Text(
                             'Douche: $showerTime minutes',
-                            style: TextStyle(fontSize: 16),
+                            style: textTheme.bodyLarge,
                           ),
                         ],
                       ),
                       const SizedBox(height: 10),
                       Row(
                         children: [
-                          const Icon(Icons.timer, color: Colors.blue),
+                          Icon(Icons.timer, color: colorScheme.primary),
                           const SizedBox(width: 8),
                           Text(
                             'Durée totale estimée: ${trainingDuration + showerTime} minutes',
-                            style: const TextStyle(fontSize: 16),
+                            style: textTheme.bodyLarge,
                           ),
                         ],
                       ),
@@ -153,8 +154,9 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
-                                      image: const DecorationImage(
-                                        image: NetworkImage(
+                                      image: DecorationImage(
+                                        image: NetworkImage(exercise[
+                                                'imageUrl'] ??
                                             'https://via.placeholder.com/100x100'),
                                         fit: BoxFit.cover,
                                       ),
@@ -170,19 +172,15 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        exercise['label'],
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
+                                        exercise['label'] ?? 'Unknown',
+                                        style: textTheme.titleMedium?.copyWith(
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
                                         '${exercise['sets']} séries de ${exercise['repetitions']} répétitions',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.grey,
-                                        ),
+                                        style: textTheme.bodyMedium
+                                            ?.copyWith(color: Colors.grey),
                                       ),
                                     ],
                                   ),
@@ -207,8 +205,8 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                       ),
                     );
                   },
-                  foregroundColor: Colors.white,
-                  backgroundColor: Colors.blue,
+                  foregroundColor: colorScheme.onPrimary,
+                  backgroundColor: colorScheme.primary,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
                   label: 'Commencer la séance',

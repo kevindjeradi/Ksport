@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ReturnAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final MaterialColor bgColor;
+  final Color bgColor;
   final String barTitle;
   final Color color;
   final double elevation;
