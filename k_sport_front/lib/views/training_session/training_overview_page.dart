@@ -34,19 +34,61 @@ class TrainingOverviewPage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final exercise = training.exercises[index];
                     return Card(
-                      elevation: 3,
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      child: ListTile(
-                        leading: const CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              'https://via.placeholder.com/100x30'),
-                        ),
-                        title: Text(
-                          exercise['label'],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          '${exercise['sets']} séries de ${exercise['repetitions']} répétitions',
+                      elevation: 5,
+                      shadowColor: Colors.black.withOpacity(0.2),
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          // Handle tap
+                          print('Exercise tapped: ${exercise['label']}');
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  image: const DecorationImage(
+                                    image: NetworkImage(
+                                        'https://via.placeholder.com/100x100'),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      exercise['label'],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      '${exercise['sets']} séries de ${exercise['repetitions']} répétitions',
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );
