@@ -41,49 +41,64 @@ class ScheduleComponentState extends State<ScheduleComponent> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Consumer<ScheduleTrainingProvider>(
-        builder: (context, trainingProvider, child) {
-      return Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Planning',
-                    style:
-                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                Text('cette semaine',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600])),
-              ],
-            ),
-            const SizedBox(height: 10),
-            trainingProvider.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: weekStatuses
-                        .asMap()
-                        .entries
-                        .map((entry) =>
-                            _buildDay(entry.key, entry.value, trainingProvider))
-                        .toList(),
+      builder: (context, trainingProvider, child) {
+        return Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Planning',
+                    style: theme.textTheme.headlineMedium,
                   ),
-            if (trainingProvider.errorMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: Text(trainingProvider.errorMessage,
-                    style: const TextStyle(color: Colors.red, fontSize: 14)),
+                  Text(
+                    'cette semaine',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onBackground.withOpacity(0.6),
+                    ),
+                  ),
+                ],
               ),
-          ],
-        ),
-      );
-    });
+              const SizedBox(height: 10),
+              trainingProvider.isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: weekStatuses
+                          .asMap()
+                          .entries
+                          .map(
+                            (entry) => _buildDay(
+                                entry.key, entry.value, trainingProvider),
+                          )
+                          .toList(),
+                    ),
+              if (trainingProvider.errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: Text(
+                    trainingProvider.errorMessage,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.error,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildDay(
       int index, Status status, ScheduleTrainingProvider trainingProvider) {
+    ThemeData theme = Theme.of(context);
     String dayName = ScheduleTrainingProvider.dayNames[index];
     Training? currentTraining = trainingProvider.weekTrainings[index];
     bool isEmpty = currentTraining?.name.isEmpty ?? true;
@@ -99,15 +114,16 @@ class ScheduleComponentState extends State<ScheduleComponent> {
         icon = Icons.check_circle;
         break;
       case Status.current:
-        bgColor = Colors.white;
-        textColor = Colors.blue;
-        containerBorder = Border.all(width: 2.0, color: Colors.blue);
+        bgColor = theme.colorScheme.surface;
+        textColor = theme.colorScheme.primary;
+        containerBorder =
+            Border.all(width: 2.0, color: theme.colorScheme.primary);
         break;
       case Status.comming:
-        bgColor = Colors.grey[100]!;
-        textColor = Colors.grey[300]!;
-        containerBorder = Border.all(width: 2.0, color: Colors.grey[200]!);
-        icon = Icons.circle;
+        bgColor = theme.colorScheme.background;
+        textColor = theme.colorScheme.onBackground.withOpacity(0.3);
+        containerBorder = Border.all(
+            width: 2.0, color: theme.colorScheme.onBackground.withOpacity(0.2));
         break;
     }
 
@@ -116,158 +132,176 @@ class ScheduleComponentState extends State<ScheduleComponent> {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              backgroundColor: Colors.blueGrey[50],
-              titlePadding: EdgeInsets.zero,
-              title: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Stack(
-                  alignment: Alignment.centerLeft,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.assignment,
-                          color: Colors.black,
-                          size: 24.0,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          dayName,
-                          style: const TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    Positioned(
-                      right: 0,
-                      child: TextButton(
-                        onPressed: () {
-                          if (trainingProvider.todayWorkouts.isEmpty) {
-                            Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text('Aucun entrainement à supprimer'),
-                            ));
-                          } else {
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title:
-                                        const Text('Supprimer l\'entrainement'),
-                                    content: const Text(
-                                        'Voulez vous supprimer l\'entrainement prévu ?'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: const Text('Non'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          // Call deleteTrainingForDay method from provider
-                                          trainingProvider
-                                              .deleteTrainingForDay(index);
-
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(const SnackBar(
-                                            content: Text(
-                                                'Entrainement prévu supprimé!'),
-                                          ));
-
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Oui',
-                                            style:
-                                                TextStyle(color: Colors.red)),
-                                      ),
-                                    ],
-                                  );
-                                });
-                          }
-                        },
-                        child: const Text("suppr",
-                            style: TextStyle(color: Colors.red)),
-                      ),
-                    ),
-                  ],
+            return LayoutBuilder(builder: (context, constraints) {
+              return AlertDialog(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
                 ),
-              ),
-              content: trainingProvider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : trainingProvider.errorMessage.isNotEmpty
-                      ? Text(trainingProvider.errorMessage)
-                      : Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            isEmpty
-                                ? const Text(
-                                    'Aucun entrainement selectionné',
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 16),
-                                  )
-                                : Center(
-                                    child: RichText(
-                                      text: TextSpan(
-                                        style: const TextStyle(
-                                            fontSize: 16, color: Colors.black),
-                                        children: <TextSpan>[
-                                          const TextSpan(
-                                              text: 'Aujourd\'hui, c\'est '),
-                                          TextSpan(
-                                            text: currentTraining?.name
-                                                .toUpperCase(),
+                backgroundColor: theme.cardTheme.color,
+                titlePadding: EdgeInsets.zero,
+                title: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.assignment,
+                            color: theme.iconTheme.color,
+                            size: 24.0,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            dayName,
+                            style: theme.textTheme.headlineSmall,
+                          ),
+                        ],
+                      ),
+                      Positioned(
+                        right: 0,
+                        child: TextButton(
+                          onPressed: () {
+                            if (trainingProvider.todayWorkouts.isEmpty) {
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text('Aucun entrainement à supprimer'),
+                              ));
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text(
+                                          'Supprimer l\'entrainement'),
+                                      content: const Text(
+                                          'Voulez vous supprimer l\'entrainement prévu ?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: const Text('Non'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            // Call deleteTrainingForDay method from provider
+                                            trainingProvider
+                                                .deleteTrainingForDay(index);
+
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  'Entrainement prévu supprimé!'),
+                                            ));
+
+                                            Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('Oui',
+                                              style: TextStyle(
+                                                  color:
+                                                      theme.colorScheme.error)),
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
+                          },
+                          child: Text("suppr",
+                              style: TextStyle(color: theme.colorScheme.error)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                content: trainingProvider.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : trainingProvider.errorMessage.isNotEmpty
+                        ? Text(
+                            trainingProvider.errorMessage,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: theme.colorScheme.error,
+                            ),
+                          )
+                        : SizedBox(
+                            width: constraints.maxWidth * 0.8,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                isEmpty
+                                    ? Text(
+                                        'Aucun entrainement selectionné',
+                                        style: theme.textTheme.bodyMedium,
+                                      )
+                                    : Center(
+                                        child: RichText(
+                                          text: TextSpan(
                                             style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: Colors.blue,
-                                            ),
+                                                fontSize: 16,
+                                                color: Colors.black),
+                                            children: <TextSpan>[
+                                              const TextSpan(
+                                                  text:
+                                                      'Aujourd\'hui, c\'est '),
+                                              TextSpan(
+                                                text: currentTraining?.name
+                                                    .toUpperCase(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+                                                  color:
+                                                      theme.colorScheme.primary,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
+                                        ),
                                       ),
+                                const SizedBox(height: 20),
+                                DropdownButtonFormField<Training>(
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
+                                    labelText:
+                                        'Modifier l\'entrainement du jour',
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: theme.colorScheme.onSurface),
                                     ),
                                   ),
-                            const SizedBox(height: 20),
-                            DropdownButtonFormField<Training>(
-                              decoration: const InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 10.0, horizontal: 10.0),
-                                labelText: 'Modifier l\'entrainement du jour',
-                                border: OutlineInputBorder(),
-                              ),
-                              items: trainingProvider.trainings
-                                  .map((Training training) {
-                                return DropdownMenuItem<Training>(
-                                  value: training,
-                                  child: Text(training.name),
-                                );
-                              }).toList(),
-                              onChanged: (Training? newValue) {
-                                setState(() {
-                                  trainingProvider.weekTrainings[index] =
-                                      newValue;
-                                });
-                                widget.onTrainingAssigned(index + 1, newValue);
-                              },
-                            )
-                          ],
-                        ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('OK', style: TextStyle(color: Colors.blue)),
-                ),
-              ],
-              contentPadding: const EdgeInsets.all(20),
-              insetPadding: const EdgeInsets.all(20),
-            );
+                                  items: trainingProvider.trainings
+                                      .map((Training training) {
+                                    return DropdownMenuItem<Training>(
+                                      value: training,
+                                      child: Text(training.name),
+                                    );
+                                  }).toList(),
+                                  onChanged: (Training? newValue) {
+                                    setState(() {
+                                      trainingProvider.weekTrainings[index] =
+                                          newValue;
+                                    });
+                                    widget.onTrainingAssigned(
+                                        index + 1, newValue);
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('OK',
+                        style: TextStyle(color: theme.colorScheme.primary)),
+                  ),
+                ],
+                contentPadding: const EdgeInsets.all(20),
+                insetPadding: const EdgeInsets.all(20),
+              );
+            });
           },
         );
         widget.onDayTapped(index + 1);

@@ -1,4 +1,4 @@
-// app_theme.dart
+// theme_light.dart
 import 'package:flutter/material.dart';
 
 ThemeData themeLight() {
@@ -18,19 +18,26 @@ ThemeData themeLight() {
   );
 
   TextTheme textTheme = const TextTheme(
-    displayLarge: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold),
-    displayMedium: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
-    displaySmall: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
-    headlineMedium: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-    headlineSmall: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-    titleLarge: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-    titleMedium: TextStyle(fontSize: 16.0),
-    titleSmall: TextStyle(fontSize: 14.0),
-    bodyLarge: TextStyle(fontSize: 16.0),
-    bodyMedium: TextStyle(fontSize: 14.0),
-    labelLarge: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
-    bodySmall: TextStyle(fontSize: 12.0),
-    labelSmall: TextStyle(fontSize: 10.0),
+    displayLarge: TextStyle(
+        fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.black),
+    displayMedium: TextStyle(
+        fontSize: 28.0, fontWeight: FontWeight.bold, color: Colors.black),
+    displaySmall: TextStyle(
+        fontSize: 24.0, fontWeight: FontWeight.bold, color: Colors.black),
+    headlineMedium: TextStyle(
+        fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black),
+    headlineSmall: TextStyle(
+        fontSize: 18.0, fontWeight: FontWeight.bold, color: Colors.black),
+    titleLarge: TextStyle(
+        fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
+    titleMedium: TextStyle(fontSize: 16.0, color: Colors.black),
+    titleSmall: TextStyle(fontSize: 14.0, color: Colors.black),
+    bodyLarge: TextStyle(fontSize: 16.0, color: Colors.black),
+    bodyMedium: TextStyle(fontSize: 14.0, color: Colors.black),
+    labelLarge: TextStyle(
+        fontSize: 16.0, fontWeight: FontWeight.bold, color: Colors.black),
+    bodySmall: TextStyle(fontSize: 12.0, color: Colors.black),
+    labelSmall: TextStyle(fontSize: 10.0, color: Colors.black),
   );
 
   return ThemeData(
