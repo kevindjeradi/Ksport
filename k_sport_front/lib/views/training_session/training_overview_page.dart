@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
+import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/views/training_session/training_session_page.dart';
 
@@ -17,44 +19,61 @@ class TrainingOverviewPage extends StatelessWidget {
     print(
         "\n\n\nNombres de series -> ${training.exercises[0]['repetitions']}\n\n");
     return Scaffold(
-      appBar: AppBar(
-        title: Text(training.name),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: training.exercises.length,
-              itemBuilder: (context, index) {
-                final exercise = training.exercises[index];
-                return ListTile(
-                  leading: Image.network(
-                    'https://via.placeholder.com/100x30',
-                    fit: BoxFit.cover,
-                    height: 30,
-                  ),
-                  title: Text(exercise['label']),
-                  subtitle: Text(
-                      '${exercise['sets']} séries x ${exercise['repetitions']} reps'),
-                );
-              },
-            ),
+      appBar: const ReturnAppBar(
+          bgColor: Colors.blue,
+          barTitle: "Résumé de la séance",
+          color: Colors.white),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  itemCount: training.exercises.length,
+                  itemBuilder: (context, index) {
+                    final exercise = training.exercises[index];
+                    return Card(
+                      elevation: 3,
+                      margin: const EdgeInsets.symmetric(vertical: 5),
+                      child: ListTile(
+                        leading: const CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              'https://via.placeholder.com/100x30'),
+                        ),
+                        title: Text(
+                          exercise['label'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          '${exercise['sets']} séries de ${exercise['repetitions']} répétitions',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CustomElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const TrainingSessionPage(),
+                      ),
+                    );
+                  },
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                  label: 'Commencer la séance',
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const TrainingSessionPage(),
-                  ),
-                );
-              },
-              child: const Text('Commencer la séance'),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
