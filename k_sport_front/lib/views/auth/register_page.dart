@@ -88,16 +88,17 @@ class RegisterPageState extends State<RegisterPage> {
       children: [
         if (_loading) const Center(child: CircularProgressIndicator()),
         Scaffold(
-          backgroundColor: Colors.blueGrey[50],
+          backgroundColor: Theme.of(context).colorScheme.background, // Updated
           body: Center(
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    const Text('Inscription',
-                        style: TextStyle(
-                            fontSize: 32, fontWeight: FontWeight.bold)),
+                    Text('Inscription',
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayLarge), // Updated
                     const SizedBox(height: 32),
                     TextField(
                       controller: _usernameController,
@@ -110,9 +111,6 @@ class RegisterPageState extends State<RegisterPage> {
                                 _usernameController.text.isNotEmpty
                             ? 'Le pseudo doit faire au moins 4 lettres'
                             : null,
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: const OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -127,9 +125,6 @@ class RegisterPageState extends State<RegisterPage> {
                       obscureText: !_passwordVisible,
                       decoration: InputDecoration(
                         labelText: 'Mot de passe',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: const OutlineInputBorder(),
                         errorText: showError &&
                                 _passwordController.text.length < 4 &&
                                 _passwordController.text.isNotEmpty

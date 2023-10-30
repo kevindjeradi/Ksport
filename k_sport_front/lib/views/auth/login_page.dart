@@ -111,16 +111,17 @@ class LoginPageState extends State<LoginPage> {
       children: [
         if (_loading) const Center(child: CircularProgressIndicator()),
         Scaffold(
-          backgroundColor: Colors.blueGrey[50],
+          backgroundColor: Theme.of(context).colorScheme.background,
           body: Center(
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    const Text('Connexion',
-                        style: TextStyle(
-                            fontSize: 32, fontWeight: FontWeight.bold)),
+                    Text(
+                      'Connexion',
+                      style: Theme.of(context).textTheme.displayLarge,
+                    ),
                     const SizedBox(height: 32),
                     TextField(
                       controller: _usernameController,
@@ -133,14 +134,6 @@ class LoginPageState extends State<LoginPage> {
                                 _usernameController.text.isNotEmpty
                             ? 'Le pseudo doit faire au moins 4 lettres'
                             : null,
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -161,14 +154,6 @@ class LoginPageState extends State<LoginPage> {
                                 _passwordController.text.isNotEmpty
                             ? 'Le mot de passe doit faire au moins 4 lettres'
                             : null,
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _passwordVisible
@@ -188,16 +173,7 @@ class LoginPageState extends State<LoginPage> {
                       valueListenable: validationNotifier,
                       builder: (context, isValid, child) {
                         return ElevatedButton(
-                          onPressed: isValid
-                              ? () {
-                                  _login();
-                                  return;
-                                }
-                              : null,
-                          style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all<Color>(Colors.blue),
-                          ),
+                          onPressed: isValid ? () => _login() : null,
                           child: const Text('Se connecter'),
                         );
                       },
