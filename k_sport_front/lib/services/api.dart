@@ -88,6 +88,23 @@ class Api {
     }
   }
 
+  static Future<Map<String, dynamic>?> fetchExerciseDetailsByLabel(
+      String exerciseLabel) async {
+    try {
+      final response =
+          await get('http://10.0.2.2:3000/exercises/label/$exerciseLabel');
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        print('Failed to load exercise details: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+    return null;
+  }
+
   static Future<List<Map<String, dynamic>>> fetchExercises() async {
     final response =
         await http.get(Uri.parse('http://10.0.2.2:3000/exercises'));
