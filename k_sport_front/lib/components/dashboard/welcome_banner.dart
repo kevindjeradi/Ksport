@@ -11,8 +11,10 @@ class WelcomeBanner extends StatelessWidget {
     print(
         "\n-------------in welcome banner: ${userProvider.username}-------------\n");
 
+    final theme = Theme.of(context);
+
     return Container(
-      margin: const EdgeInsets.all(10.0),
+      margin: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.0),
         boxShadow: [
@@ -22,7 +24,7 @@ class WelcomeBanner extends StatelessWidget {
             blurRadius: 7,
           ),
         ],
-        color: Theme.of(context).colorScheme.background,
+        color: theme.colorScheme.secondaryContainer,
       ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -37,11 +39,22 @@ class WelcomeBanner extends StatelessWidget {
                       NetworkImage('https://via.placeholder.com/80'),
                 ),
                 const SizedBox(width: 10),
-                Text('Hey ! Bonne journée ${userProvider.username}!'),
+                Expanded(
+                  child: Text(
+                    'Hey ! Bonne journée ${userProvider.username}!',
+                    style: theme.textTheme.headlineSmall
+                        ?.copyWith(color: theme.colorScheme.onBackground),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 10),
-            const Text('Message de motivation à la con'),
+            Text(
+              'Message de motivation à la con',
+              style: theme.textTheme.bodyMedium
+                  ?.copyWith(color: theme.colorScheme.onBackground),
+            ),
           ],
         ),
       ),
