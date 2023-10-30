@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
+import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
-import 'package:k_sport_front/views/training_session_page.dart';
+import 'package:k_sport_front/services/training_service.dart';
+import 'package:k_sport_front/views/training_session/training_overview_page.dart';
 import 'package:provider/provider.dart';
 
 class TodaysWorkout extends StatefulWidget {
@@ -15,7 +17,8 @@ class TodaysWorkout extends StatefulWidget {
 
 class TodaysWorkoutState extends State<TodaysWorkout> {
   List<Map<String, dynamic>> workouts = [];
-  bool isLoading = true;
+  bool isLoading = false;
+  Training? training;
 
   @override
   void initState() {
@@ -29,16 +32,15 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
       String day =
           DateFormat('EEEE', 'fr_FR').format(DateTime.now()).toLowerCase();
       if (mounted) {
-        final trainingProvider =
-            Provider.of<ScheduleTrainingProvider>(context, listen: false);
-
         // Get training of the day directly from the provider
-        final training = trainingProvider.getTrainingForDay(day);
+        training = await TrainingService.fetchTrainingForDay(day);
         if (training != null) {
+          print("not nullllllll");
           setState(() {
             isLoading = false;
           });
         } else {
+          print("null");
           setState(() {
             isLoading = false;
           });
@@ -55,11 +57,15 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
   @override
   Widget build(BuildContext context) {
     final trainingProvider = context.watch<ScheduleTrainingProvider>();
-    final workouts = trainingProvider.todayWorkouts;
+    workouts = trainingProvider.todayWorkouts;
 
     return InkWell(
       onTap: () {
-        CustomNavigation.push(context, const TrainingSessionPage());
+        CustomNavigation.push(
+            context,
+            TrainingOverviewPage(
+              training: training!,
+            ));
       },
       child: Column(
         children: [
