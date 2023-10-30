@@ -108,11 +108,13 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
         ? exercises[_currentExerciseIndex]
         : null;
 
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: const ReturnAppBar(
-          bgColor: Colors.blue,
+      appBar: ReturnAppBar(
+          bgColor: theme.colorScheme.primary,
           barTitle: "Séance d'entrainement",
-          color: Colors.white),
+          color: theme.colorScheme.onPrimary),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: exercises.isEmpty
@@ -120,13 +122,11 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (exercise == null) const WorkoutCompletedMessage(),
                   const SizedBox(height: 20),
                   if (exercise != null)
                     Text(
                       'Exercice ${_currentExerciseIndex + 1}/${exercises.length}',
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
+                      style: theme.textTheme.headlineMedium,
                     ),
                   const SizedBox(height: 20),
                   if (exercise != null)
@@ -166,29 +166,6 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   }
 }
 
-class WorkoutCompletedMessage extends StatelessWidget {
-  const WorkoutCompletedMessage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        children: [
-          Text(
-            'Bravo !',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 10),
-          Text(
-            'Tu as terminé ta séance !',
-            style: TextStyle(fontSize: 18),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class ExerciseInfoCard extends StatelessWidget {
   final Map<String, dynamic> exercise;
   final Function startRestTimer;
@@ -203,8 +180,10 @@ class ExerciseInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Card(
-      elevation: 4,
+      elevation: theme.cardTheme.elevation,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -212,12 +191,14 @@ class ExerciseInfoCard extends StatelessWidget {
           children: [
             Text(
               '${exercise['name']}',
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: theme.textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             InfoRow(
-                label: 'Séries',
-                value: "$currentSet / ${exercise['series'].toString()}"),
+              label: 'Séries',
+              value: "$currentSet / ${exercise['series'].toString()}",
+            ),
             InfoRow(label: 'Répétitions', value: exercise['reps'].toString()),
             InfoRow(label: 'Repos', value: '${exercise['restTime']}s'),
             RestTimerButton(startRestTimer: startRestTimer),
@@ -237,12 +218,16 @@ class InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
         children: [
-          Expanded(child: Text(label, style: const TextStyle(fontSize: 18))),
-          Text(value, style: const TextStyle(fontSize: 18)),
+          Expanded(
+            child: Text(label, style: theme.textTheme.titleLarge),
+          ),
+          Text(value, style: theme.textTheme.headlineSmall),
         ],
       ),
     );
@@ -257,16 +242,18 @@ class RestTimerButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return ElevatedButton(
       onPressed: () => startRestTimer(),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue,
-        disabledForegroundColor: Colors.grey.withOpacity(0.38),
-        disabledBackgroundColor: Colors.grey.withOpacity(0.12),
+        backgroundColor: theme.colorScheme.primary,
+        disabledForegroundColor: theme.colorScheme.onSurface.withOpacity(0.38),
+        disabledBackgroundColor: theme.colorScheme.surface.withOpacity(0.12),
         padding: const EdgeInsets.all(15),
-        textStyle: const TextStyle(fontSize: 18),
+        textStyle: theme.textTheme.titleLarge,
       ),
-      child: const Text('lancer le repos'),
+      child: const Text('Lancer le repos'),
     );
   }
 }

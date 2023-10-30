@@ -55,11 +55,13 @@ class _TimerPageState extends State<TimerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: ReturnAppBar(
-          bgColor: Colors.blue,
+          bgColor: theme.colorScheme.primary,
           barTitle: widget.currentExercise['name'],
-          color: Colors.white),
+          color: theme.colorScheme.onPrimary),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -115,19 +117,21 @@ class RestTimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Stack(
             children: [
-              const Align(
+              Align(
                 alignment: Alignment.center,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Text(
                     'Temps de repos',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    style: theme.textTheme.displaySmall,
                   ),
                 ),
               ),
@@ -135,6 +139,7 @@ class RestTimer extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: IconButton(
                   icon: const Icon(Icons.close),
+                  color: theme.colorScheme.onSurface,
                   onPressed: () => stopTimer(),
                 ),
               ),
@@ -153,14 +158,16 @@ class RestTimer extends StatelessWidget {
                   controller: controller,
                   width: MediaQuery.of(context).size.width / 2,
                   height: MediaQuery.of(context).size.height / 2,
-                  ringColor: Colors.blue[100]!,
-                  fillColor: Colors.blueAccent,
-                  backgroundColor: Colors.blue[600],
+                  ringColor: theme.colorScheme.primaryContainer,
+                  fillColor: theme.colorScheme.secondary,
+                  backgroundColor: theme.colorScheme.primary,
                   strokeWidth: 20.0,
                   strokeCap: StrokeCap.round,
                   textStyle: TextStyle(
                     fontSize: 33.0,
-                    color: isPaused ? Colors.red : Colors.white,
+                    color: isPaused
+                        ? theme.colorScheme.error
+                        : theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                   textFormat: CountdownTextFormat.MM_SS,
@@ -174,10 +181,10 @@ class RestTimer extends StatelessWidget {
                   },
                 ),
                 if (isPaused)
-                  const Icon(
+                  Icon(
                     Icons.pause,
                     size: 50,
-                    color: Colors.white,
+                    color: theme.colorScheme.onPrimary,
                   ),
               ],
             ),
@@ -187,8 +194,8 @@ class RestTimer extends StatelessWidget {
         CustomElevatedButton(
           onPressed: () => skipTimer(),
           label: 'Passer le repos',
-          backgroundColor: Colors.blue,
-          foregroundColor: Colors.white,
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
         ),
       ],
     );
@@ -209,6 +216,8 @@ class ExerciseProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         ClipRRect(
@@ -217,27 +226,28 @@ class ExerciseProgressIndicator extends StatelessWidget {
             value:
                 totalExercises > 0 ? currentExerciseIndex / totalExercises : 0,
             minHeight: 20,
-            backgroundColor: Colors.grey[300],
-            valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+            backgroundColor: theme.colorScheme.background,
+            valueColor:
+                AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
           ),
         ),
         const SizedBox(height: 10),
         if (nextExerciseName.isNotEmpty)
           currentExerciseIndex < totalExercises
-              ? Text(
-                  "Prochain exercice : $nextExerciseName",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    "Prochain exercice : $nextExerciseName",
+                    style: theme.textTheme.headlineSmall,
                   ),
                 )
-              : Text(
-                  nextExerciseName,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(
+                    nextExerciseName,
+                    style: theme.textTheme.headlineSmall,
                   ),
-                )
+                ),
       ],
     );
   }
