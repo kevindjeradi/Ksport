@@ -67,12 +67,12 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     "Aucun entrainement prévu aujourd'hui",
-                    style: textTheme.titleLarge,
+                    style: textTheme.headlineMedium,
                   ),
                 )
               : Text(
                   "Entraînement du jour",
-                  style: textTheme.titleLarge,
+                  style: textTheme.headlineMedium,
                 ),
           Padding(
             padding: const EdgeInsets.all(8.0),

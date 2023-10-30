@@ -12,11 +12,15 @@ class WeeklyActivity extends StatelessWidget {
           'The progress list should contain exactly 7 values for each day of the week.');
     }
 
+    ThemeData theme = Theme.of(context);
+    TextTheme textTheme = theme.textTheme;
+    ColorScheme colorScheme = theme.colorScheme;
+
     return Column(
       children: [
-        const Text("La semaine dernière", style: TextStyle(fontSize: 20)),
+        Text("La semaine dernière", style: textTheme.headlineMedium),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               Row(
@@ -33,13 +37,14 @@ class WeeklyActivity extends StatelessWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             color: progress[index]
-                                ? Colors.purple
-                                : Colors.grey.shade300,
+                                ? colorScheme.primary
+                                : Colors.grey.shade400,
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           ['L', 'M', 'M', 'J', 'V', 'S', 'D'][index],
+                          style: textTheme.bodyMedium,
                         ),
                       ],
                     ),
@@ -51,7 +56,7 @@ class WeeklyActivity extends StatelessWidget {
                 onPressed: () {
                   // Add navigation or detailed view functionality here
                 },
-                child: const Text("Voir les détails >"),
+                child: Text("Voir les détails >", style: textTheme.bodyMedium),
               )
             ],
           ),
