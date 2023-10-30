@@ -12,6 +12,8 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(
@@ -33,9 +35,10 @@ class CustomBottomNavBar extends StatelessWidget {
       ],
       currentIndex: currentIndex,
       onTap: onTap,
-      selectedItemColor: Colors.blue, // Highlight color for active tab
+      selectedItemColor:
+          theme.colorScheme.primary, // Highlight color for active tab
       unselectedItemColor: Colors.grey, // Non-active items color
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colorScheme.surface,
     );
   }
 }

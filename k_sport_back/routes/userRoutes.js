@@ -54,12 +54,14 @@ router.get('/user/details', async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-
+        const numberOfTrainings = user.trainings.length
         // Return the required details
         const userDetails = {
             username: user.username,
             dateJoined: user.dateJoined,
-            profileImage: user.profileImage
+            profileImage: user.profileImage,
+            numberOfTrainings: numberOfTrainings,
+
         };
         res.json(userDetails);
     } catch (error) {

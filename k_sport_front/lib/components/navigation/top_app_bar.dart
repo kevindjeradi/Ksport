@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
+import 'package:k_sport_front/views/profile_page.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -12,7 +14,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: const Icon(Icons.account_circle),
         onPressed: () {
-          // Handle profile interactions
+          CustomNavigation.push(context, const ProfilePage());
         },
       ),
       actions: [
