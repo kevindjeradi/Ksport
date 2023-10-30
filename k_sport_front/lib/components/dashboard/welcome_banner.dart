@@ -12,50 +12,49 @@ class WelcomeBanner extends StatelessWidget {
         "\n-------------in welcome banner: ${userProvider.username}-------------\n");
 
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-    return Container(
-      margin: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 7,
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
         color: theme.colorScheme.secondaryContainer,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 40,
-                  backgroundImage:
-                      NetworkImage('https://via.placeholder.com/80'),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Hey ! Bonne journée ${userProvider.username}!',
-                    style: theme.textTheme.headlineSmall
-                        ?.copyWith(color: theme.colorScheme.onBackground),
-                    overflow: TextOverflow.ellipsis,
+        elevation: 5,
+        shadowColor: colorScheme.primary.withOpacity(0.5),
+        margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const CircleAvatar(
+                    radius: 40,
+                    backgroundImage:
+                        NetworkImage('https://via.placeholder.com/80'),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Message de motivation à la con',
-              style: theme.textTheme.bodyMedium
-                  ?.copyWith(color: theme.colorScheme.onBackground),
-            ),
-          ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Hey ! Bonne journée ${userProvider.username}!',
+                      style: theme.textTheme.headlineSmall
+                          ?.copyWith(color: theme.colorScheme.onBackground),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Message de motivation à la con',
+                style: theme.textTheme.bodyMedium
+                    ?.copyWith(color: theme.colorScheme.onBackground),
+              ),
+            ],
+          ),
         ),
       ),
     );

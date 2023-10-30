@@ -118,27 +118,34 @@ class TrainingFormState extends State<TrainingForm> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: [
-                      TrainingFormInput(
-                        controller: _nameController,
-                        label: "Nom de l'entrainement",
-                        icon: Icons.title,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Veuillez entrer un nom pour l'entrainement";
-                          }
-                          return null;
-                        },
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            TrainingFormInput(
+                              controller: _nameController,
+                              label: "Nom de l'entrainement",
+                              icon: Icons.title,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Veuillez entrer un nom pour l'entrainement";
+                                }
+                                return null;
+                              },
+                            ),
+                            const SizedBox(height: 12.0),
+                            TrainingFormInput(
+                                controller: _descriptionController,
+                                label: 'Description',
+                                icon: Icons.description),
+                            const SizedBox(height: 12.0),
+                            TrainingFormInput(
+                                controller: _goalController,
+                                label: 'Objectif',
+                                icon: Icons.flash_on),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 8.0),
-                      TrainingFormInput(
-                          controller: _descriptionController,
-                          label: 'Description',
-                          icon: Icons.description),
-                      const SizedBox(height: 8.0),
-                      TrainingFormInput(
-                          controller: _goalController,
-                          label: 'Objectif',
-                          icon: Icons.flash_on),
                       const SizedBox(height: 16.0),
                       ExerciseFieldsList(
                         exerciseControllers: _exerciseControllers,

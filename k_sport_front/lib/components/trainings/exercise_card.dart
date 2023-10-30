@@ -21,7 +21,9 @@ class ExerciseCard extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 16.0),
+      margin: const EdgeInsets.symmetric(vertical: 12.0),
+      elevation: 2,
+      shadowColor: theme.colorScheme.primary.withOpacity(0.5),
       child: Stack(
         children: [
           Padding(

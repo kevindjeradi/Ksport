@@ -57,6 +57,7 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
           child: Column(
             children: [
               Card(
+                color: theme.colorScheme.secondaryContainer,
                 elevation: 5,
                 shadowColor: colorScheme.primary.withOpacity(0.5),
                 margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),

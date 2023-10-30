@@ -19,6 +19,8 @@ class TrainingFormInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
@@ -26,8 +28,8 @@ class TrainingFormInput extends StatelessWidget {
         contentPadding: const EdgeInsets.all(10.0),
         labelText: label,
         prefixIcon: icon != null ? Icon(icon) : null,
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.blue, width: 2.0),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: theme.colorScheme.primary, width: 2.0),
         ),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey, width: 1.0),
