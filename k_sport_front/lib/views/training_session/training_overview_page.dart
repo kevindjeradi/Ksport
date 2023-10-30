@@ -18,6 +18,7 @@ class TrainingOverviewPage extends StatelessWidget {
     print("\n\n\nNombre de series exo 1 -> ${training.exercises[0]['sets']}\n");
     print(
         "\n\n\nNombres de series -> ${training.exercises[0]['repetitions']}\n\n");
+
     return Scaffold(
       appBar: const ReturnAppBar(
           bgColor: Colors.blue,
@@ -33,61 +34,67 @@ class TrainingOverviewPage extends StatelessWidget {
                   itemCount: training.exercises.length,
                   itemBuilder: (context, index) {
                     final exercise = training.exercises[index];
-                    return Card(
-                      elevation: 5,
-                      shadowColor: Colors.black.withOpacity(0.2),
-                      margin: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        onTap: () {
-                          // Handle tap
-                          print('Exercise tapped: ${exercise['label']}');
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(12),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 60,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  image: const DecorationImage(
-                                    image: NetworkImage(
-                                        'https://via.placeholder.com/100x100'),
-                                    fit: BoxFit.cover,
+                    return SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.2,
+                      child: Card(
+                        elevation: 5,
+                        shadowColor: Colors.black.withOpacity(0.2),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () {
+                            // Handle tap
+                            print('Exercise tapped: ${exercise['label']}');
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      image: const DecorationImage(
+                                        image: NetworkImage(
+                                            'https://via.placeholder.com/100x100'),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      exercise['label'],
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16,
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  flex: 2,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        exercise['label'],
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      '${exercise['sets']} séries de ${exercise['repetitions']} répétitions',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        '${exercise['sets']} séries de ${exercise['repetitions']} répétitions',
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
