@@ -23,13 +23,29 @@ router.get('/exercises', async (req, res) => {
 // GET a specific exercise
 router.get('/exercises/:id', async (req, res) => {
     try {
+        console.log(req.params.id)
         const exercise = await Exercise.findById(req.params.id);
+        console.log("exercise ->" + exercise)
         if (!exercise) return res.status(404).json({ message: 'Exercise not found' });
-        res.json(exercise);
+        res.status(200).json(exercise);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
+// GET an exercise by label
+router.get('/exercises/label/:label', async (req, res) => {
+    try {
+        console.log(req.params.label)
+        const exercise = await Exercise.findOne({ label: req.params.label });
+        console.log("exercise ->" + exercise)
+        if (!exercise) return res.status(404).json({ message: 'Exercise not found' });
+        res.status(200).json(exercise);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // POST (create) a new exercise
 router.post('/exercises', async (req, res) => {
