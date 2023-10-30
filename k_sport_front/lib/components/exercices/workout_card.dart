@@ -27,7 +27,7 @@ class WorkoutCard extends StatelessWidget {
                 color: Colors.white,
                 backgroundColor: Colors
                     .black54, // This adds a slight background for better readability.
-                fontSize: 16, // Adjust the font size as necessary.
+                fontSize: 18, // Adjust the font size as necessary.
               ),
             ),
           ),

@@ -18,6 +18,8 @@ class ExerciseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       child: Stack(
@@ -27,6 +29,7 @@ class ExerciseCard extends StatelessWidget {
             child: Column(
               children: [
                 TextField(
+                  style: theme.textTheme.headlineSmall,
                   controller: labelController,
                   textAlign: TextAlign.center,
                   decoration: const InputDecoration(

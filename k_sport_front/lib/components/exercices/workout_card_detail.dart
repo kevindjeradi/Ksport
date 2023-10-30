@@ -17,11 +17,13 @@ class WorkoutCardDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: ReturnAppBar(
           barTitle: "${title.toLowerCase()} pour $muscleLabel",
-          bgColor: Colors.blue,
-          color: Colors.white,
+          bgColor: theme.colorScheme.primary,
+          color: theme.colorScheme.onPrimary,
           elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -36,12 +38,12 @@ class WorkoutCardDetail extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 16), // Increased the space a little bit.
+            const SizedBox(height: 16),
             Expanded(
               child: SingleChildScrollView(
                 child: Text(
                   description,
-                  style: const TextStyle(fontSize: 16),
+                  style: theme.textTheme.bodyLarge,
                 ),
               ),
             )

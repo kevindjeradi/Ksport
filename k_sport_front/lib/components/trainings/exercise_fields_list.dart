@@ -17,6 +17,8 @@ class ExerciseFieldsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return Column(
       children: [
         ...exerciseControllers.asMap().entries.map((entry) {
@@ -35,6 +37,8 @@ class ExerciseFieldsList extends StatelessWidget {
           label: 'Ajouter un exercice',
           onPressed: addExerciseCallback,
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: theme.colorScheme.onPrimary,
         )
       ],
     );

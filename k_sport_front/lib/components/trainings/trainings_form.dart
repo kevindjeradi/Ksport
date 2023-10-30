@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
+import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/components/trainings/exercise_fields_list.dart';
 import 'package:k_sport_front/components/trainings/training_form_input.dart';
 import 'package:k_sport_front/models/training.dart';
@@ -98,12 +99,15 @@ class TrainingFormState extends State<TrainingForm> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.editingTraining == null
-            ? 'Nouvel entrainement'
-            : 'Modifier un entrainement'),
-      ),
+      appBar: ReturnAppBar(
+          barTitle: widget.editingTraining == null
+              ? 'Nouvel entrainement'
+              : 'Modifier un entrainement',
+          bgColor: theme.colorScheme.primary,
+          color: theme.colorScheme.onPrimary),
       body: Column(
         children: [
           Expanded(
@@ -152,6 +156,8 @@ class TrainingFormState extends State<TrainingForm> {
             child: CustomElevatedButton(
               onPressed: _submitForm,
               label: "Sauvegarder l'entrainement",
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
             ),
           ),
         ],

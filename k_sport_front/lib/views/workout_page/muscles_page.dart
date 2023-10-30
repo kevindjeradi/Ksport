@@ -11,12 +11,14 @@ class MusclesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: isSelectionMode
-          ? const ReturnAppBar(
-              bgColor: Colors.blue,
+          ? ReturnAppBar(
+              bgColor: theme.colorScheme.primary,
               barTitle: "Choisir un muscle",
-              color: Colors.white)
+              color: theme.colorScheme.onPrimary)
           : null,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -24,11 +26,10 @@ class MusclesPage extends StatelessWidget {
           children: [
             isSelectionMode
                 ? const SizedBox()
-                : const Padding(
-                    padding: EdgeInsets.all(8.0),
+                : Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Text('Choisir un muscle',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
+                        style: theme.textTheme.displaySmall),
                   ),
             Expanded(
               child: FutureBuilder<List<Muscle>>(

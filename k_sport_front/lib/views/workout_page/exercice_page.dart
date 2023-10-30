@@ -17,11 +17,13 @@ class ExercisesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: const ReturnAppBar(
+      appBar: ReturnAppBar(
           barTitle: "Exercices",
-          bgColor: Colors.blue,
-          color: Colors.white,
+          bgColor: theme.colorScheme.primary,
+          color: theme.colorScheme.onPrimary,
           elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

@@ -29,8 +29,7 @@ class MuscleGrid extends StatelessWidget {
                 context,
                 ExercisesPage(
                     isSelectionMode: isSelectionMode,
-                    muscleLabel: muscle.label
-                        .toString())); // Passing the muscle ID to the new page
+                    muscleLabel: muscle.label.toString()));
           },
         );
       }).toList(),

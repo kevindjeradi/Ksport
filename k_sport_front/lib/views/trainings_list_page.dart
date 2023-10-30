@@ -44,15 +44,19 @@ class TrainingsListPageState extends State<TrainingsListPage> {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text("Mes entraînements",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                "Mes entraînements",
+                style: theme.textTheme.displaySmall,
+              ),
             ),
             Expanded(child: _buildTrainingList(trainings)),
             const SizedBox(height: 12.0),
@@ -62,6 +66,8 @@ class TrainingsListPageState extends State<TrainingsListPage> {
                     .then((_) => _fetchTrainings());
               },
               label: 'Créer un nouvel entraînement',
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
             ),
             const SizedBox(height: 8.0),
           ],
@@ -71,6 +77,8 @@ class TrainingsListPageState extends State<TrainingsListPage> {
   }
 
   Widget _buildTrainingList(List<Training> trainings) {
+    ThemeData theme = Theme.of(context);
+
     return ListView.separated(
       itemCount: trainings.length,
       separatorBuilder: (context, index) => const Divider(),
@@ -79,11 +87,17 @@ class TrainingsListPageState extends State<TrainingsListPage> {
           contentPadding: const EdgeInsets.all(8.0),
           title: Text(
             trainings[index].name,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: theme.textTheme.headlineSmall,
           ),
-          subtitle: Text(trainings[index].description),
+          subtitle: Text(
+            trainings[index].description,
+            style: theme.textTheme.titleMedium,
+          ),
           trailing: IconButton(
-            icon: const Icon(Icons.delete, color: Colors.redAccent),
+            icon: Icon(
+              Icons.delete,
+              color: theme.colorScheme.error,
+            ),
             onPressed: () async {
               await http.delete(Uri.parse(
                   'http://10.0.2.2:3000/trainings/${trainings[index].id}'));
