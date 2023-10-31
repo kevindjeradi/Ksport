@@ -75,6 +75,21 @@ class Api {
     }
   }
 
+  static Future<List<String>> fetchMusclesByGroup(String group) async {
+    final response =
+        await get('http://10.0.2.2:3000/muscles/byGroup?group=$group');
+
+    if (response.statusCode == 200) {
+      List<dynamic> responseBody = json.decode(response.body);
+      // Extracting the muscle labels from the response
+      List<String> muscleLabels =
+          responseBody.map((muscle) => muscle['label'] as String).toList();
+      return muscleLabels;
+    } else {
+      throw Exception('Failed to load muscles');
+    }
+  }
+
   static Future<List<Muscle>> fetchMuscles() async {
     final response = await http.get(Uri.parse('http://10.0.2.2:3000/muscles'));
 
@@ -132,6 +147,29 @@ class Api {
       print('Error: $e');
     }
     return null;
+  }
+
+  static Future<List<Exercice>> fetchExercisesByMuscleGroup(
+      String group) async {
+    // Step 1: Fetch muscle labels by group
+    List<String> muscleLabels = await fetchMusclesByGroup(group);
+
+    // Step 2: Fetch exercises by muscle labels
+    List<Exercice> exercises = [];
+    for (String label in muscleLabels) {
+      final response = await http
+          .get(Uri.parse('http://10.0.2.2:3000/exercises?muscleLabel=$label'));
+
+      if (response.statusCode == 200) {
+        List<dynamic> responseBody = json.decode(response.body);
+        exercises.addAll(responseBody
+            .map((exercise) => Exercice.fromJson(exercise))
+            .toList());
+      } else {
+        throw Exception('Failed to load exercises for muscle label: $label');
+      }
+    }
+    return exercises;
   }
 
   static Future<List<Map<String, dynamic>>> fetchExercises() async {
