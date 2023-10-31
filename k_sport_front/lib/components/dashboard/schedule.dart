@@ -281,8 +281,8 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                   }).toList(),
                                   onChanged: (Training? newValue) {
                                     setState(() {
-                                      trainingProvider.weekTrainings[index] =
-                                          newValue;
+                                      trainingProvider.updateTrainingForDay(
+                                          index, newValue);
                                     });
                                     widget.onTrainingAssigned(
                                         index + 1, newValue);

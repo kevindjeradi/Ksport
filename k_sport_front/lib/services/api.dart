@@ -12,7 +12,7 @@ class Api {
 
   static Future<http.Response> get(String url) async {
     final token = await _tokenService.getToken();
-    print("\n\n--------------token in Api.get: $token--------------\n\n");
+    print("\n--------------token in Api.get: $token");
     return http.get(
       Uri.parse(url),
       headers: {
@@ -25,7 +25,7 @@ class Api {
   static Future<http.Response> post(
       String url, Map<String, dynamic> data) async {
     final token = await _tokenService.getToken();
-    print("token in post $token");
+    print("\n--------------token in post $token");
     return http.post(
       Uri.parse(url),
       headers: {
@@ -46,6 +46,18 @@ class Api {
         'Authorization': 'Bearer $token',
       },
       body: jsonEncode(data),
+    );
+  }
+
+  static Future<http.Response> delete(String url) async {
+    final token = await _tokenService.getToken();
+    print("\n--------------token in Api.delete: $token");
+    return http.delete(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
     );
   }
 

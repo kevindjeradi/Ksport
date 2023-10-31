@@ -1,3 +1,4 @@
+// todays_workout.dart
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +20,7 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
   List<Map<String, dynamic>> workouts = [];
   bool isLoading = false;
   Training? training;
+  bool isWorkoutsLoading = false;
 
   @override
   void initState() {
@@ -26,11 +28,21 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
     _loadWorkouts();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadWorkouts();
+  }
+
   _loadWorkouts() async {
+    if (isWorkoutsLoading) return;
+
     try {
+      isWorkoutsLoading = true;
       await initializeDateFormatting('fr_FR', null);
       String day =
           DateFormat('EEEE', 'fr_FR').format(DateTime.now()).toLowerCase();
+
       if (mounted) {
         training = await TrainingService.fetchTrainingForDay(day);
         setState(() {
@@ -42,6 +54,8 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
       setState(() {
         isLoading = false;
       });
+    } finally {
+      isWorkoutsLoading = false;
     }
   }
 
@@ -52,57 +66,63 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
 
-    return InkWell(
-      onTap: () {
-        CustomNavigation.push(
-            context,
-            TrainingOverviewPage(
-              training: training!,
-            ));
-      },
-      child: Column(
-        children: [
-          workouts.isEmpty
-              ? Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    "Aucun entrainement prévu aujourd'hui",
-                    style: textTheme.headlineMedium,
+    return workouts.isEmpty
+        ? Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "Aucun entrainement prévu aujourd'hui",
+              style: textTheme.headlineMedium,
+            ),
+          )
+        : InkWell(
+            onTap: () {
+              if (training != null) {
+                CustomNavigation.push(
+                    context, TrainingOverviewPage(training: training!));
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    duration: Duration(seconds: 1),
+                    content: Text('Training not found for today.'),
                   ),
-                )
-              : Text(
+                );
+              }
+            },
+            child: Column(
+              children: [
+                Text(
                   "Entraînement du jour",
                   style: textTheme.headlineMedium,
                 ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: isLoading
-                ? const CircularProgressIndicator()
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: workouts.length,
-                    itemBuilder: (context, index) {
-                      final workout = workouts[index];
-                      return ListTile(
-                        leading: Image.network(
-                          'https://via.placeholder.com/100x30',
-                          fit: BoxFit.cover,
-                          height: 30,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: isLoading
+                      ? const CircularProgressIndicator()
+                      : ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: workouts.length,
+                          itemBuilder: (context, index) {
+                            final workout = workouts[index];
+                            return ListTile(
+                              leading: Image.network(
+                                'https://via.placeholder.com/100x30',
+                                fit: BoxFit.cover,
+                                height: 30,
+                              ),
+                              title: Text(
+                                workout['name'],
+                                style: textTheme.bodyLarge,
+                              ),
+                              subtitle: Text(
+                                '${workout['series']} séries x ${workout['reps']} reps',
+                                style: textTheme.bodySmall,
+                              ),
+                            );
+                          },
                         ),
-                        title: Text(
-                          workout['name'],
-                          style: textTheme.bodyLarge,
-                        ),
-                        subtitle: Text(
-                          '${workout['series']} séries x ${workout['reps']} reps',
-                          style: textTheme.bodySmall,
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
-      ),
-    );
+                ),
+              ],
+            ),
+          );
   }
 }

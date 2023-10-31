@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/trainings/trainings_form.dart';
@@ -99,8 +98,8 @@ class TrainingsListPageState extends State<TrainingsListPage> {
               color: theme.colorScheme.error,
             ),
             onPressed: () async {
-              await http.delete(Uri.parse(
-                  'http://10.0.2.2:3000/trainings/${trainings[index].id}'));
+              await Api.delete(
+                  'http://10.0.2.2:3000/trainings/${trainings[index].id}');
               setState(() {
                 trainings.removeAt(index);
               });
