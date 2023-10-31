@@ -1,5 +1,6 @@
 // register_page.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/services/user_service.dart';
 import 'package:k_sport_front/provider/auth_notifier.dart';
@@ -86,7 +87,7 @@ class RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        if (_loading) const Center(child: CircularProgressIndicator()),
+        if (_loading) const Center(child: CustomLoader()),
         Scaffold(
           backgroundColor: Theme.of(context).colorScheme.background, // Updated
           body: Center(

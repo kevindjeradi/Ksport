@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
@@ -68,7 +69,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
               ),
               const SizedBox(height: 10),
               trainingProvider.isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const Center(child: CustomLoader())
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: weekStatuses
@@ -216,7 +217,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                   ),
                 ),
                 content: trainingProvider.isLoading
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const Center(child: CustomLoader())
                     : trainingProvider.errorMessage.isNotEmpty
                         ? Text(
                             trainingProvider.errorMessage,

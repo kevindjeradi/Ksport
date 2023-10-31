@@ -1,5 +1,6 @@
 // exercice_page.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/components/exercices/workout_card.dart';
@@ -31,7 +32,7 @@ class ExercisesPage extends StatelessWidget {
           future: Api.fetchExercisesByMuscle(muscleLabel),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CustomLoader());
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

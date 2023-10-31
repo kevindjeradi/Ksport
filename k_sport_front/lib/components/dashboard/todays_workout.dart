@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/models/training.dart';
@@ -94,7 +95,7 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: isLoading
-                      ? const CircularProgressIndicator()
+                      ? const CustomLoader()
                       : ListView.builder(
                           shrinkWrap: true,
                           itemCount: workouts.length,

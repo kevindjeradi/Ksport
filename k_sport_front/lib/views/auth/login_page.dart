@@ -1,5 +1,6 @@
 // login_page.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
@@ -107,7 +108,7 @@ class LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        if (_loading) const Center(child: CircularProgressIndicator()),
+        if (_loading) const Center(child: CustomLoader()),
         Scaffold(
           backgroundColor: Theme.of(context).colorScheme.background,
           body: Center(
