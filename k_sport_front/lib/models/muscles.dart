@@ -4,14 +4,14 @@ class Muscle {
   final String imageUrl;
   final String label;
   final String detailTitle;
-  final String? groupe;
+  final String groupe;
 
   Muscle({
     required this.id,
     required this.imageUrl,
     required this.label,
     required this.detailTitle,
-    this.groupe,
+    required this.groupe,
   });
 
   factory Muscle.fromJson(Map<String, dynamic> json) {
