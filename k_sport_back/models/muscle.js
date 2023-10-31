@@ -11,7 +11,9 @@ const muscleSchema = new mongoose.Schema({
         type: String,
         unique: true  // <-- This ensures uniqueness
     },
-    detailDescription: String
+    detailDescription: String,
+    groupe: String,
+
 });
 
 

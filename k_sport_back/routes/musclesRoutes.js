@@ -14,6 +14,21 @@ router.get('/muscles', async (req, res) => {
     }
 });
 
+// GET all muscles by group
+router.get('/muscles/byGroup', async (req, res) => {
+    const group = req.query.group;
+    if (!group) {
+        return res.status(400).json({ error: 'Group query parameter is required' });
+    }
+
+    try {
+        const muscles = await Muscle.find({ groupe: group });
+        res.json(muscles);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // GET a specific muscle
 router.get('/muscles/:id', async (req, res) => {
     try {
