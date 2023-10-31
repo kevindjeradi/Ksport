@@ -2,14 +2,22 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/exercices/muscle_grid.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
+import 'package:k_sport_front/components/muscles/muscle_group_list.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/models/muscles.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/views/workout_page/create_muscle_page.dart';
+import 'package:k_sport_front/views/workout_page/exercice_page.dart';
 
 class MusclesPage extends StatelessWidget {
   final bool isSelectionMode;
   const MusclesPage({super.key, this.isSelectionMode = false});
+
+  void _onGroupSelected(String group, BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => ExercisesPage(muscleLabel: group, isGroup: true),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +34,8 @@ class MusclesPage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            MuscleGroupList(
+                onGroupSelected: (group) => _onGroupSelected(group, context)),
             isSelectionMode
                 ? const SizedBox()
                 : Padding(
