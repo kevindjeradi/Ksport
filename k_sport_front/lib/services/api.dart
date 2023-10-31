@@ -109,6 +109,7 @@ class Api {
         'imageUrl': muscle.imageUrl,
         'label': muscle.label,
         'detailTitle': muscle.detailTitle,
+        'groupe': muscle.groupe,
       },
     );
 
