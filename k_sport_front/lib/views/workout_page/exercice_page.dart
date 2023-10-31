@@ -11,10 +11,14 @@ import 'package:k_sport_front/services/api.dart';
 class ExercisesPage extends StatelessWidget {
   final String muscleLabel;
   final bool isSelectionMode;
+  final bool isGroup;
 
-  const ExercisesPage(
-      {Key? key, required this.muscleLabel, this.isSelectionMode = false})
-      : super(key: key);
+  const ExercisesPage({
+    Key? key,
+    required this.muscleLabel,
+    this.isSelectionMode = false,
+    this.isGroup = false,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,9 @@ class ExercisesPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: FutureBuilder<List<Exercice>>(
-          future: Api.fetchExercisesByMuscle(muscleLabel),
+          future: isGroup
+              ? Api.fetchExercisesByMuscleGroup(muscleLabel)
+              : Api.fetchExercisesByMuscle(muscleLabel),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CustomLoader());
