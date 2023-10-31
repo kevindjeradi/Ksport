@@ -1,3 +1,4 @@
+// exercicesRoutes.js
 const express = require('express');
 const Exercise = require('../models/Exercice');
 

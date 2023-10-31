@@ -34,15 +34,15 @@ class MusclesPage extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            MuscleGroupList(
-                onGroupSelected: (group) => _onGroupSelected(group, context)),
             isSelectionMode
                 ? const SizedBox()
                 : Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('Choisir un muscle',
+                    child: Text('Choisir un groupe ou un muscle',
                         style: theme.textTheme.displaySmall),
                   ),
+            MuscleGroupList(
+                onGroupSelected: (group) => _onGroupSelected(group, context)),
             Expanded(
               child: FutureBuilder<List<Muscle>>(
                 future: Api.fetchMuscles(),
