@@ -13,7 +13,6 @@ const muscleSchema = new mongoose.Schema({
     },
     detailDescription: String,
     groupe: String,
-
 });
 
 

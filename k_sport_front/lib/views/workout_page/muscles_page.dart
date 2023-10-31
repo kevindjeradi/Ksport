@@ -15,7 +15,11 @@ class MusclesPage extends StatelessWidget {
 
   void _onGroupSelected(String group, BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => ExercisesPage(muscleLabel: group, isGroup: true),
+      builder: (context) => ExercisesPage(
+        muscleLabel: group,
+        isGroup: true,
+        isSelectionMode: isSelectionMode,
+      ),
     ));
   }
 
