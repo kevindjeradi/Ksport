@@ -1,3 +1,4 @@
+// create_muscle_page.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
@@ -17,9 +18,11 @@ class CreateMusclePageState extends State<CreateMusclePage> {
   final _formKey = GlobalKey<FormState>();
   final _imageUrlController = TextEditingController();
   final _labelController = TextEditingController();
+  final _groupController = TextEditingController();
+  final List<String> muscleGroups = ["Jambes", "Bras", "Dos", "Torse"];
   bool _isLoading = false;
   String? _imageUrlPreview;
-  bool _UrlIsImage = false;
+  bool _urlIsImage = false;
 
   @override
   void dispose() {
@@ -40,7 +43,7 @@ class CreateMusclePageState extends State<CreateMusclePage> {
           return;
         }
       }
-      if (!_UrlIsImage) {
+      if (!_urlIsImage) {
         if (mounted) {
           showCustomSnackBar(
               context, "L'URL n'est pas une image", SnackBarType.error);
@@ -56,6 +59,7 @@ class CreateMusclePageState extends State<CreateMusclePage> {
           imageUrl: _imageUrlController.text,
           label: _labelController.text,
           detailTitle: _labelController.text,
+          groupe: _groupController.text,
         );
 
         await Api.addMuscle(muscle);
@@ -125,6 +129,38 @@ class CreateMusclePageState extends State<CreateMusclePage> {
                         },
                       ),
                       const SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        decoration: InputDecoration(
+                          labelText: 'Groupe de muscle',
+                          border: const OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.group_outlined,
+                              color: theme.colorScheme.primary),
+                          labelStyle:
+                              TextStyle(color: theme.colorScheme.onSurface),
+                        ),
+                        value: _groupController.text.isEmpty
+                            ? null
+                            : _groupController.text,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            _groupController.text = newValue!;
+                          });
+                        },
+                        items: muscleGroups
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Le groupe de muscle est obligatoire';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
                       TextFormField(
                         controller: _imageUrlController,
                         onChanged: (_) => _updatePreview(),
@@ -161,14 +197,14 @@ class CreateMusclePageState extends State<CreateMusclePage> {
                           loadingBuilder: (BuildContext context, Widget child,
                               ImageChunkEvent? loadingProgress) {
                             if (loadingProgress == null) {
-                              _UrlIsImage = true;
+                              _urlIsImage = true;
                               return child;
                             } else {
                               return const Center(child: CustomLoader());
                             }
                           },
                           errorBuilder: (context, error, stackTrace) {
-                            _UrlIsImage = false;
+                            _urlIsImage = false;
                             return Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
