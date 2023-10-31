@@ -86,6 +86,22 @@ class Api {
     }
   }
 
+  static Future<void> addMuscle(Muscle muscle) async {
+    const url = 'http://10.0.2.2:3000/muscles';
+    final response = await post(
+      url,
+      {
+        'imageUrl': muscle.imageUrl,
+        'label': muscle.label,
+        'detailTitle': muscle.detailTitle,
+      },
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception('Failed to add muscle');
+    }
+  }
+
   static Future<List<Exercice>> fetchExercisesByMuscle(
       String muscleLabel) async {
     final response = await http.get(
