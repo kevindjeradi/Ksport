@@ -17,6 +17,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
 
   void _goToNextExercise() {
     setState(() {
+      context.read<ScheduleTrainingProvider>().updateCurrentSet(1);
       _currentExerciseIndex++;
     });
   }
@@ -24,6 +25,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   void _goToPreviousExercise() {
     if (_currentExerciseIndex > 0) {
       setState(() {
+        context.read<ScheduleTrainingProvider>().updateCurrentSet(1);
         _currentExerciseIndex--;
       });
     }
