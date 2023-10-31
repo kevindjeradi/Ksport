@@ -27,20 +27,22 @@ void showCustomSnackBar(
   }
 
   final snackBar = SnackBar(
-    duration: const Duration(seconds: 1),
+    duration: const Duration(seconds: 2),
     content: Row(
       children: [
         Icon(
           iconData,
           color: textColor,
+          size: 20,
         ),
-        const SizedBox(width: 8.0),
+        const SizedBox(width: 16.0),
         Expanded(
           child: Text(
             message,
-            style: TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               color: textColor,
               fontSize: 16.0,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),
