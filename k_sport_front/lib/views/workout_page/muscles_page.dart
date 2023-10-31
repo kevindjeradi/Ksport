@@ -5,6 +5,7 @@ import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/models/muscles.dart';
 import 'package:k_sport_front/services/api.dart';
+import 'package:k_sport_front/views/workout_page/create_muscle_page.dart';
 
 class MusclesPage extends StatelessWidget {
   final bool isSelectionMode;
@@ -52,6 +53,15 @@ class MusclesPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: theme.colorScheme.secondaryContainer,
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const CreateMusclePage(),
+          ));
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

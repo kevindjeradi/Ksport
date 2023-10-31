@@ -8,9 +8,6 @@ class WelcomeBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    print(
-        "\n-------------in welcome banner: ${userProvider.username}-------------\n");
-
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
