@@ -1,5 +1,6 @@
 // register_page.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/services/user_service.dart';
 import 'package:k_sport_front/provider/auth_notifier.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
@@ -70,9 +71,8 @@ class RegisterPageState extends State<RegisterPage> {
         if (mounted) {
           Provider.of<AuthNotifier>(context, listen: false)
               .login(_usernameController.text, _passwordController.text);
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Successfully registered!'),
-          ));
+          showCustomSnackBar(
+              context, 'Inscription réussie !', SnackBarType.success);
         }
       } else {
         print("An error occurred: ${response['error']}");

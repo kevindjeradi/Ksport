@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:provider/provider.dart';
@@ -165,10 +166,10 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                           onPressed: () {
                             if (trainingProvider.todayWorkouts.isEmpty) {
                               Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text('Aucun entrainement à supprimer'),
-                              ));
+                              showCustomSnackBar(
+                                  context,
+                                  'Aucun entrainement à supprimer',
+                                  SnackBarType.info);
                             } else {
                               showDialog(
                                   context: context,
@@ -189,12 +190,10 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                             // Call deleteTrainingForDay method from provider
                                             trainingProvider
                                                 .deleteTrainingForDay(index);
-
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(const SnackBar(
-                                              content: Text(
-                                                  'Entrainement prévu supprimé!'),
-                                            ));
+                                            showCustomSnackBar(
+                                                context,
+                                                'Entrainement prévu supprimé!',
+                                                SnackBarType.success);
 
                                             Navigator.of(context).pop();
                                             Navigator.of(context).pop();

@@ -1,6 +1,7 @@
 // login_page.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
+import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/services/token_service.dart';
@@ -83,24 +84,21 @@ class LoginPageState extends State<LoginPage> {
         }
         if (mounted) {
           CustomNavigation.pushReplacement(context, const Home());
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Successfully logged in!'),
-          ));
+          showCustomSnackBar(
+              context, 'Connecté avec succès', SnackBarType.success);
         }
       } else {
         // Show error message
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Invalid credentials'),
-          ));
+          showCustomSnackBar(
+              context, 'Impossible de se connecter', SnackBarType.error);
         }
       }
     } catch (error) {
       // Show error message
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('An error occurred: $error'),
-        ));
+        showCustomSnackBar(
+            context, 'Une erreur est survenue -> $error', SnackBarType.error);
       }
     }
   }

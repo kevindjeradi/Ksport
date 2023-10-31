@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
+import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/services/training_service.dart';
@@ -80,12 +81,8 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
                 CustomNavigation.push(
                     context, TrainingOverviewPage(training: training!));
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    duration: Duration(seconds: 1),
-                    content: Text('Training not found for today.'),
-                  ),
-                );
+                showCustomSnackBar(
+                    context, 'Entrainement introuvable', SnackBarType.error);
               }
             },
             child: Column(
