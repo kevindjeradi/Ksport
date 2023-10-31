@@ -1,3 +1,4 @@
+// musclesRoutes.js
 const express = require('express');
 const Muscle = require('../models/Muscle');
 

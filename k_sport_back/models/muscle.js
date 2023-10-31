@@ -1,3 +1,4 @@
+// muscle.js
 const mongoose = require('mongoose');
 
 const muscleSchema = new mongoose.Schema({

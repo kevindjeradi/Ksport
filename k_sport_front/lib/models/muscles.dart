@@ -1,3 +1,4 @@
+// Muscle.dart
 class Muscle {
   final String id;
   final String imageUrl;
