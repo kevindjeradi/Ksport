@@ -2,54 +2,6 @@
 import 'package:flutter/material.dart';
 
 ThemeData themeLight(ColorScheme colorScheme) {
-  // Bleu
-  // ColorScheme colorScheme = const ColorScheme.light(
-  //   primary: Color(0xFF0056D2),
-  //   primaryContainer: Color(0xFFD6E4FF),
-  //   secondary: Color(0xFF007BFF),
-  //   secondaryContainer: Color(0xFFCCE0FF),
-  //   background: Color(0xFFF3F4F6),
-  //   surface: Colors.white,
-  //   error: Colors.redAccent,
-  //   onPrimary: Colors.white,
-  //   onSecondary: Colors.white,
-  //   onBackground: Colors.black,
-  //   onSurface: Colors.black,
-  //   onError: Colors.white,
-  // );
-
-  // Orange et marron
-  // ColorScheme colorScheme = const ColorScheme.light(
-  //   primary: Color(0xFFFF8A65),
-  //   primaryContainer: Color(0xFFFFBB93),
-  //   secondary: Color(0xFF8D6E63),
-  //   secondaryContainer: Color(0xFFC19A8B),
-  //   background: Color(0xFFF5F5F5),
-  //   surface: Colors.white,
-  //   error: Color(0xFFE57373),
-  //   onPrimary: Colors.white,
-  //   onSecondary: Colors.white,
-  //   onBackground: Colors.black,
-  //   onSurface: Colors.black,
-  //   onError: Colors.white,
-  // );
-
-  // moderne et lisse
-  // ColorScheme colorScheme = const ColorScheme.light(
-  //   primary: Color(0xFF2D4C7F),
-  //   primaryContainer: Color(0xFFD0DAE9),
-  //   secondary: Color(0xFFF4A261),
-  //   secondaryContainer: Color(0xFFFFE8D6),
-  //   background: Color(0xFFF0F4F8),
-  //   surface: Colors.white,
-  //   error: Color(0xFFE76F51),
-  //   onPrimary: Colors.white,
-  //   onSecondary: Colors.black,
-  //   onBackground: Colors.black,
-  //   onSurface: Colors.black,
-  //   onError: Colors.white,
-  // );
-
   TextTheme textTheme = const TextTheme(
     displayLarge: TextStyle(
         fontSize: 32.0, fontWeight: FontWeight.bold, color: Colors.black),
@@ -75,7 +27,6 @@ ThemeData themeLight(ColorScheme colorScheme) {
 
   return ThemeData(
     colorScheme: colorScheme,
-    brightness: Brightness.light,
     textTheme: textTheme,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(

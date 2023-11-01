@@ -29,10 +29,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeColorSchemeProvider>(context);
+
     return MaterialApp(
       title: 'K Sports',
-      theme: themeLight(
-          Provider.of<ThemeColorSchemeProvider>(context).colorScheme),
+      theme: themeLight(themeProvider.colorScheme),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,
