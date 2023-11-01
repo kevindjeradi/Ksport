@@ -1,6 +1,7 @@
 // profile_page.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
+import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -11,6 +12,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeProvider = Provider.of<ThemeColorSchemeProvider>(context);
 
     return Scaffold(
       appBar: ReturnAppBar(
@@ -51,6 +53,34 @@ class ProfilePage extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const Divider(height: 30.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Choisir un thème:"),
+                    DropdownButton<String>(
+                      value: themeProvider.currentThemeName,
+                      icon: const Icon(Icons.arrow_downward),
+                      elevation: 16,
+                      style: const TextStyle(color: Colors.deepPurple),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.deepPurpleAccent,
+                      ),
+                      onChanged: (String? newValue) {
+                        final newIndex =
+                            themeProvider.availableThemes.indexOf(newValue!);
+                        themeProvider.setColorScheme(newIndex);
+                      },
+                      items: themeProvider.availableThemes
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
               ],
             ),
           );

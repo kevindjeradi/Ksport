@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/provider/auth_notifier.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
+import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/theme/theme_light.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
@@ -16,6 +17,8 @@ void main() => runApp(
           ChangeNotifierProvider(create: (context) => UserProvider()),
           ChangeNotifierProvider(
               create: (context) => ScheduleTrainingProvider()),
+          ChangeNotifierProvider(
+              create: (context) => ThemeColorSchemeProvider()),
         ],
         child: const MyApp(),
       ),
@@ -28,7 +31,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'K Sports',
-      theme: themeLight(),
+      theme: themeLight(
+          Provider.of<ThemeColorSchemeProvider>(context).colorScheme),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,
