@@ -1,9 +1,11 @@
+// exercise_card.dart
 import 'package:flutter/material.dart';
 
 class ExerciseCard extends StatelessWidget {
   final TextEditingController labelController;
   final TextEditingController repsController;
   final TextEditingController setsController;
+  final TextEditingController weightController;
   final TextEditingController restTimeController;
   final VoidCallback onRemove;
 
@@ -12,6 +14,7 @@ class ExerciseCard extends StatelessWidget {
     required this.labelController,
     required this.repsController,
     required this.setsController,
+    required this.weightController,
     required this.restTimeController,
     required this.onRemove,
   }) : super(key: key);
@@ -75,6 +78,16 @@ class ExerciseCard extends StatelessWidget {
                         keyboardType: TextInputType.number,
                       ),
                     ),
+                    Flexible(
+                      child: TextField(
+                        controller: weightController,
+                        decoration: const InputDecoration(
+                          labelText: 'Poids (kg)',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                    )
                   ],
                 ),
               ],

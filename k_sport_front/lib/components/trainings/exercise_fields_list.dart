@@ -28,6 +28,7 @@ class ExerciseFieldsList extends StatelessWidget {
             labelController: controllerMap['label']!,
             repsController: controllerMap['repetitions']!,
             setsController: controllerMap['sets']!,
+            weightController: controllerMap['weight']!,
             restTimeController: controllerMap['restTime']!,
             onRemove: () => removeExerciseCallback(idx),
           );

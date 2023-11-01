@@ -1,3 +1,4 @@
+// training.js
 const mongoose = require('mongoose');
 
 const trainingSchema = new mongoose.Schema({
@@ -8,7 +9,8 @@ const trainingSchema = new mongoose.Schema({
         exerciseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Exercise' },
         repetitions: Number,
         sets: Number,
-        restTime: Number  // in seconds or minutes
+        weight: Number,
+        restTime: Number  // in seconds
     }],
     goal: String
 });

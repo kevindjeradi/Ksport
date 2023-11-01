@@ -1,3 +1,4 @@
+// trainings_form.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
@@ -41,6 +42,7 @@ class TrainingFormState extends State<TrainingForm> {
           'repetitions':
               TextEditingController(text: exercise['repetitions'].toString()),
           'sets': TextEditingController(text: exercise['sets'].toString()),
+          'weight': TextEditingController(text: exercise['weight'].toString()),
           'restTime':
               TextEditingController(text: exercise['restTime'].toString()),
         });
@@ -83,6 +85,7 @@ class TrainingFormState extends State<TrainingForm> {
         'exerciseId': TextEditingController(),
         'repetitions': TextEditingController(),
         'sets': TextEditingController(),
+        'weight': TextEditingController(),
         'restTime': TextEditingController(),
       });
     });
@@ -181,6 +184,7 @@ class TrainingFormState extends State<TrainingForm> {
           'exerciseId': controller['exerciseId']!.text,
           'repetitions': int.parse(controller['repetitions']!.text),
           'sets': int.parse(controller['sets']!.text),
+          'weight': double.parse(controller['weight']!.text),
           'restTime': int.parse(controller['restTime']!.text),
         });
       }
