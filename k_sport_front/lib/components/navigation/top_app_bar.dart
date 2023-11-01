@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
+import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/profile_page.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -19,15 +20,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.search),
+          icon: const Icon(Icons.logout),
           onPressed: () {
-            // Search functionality
-          },
-        ),
-        IconButton(
-          icon: const Icon(Icons.notifications),
-          onPressed: () {
-            // Handle notifications
+            CustomNavigation.pushReplacement(context, const LoginPage());
           },
         ),
       ],
