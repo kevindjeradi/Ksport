@@ -7,12 +7,14 @@ class ExerciseFieldsList extends StatelessWidget {
   final List<Map<String, TextEditingController>> exerciseControllers;
   final VoidCallback addExerciseCallback;
   final Function(int) removeExerciseCallback;
+  final Function(int) updateWeightControllers;
 
   const ExerciseFieldsList({
     super.key,
     required this.exerciseControllers,
     required this.addExerciseCallback,
     required this.removeExerciseCallback,
+    required this.updateWeightControllers,
   });
 
   @override
@@ -28,6 +30,7 @@ class ExerciseFieldsList extends StatelessWidget {
             labelController: controllerMap['label']!,
             repsController: controllerMap['repetitions']!,
             setsController: controllerMap['sets']!,
+            updateWeightControllers: () => updateWeightControllers(idx),
             weightController: controllerMap['weight']!,
             restTimeController: controllerMap['restTime']!,
             onRemove: () => removeExerciseCallback(idx),

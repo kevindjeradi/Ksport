@@ -1,13 +1,14 @@
 // exercise_card.dart
 import 'package:flutter/material.dart';
 
-class ExerciseCard extends StatelessWidget {
+class ExerciseCard extends StatefulWidget {
   final TextEditingController labelController;
   final TextEditingController repsController;
   final TextEditingController setsController;
   final TextEditingController weightController;
   final TextEditingController restTimeController;
   final VoidCallback onRemove;
+  final Function updateWeightControllers;
 
   const ExerciseCard({
     Key? key,
@@ -17,7 +18,49 @@ class ExerciseCard extends StatelessWidget {
     required this.weightController,
     required this.restTimeController,
     required this.onRemove,
+    required this.updateWeightControllers,
   }) : super(key: key);
+
+  @override
+  State<ExerciseCard> createState() => _ExerciseCardState();
+}
+
+class _ExerciseCardState extends State<ExerciseCard> {
+  late TextEditingController setsController;
+  late List<TextEditingController> weightControllers;
+
+  @override
+  void initState() {
+    super.initState();
+    setsController = widget.setsController;
+    weightControllers = widget.weightController.text
+        .split(',')
+        .map((e) => TextEditingController(text: e))
+        .toList();
+
+    setsController.addListener(() {
+      var currentSets = int.tryParse(setsController.text) ?? 0;
+
+      while (weightControllers.length < currentSets) {
+        weightControllers.add(TextEditingController(text: '0'));
+      }
+
+      if (weightControllers.length > currentSets) {
+        weightControllers = weightControllers.take(currentSets).toList();
+      }
+
+      widget.weightController.text =
+          weightControllers.map((e) => e.text).join(',');
+    });
+  }
+
+  @override
+  void dispose() {
+    for (var controller in weightControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +78,7 @@ class ExerciseCard extends StatelessWidget {
               children: [
                 TextField(
                   style: theme.textTheme.headlineSmall,
-                  controller: labelController,
+                  controller: widget.labelController,
                   textAlign: TextAlign.center,
                   decoration: const InputDecoration(
                     hintText: "Nom de l'exercice",
@@ -48,7 +91,7 @@ class ExerciseCard extends StatelessWidget {
                   children: [
                     Flexible(
                       child: TextField(
-                        controller: repsController,
+                        controller: widget.repsController,
                         decoration: const InputDecoration(
                           labelText: 'Répétitions',
                           border: OutlineInputBorder(),
@@ -59,7 +102,7 @@ class ExerciseCard extends StatelessWidget {
                     const SizedBox(width: 8.0),
                     Flexible(
                       child: TextField(
-                        controller: setsController,
+                        controller: widget.setsController,
                         decoration: const InputDecoration(
                           labelText: 'Séries',
                           border: OutlineInputBorder(),
@@ -70,7 +113,7 @@ class ExerciseCard extends StatelessWidget {
                     const SizedBox(width: 8.0),
                     Flexible(
                       child: TextField(
-                        controller: restTimeController,
+                        controller: widget.restTimeController,
                         decoration: const InputDecoration(
                           labelText: 'Repos (sec)',
                           border: OutlineInputBorder(),
@@ -80,7 +123,7 @@ class ExerciseCard extends StatelessWidget {
                     ),
                     Flexible(
                       child: TextField(
-                        controller: weightController,
+                        controller: widget.weightController,
                         decoration: const InputDecoration(
                           labelText: 'Poids (kg)',
                           border: OutlineInputBorder(),
@@ -98,7 +141,7 @@ class ExerciseCard extends StatelessWidget {
             right: 4,
             child: IconButton(
               icon: const Icon(Icons.remove_circle_outline),
-              onPressed: onRemove,
+              onPressed: widget.onRemove,
               tooltip: 'Supprimer',
             ),
           ),

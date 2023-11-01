@@ -24,6 +24,40 @@ class TrainingFormState extends State<TrainingForm> {
   final List<Map<String, TextEditingController>> _exerciseControllers = [];
   final TrainingService _trainingService = TrainingService();
 
+  void _addWeightController(int exerciseIndex) {
+    var currentWeightText = _exerciseControllers[exerciseIndex]['weight']!.text;
+    var newWeights =
+        currentWeightText.isEmpty ? [] : currentWeightText.split(',').toList();
+    newWeights.add('0'); // Adding a new weight with a default value
+    _exerciseControllers[exerciseIndex]['weight']!.text = newWeights.join(',');
+  }
+
+  void _removeWeightController(int exerciseIndex) {
+    var currentWeightText = _exerciseControllers[exerciseIndex]['weight']!.text;
+    var weights = currentWeightText.split(',');
+    if (weights.isNotEmpty) {
+      weights.removeLast();
+      _exerciseControllers[exerciseIndex]['weight']!.text = weights.join(',');
+    }
+  }
+
+  void _updateWeightControllers(int exerciseIndex) {
+    int currentSets =
+        int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
+    var currentWeightText = _exerciseControllers[exerciseIndex]['weight']!.text;
+    var weights = currentWeightText.isEmpty ? [] : currentWeightText.split(',');
+
+    while (weights.length < currentSets) {
+      weights.add('0'); // Adding a new weight with a default value
+    }
+
+    if (weights.length > currentSets) {
+      weights = weights.take(currentSets).toList();
+    }
+
+    _exerciseControllers[exerciseIndex]['weight']!.text = weights.join(',');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -42,7 +76,7 @@ class TrainingFormState extends State<TrainingForm> {
           'repetitions':
               TextEditingController(text: exercise['repetitions'].toString()),
           'sets': TextEditingController(text: exercise['sets'].toString()),
-          'weight': TextEditingController(text: exercise['weight'].toString()),
+          'weight': TextEditingController(text: exercise['weight'].join(',')),
           'restTime':
               TextEditingController(text: exercise['restTime'].toString()),
         });
@@ -154,6 +188,7 @@ class TrainingFormState extends State<TrainingForm> {
                         exerciseControllers: _exerciseControllers,
                         addExerciseCallback: _addExercise,
                         removeExerciseCallback: _removeExercise,
+                        updateWeightControllers: _updateWeightControllers,
                       ),
                     ],
                   ),
@@ -179,12 +214,17 @@ class TrainingFormState extends State<TrainingForm> {
     if (_formKey.currentState?.validate() == true) {
       List<Map<String, dynamic>> exercisesData = [];
       for (var controller in _exerciseControllers) {
+        var weights = controller['weight']!
+            .text
+            .split(',')
+            .map((e) => double.tryParse(e) ?? 0.0)
+            .toList();
         exercisesData.add({
           'label': controller['label']!.text,
           'exerciseId': controller['exerciseId']!.text,
           'repetitions': int.parse(controller['repetitions']!.text),
           'sets': int.parse(controller['sets']!.text),
-          'weight': double.parse(controller['weight']!.text),
+          'weight': weights,
           'restTime': int.parse(controller['restTime']!.text),
         });
       }
