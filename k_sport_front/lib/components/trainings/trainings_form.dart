@@ -25,36 +25,38 @@ class TrainingFormState extends State<TrainingForm> {
   final TrainingService _trainingService = TrainingService();
 
   void _addWeightController(int exerciseIndex) {
-    var currentWeightText = _exerciseControllers[exerciseIndex]['weight']!.text;
-    var newWeights =
-        currentWeightText.isEmpty ? [] : currentWeightText.split(',').toList();
-    newWeights.add('0'); // Adding a new weight with a default value
-    _exerciseControllers[exerciseIndex]['weight']!.text = newWeights.join(',');
+    int currentSets =
+        int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
+    _exerciseControllers[exerciseIndex]['sets']!.text =
+        (currentSets + 1).toString();
+    _updateWeightControllers(exerciseIndex);
   }
 
   void _removeWeightController(int exerciseIndex) {
-    var currentWeightText = _exerciseControllers[exerciseIndex]['weight']!.text;
-    var weights = currentWeightText.split(',');
-    if (weights.isNotEmpty) {
-      weights.removeLast();
-      _exerciseControllers[exerciseIndex]['weight']!.text = weights.join(',');
+    int currentSets =
+        int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
+    if (currentSets > 0) {
+      _exerciseControllers[exerciseIndex]['sets']!.text =
+          (currentSets - 1).toString();
+      _updateWeightControllers(exerciseIndex);
     }
   }
 
   void _updateWeightControllers(int exerciseIndex) {
     int currentSets =
         int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
-    var currentWeightText = _exerciseControllers[exerciseIndex]['weight']!.text;
-    var weights = currentWeightText.isEmpty ? [] : currentWeightText.split(',');
+    var weights =
+        _exerciseControllers[exerciseIndex]['weight']!.text.split(',').toList();
 
-    while (weights.length < currentSets) {
-      weights.add('0'); // Adding a new weight with a default value
+    // Adjust the weights list size to match currentSets
+    if (weights.length < currentSets) {
+      weights
+          .addAll(List.generate(currentSets - weights.length, (index) => '0'));
+    } else if (weights.length > currentSets) {
+      weights = weights.sublist(0, currentSets);
     }
 
-    if (weights.length > currentSets) {
-      weights = weights.take(currentSets).toList();
-    }
-
+    // Update the weight controller
     _exerciseControllers[exerciseIndex]['weight']!.text = weights.join(',');
   }
 
@@ -214,11 +216,12 @@ class TrainingFormState extends State<TrainingForm> {
     if (_formKey.currentState?.validate() == true) {
       List<Map<String, dynamic>> exercisesData = [];
       for (var controller in _exerciseControllers) {
-        var weights = controller['weight']!
+        List<double> weights = controller['weight']!
             .text
             .split(',')
             .map((e) => double.tryParse(e) ?? 0.0)
             .toList();
+        print('\n\n\nweights: $weights\n\n\n');
         exercisesData.add({
           'label': controller['label']!.text,
           'exerciseId': controller['exerciseId']!.text,

@@ -33,24 +33,42 @@ class _ExerciseCardState extends State<ExerciseCard> {
   void initState() {
     super.initState();
     setsController = widget.setsController;
-    weightControllers = widget.weightController.text
-        .split(',')
-        .map((e) => TextEditingController(text: e))
-        .toList();
+    weightControllers = List.generate(
+      widget.weightController.text.split(',').length,
+      (index) => TextEditingController(
+          text: widget.weightController.text.split(',')[index]),
+    );
+
+    // Update the parent weight controller when a weight controller changes
+    for (var controller in weightControllers) {
+      controller.addListener(() {
+        widget.weightController.text =
+            weightControllers.map((e) => e.text).join(',');
+      });
+    }
 
     setsController.addListener(() {
       var currentSets = int.tryParse(setsController.text) ?? 0;
-
-      while (weightControllers.length < currentSets) {
-        weightControllers.add(TextEditingController(text: '0'));
+      if (currentSets != weightControllers.length) {
+        setState(() {
+          if (weightControllers.length < currentSets) {
+            weightControllers.addAll(List.generate(
+                currentSets - weightControllers.length,
+                (index) => TextEditingController(text: '0')
+                  ..addListener(() {
+                    widget.weightController.text =
+                        weightControllers.map((e) => e.text).join(',');
+                  })));
+          } else if (weightControllers.length > currentSets) {
+            weightControllers
+                .sublist(currentSets)
+                .forEach((controller) => controller.dispose());
+            weightControllers = weightControllers.sublist(0, currentSets);
+          }
+          widget.weightController.text =
+              weightControllers.map((e) => e.text).join(',');
+        });
       }
-
-      if (weightControllers.length > currentSets) {
-        weightControllers = weightControllers.take(currentSets).toList();
-      }
-
-      widget.weightController.text =
-          weightControllers.map((e) => e.text).join(',');
     });
   }
 
@@ -121,17 +139,27 @@ class _ExerciseCardState extends State<ExerciseCard> {
                         keyboardType: TextInputType.number,
                       ),
                     ),
-                    Flexible(
-                      child: TextField(
-                        controller: widget.weightController,
-                        decoration: const InputDecoration(
-                          labelText: 'Poids (kg)',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                    )
                   ],
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
+                Row(
+                  children: List.generate(weightControllers.length, (index) {
+                    return Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: TextField(
+                          controller: weightControllers[index],
+                          decoration: InputDecoration(
+                            labelText: 'Poids ${index + 1} (kg)',
+                            border: const OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                        ),
+                      ),
+                    );
+                  }),
                 ),
               ],
             ),
