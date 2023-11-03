@@ -33,9 +33,9 @@ class _TimerPageState extends State<TimerPage> {
   final CountDownController _controller = CountDownController();
   bool _isPaused = false;
 
-  void _sendScheduledNotif(int delayInSeconds) {
-    widget.notificationHandler.sendScheduledNotif(
-        delayInSeconds); // Update the method call to use the NotificationHandler instance
+  void _sendScheduledNotif(int delayInSeconds, String currentExerciseName) {
+    widget.notificationHandler.sendScheduledNotif(delayInSeconds,
+        "Prochaine série", "Temps de repos fini pour $currentExerciseName");
   }
 
   void _cancelScheduledNotification(int id) {
@@ -65,7 +65,8 @@ class _TimerPageState extends State<TimerPage> {
             final seconds = int.tryParse(parts[1]);
             if (minutes != null && seconds != null) {
               final remainingTimeInSeconds = minutes * 60 + seconds;
-              _sendScheduledNotif(remainingTimeInSeconds);
+              _sendScheduledNotif(
+                  remainingTimeInSeconds, widget.currentExercise['name']);
             } else {
               print('Failed to parse minutes and/or seconds');
             }
@@ -104,6 +105,7 @@ class _TimerPageState extends State<TimerPage> {
             RestTimer(
               controller: _controller,
               restTime: widget.restTime,
+              currentExerciseName: widget.currentExercise['name'],
               sendScheduledNotif: _sendScheduledNotif,
               onTimerFinish: () {
                 Navigator.of(context).pop();
@@ -138,6 +140,7 @@ class _TimerPageState extends State<TimerPage> {
 class RestTimer extends StatelessWidget {
   final CountDownController controller;
   final int restTime;
+  final String currentExerciseName;
   final bool isPaused;
   final Function sendScheduledNotif;
   final Function toggleTimer;
@@ -149,6 +152,7 @@ class RestTimer extends StatelessWidget {
     Key? key,
     required this.controller,
     required this.restTime,
+    required this.currentExerciseName,
     required this.isPaused,
     required this.sendScheduledNotif,
     required this.toggleTimer,
@@ -218,7 +222,7 @@ class RestTimer extends StatelessWidget {
                   autoStart: true,
                   onStart: () {
                     print('Countdown Started');
-                    sendScheduledNotif(restTime);
+                    sendScheduledNotif(restTime, currentExerciseName);
                   },
                   onComplete: () {
                     print('Countdown Ended');

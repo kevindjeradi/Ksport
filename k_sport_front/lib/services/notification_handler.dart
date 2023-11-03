@@ -6,7 +6,7 @@ class NotificationHandler {
 
   NotificationHandler(this.flutterLocalNotificationsPlugin);
 
-  Future<void> sendInstantNotif() async {
+  Future<void> sendInstantNotif(String title, String body) async {
     const AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails('your channel id', 'your channel name',
             channelDescription: 'your channel description',
@@ -15,16 +15,16 @@ class NotificationHandler {
             ticker: 'ticker');
     const NotificationDetails notificationDetails =
         NotificationDetails(android: androidNotificationDetails);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'plain title', 'plain body', notificationDetails,
-        payload: 'item x');
+    await flutterLocalNotificationsPlugin
+        .show(0, title, body, notificationDetails, payload: 'item x');
   }
 
-  Future<void> sendScheduledNotif(int delayInSeconds) async {
+  Future<void> sendScheduledNotif(
+      int delayInSeconds, String title, String body) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         0,
-        'scheduled title',
-        'scheduled body',
+        title,
+        body,
         tz.TZDateTime.now(tz.local).add(Duration(seconds: delayInSeconds)),
         const NotificationDetails(
             android: AndroidNotificationDetails(
