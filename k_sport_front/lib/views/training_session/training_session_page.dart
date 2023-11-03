@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
+import 'package:k_sport_front/services/notification_handler.dart';
 import 'package:k_sport_front/views/training_session/timer_page.dart';
 import 'package:provider/provider.dart';
 
@@ -36,6 +37,9 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     if (restTime > 0) {
       final provider =
           Provider.of<ScheduleTrainingProvider>(context, listen: false);
+      final notificationHandler =
+          Provider.of<NotificationHandler>(context, listen: false);
+
       final exercises = provider.todayWorkouts;
 
       final currentExercise = exercises[_currentExerciseIndex];
@@ -48,13 +52,13 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
         context,
         MaterialPageRoute(
           builder: (context) => TimerPage(
-            restTime: restTime,
-            onTimerFinish: _onTimerFinish,
-            currentExercise: currentExercise,
-            nextExercise: nextExercise ?? {},
-            totalExercises: exercises.length,
-            currentExerciseIndex: _currentExerciseIndex,
-          ),
+              restTime: restTime,
+              onTimerFinish: _onTimerFinish,
+              currentExercise: currentExercise,
+              nextExercise: nextExercise ?? {},
+              totalExercises: exercises.length,
+              currentExerciseIndex: _currentExerciseIndex,
+              notificationHandler: notificationHandler),
         ),
       );
     }

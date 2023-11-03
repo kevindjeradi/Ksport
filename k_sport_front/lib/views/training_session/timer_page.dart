@@ -3,6 +3,7 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
+import 'package:k_sport_front/services/notification_handler.dart';
 
 class TimerPage extends StatefulWidget {
   final int restTime;
@@ -11,16 +12,18 @@ class TimerPage extends StatefulWidget {
   final Map<String, dynamic> currentExercise;
   final int totalExercises;
   final int currentExerciseIndex;
+  final NotificationHandler notificationHandler;
 
-  const TimerPage({
-    Key? key,
-    required this.restTime,
-    required this.onTimerFinish,
-    required this.nextExercise,
-    required this.currentExercise,
-    required this.totalExercises,
-    required this.currentExerciseIndex,
-  }) : super(key: key);
+  const TimerPage(
+      {Key? key,
+      required this.restTime,
+      required this.onTimerFinish,
+      required this.nextExercise,
+      required this.currentExercise,
+      required this.totalExercises,
+      required this.currentExerciseIndex,
+      required this.notificationHandler})
+      : super(key: key);
 
   @override
   State<TimerPage> createState() => _TimerPageState();
@@ -30,10 +33,20 @@ class _TimerPageState extends State<TimerPage> {
   final CountDownController _controller = CountDownController();
   bool _isPaused = false;
 
+  void _sendScheduledNotif(int delayInSeconds) {
+    widget.notificationHandler.sendScheduledNotif(
+        delayInSeconds); // Update the method call to use the NotificationHandler instance
+  }
+
+  void _cancelScheduledNotification(int id) {
+    widget.notificationHandler.cancelScheduledNotification(id);
+  }
+
 // Method to skip the rest time and go to the next exercise
   void _skipTimer() {
     if (mounted) {
       _controller.pause();
+      _cancelScheduledNotification(0);
       Navigator.of(context).pop();
       widget.onTimerFinish();
     }
@@ -43,9 +56,29 @@ class _TimerPageState extends State<TimerPage> {
   void _toggleTimer() {
     if (mounted) {
       if (_isPaused) {
+        // Get the remaining time when resuming
+        final remainingTimeAsString = _controller.getTime();
+        if (remainingTimeAsString != null) {
+          final parts = remainingTimeAsString.split(':');
+          if (parts.length == 2) {
+            final minutes = int.tryParse(parts[0]);
+            final seconds = int.tryParse(parts[1]);
+            if (minutes != null && seconds != null) {
+              final remainingTimeInSeconds = minutes * 60 + seconds;
+              _sendScheduledNotif(remainingTimeInSeconds);
+            } else {
+              print('Failed to parse minutes and/or seconds');
+            }
+          } else {
+            print('Unexpected time format');
+          }
+        } else {
+          print('Failed to get remaining time');
+        }
         _controller.resume();
       } else {
         _controller.pause();
+        _cancelScheduledNotification(0);
       }
 
       setState(() {
@@ -71,16 +104,22 @@ class _TimerPageState extends State<TimerPage> {
             RestTimer(
               controller: _controller,
               restTime: widget.restTime,
+              sendScheduledNotif: _sendScheduledNotif,
               onTimerFinish: () {
                 Navigator.of(context).pop();
                 widget.onTimerFinish();
               },
               stopTimer: () {
+                _cancelScheduledNotification(0);
                 Navigator.of(context).pop();
               },
               isPaused: _isPaused,
-              toggleTimer: _toggleTimer,
-              skipTimer: _skipTimer,
+              toggleTimer: () {
+                _toggleTimer();
+              },
+              skipTimer: () {
+                _skipTimer();
+              },
             ),
             const SizedBox(height: 20),
             ExerciseProgressIndicator(
@@ -100,6 +139,7 @@ class RestTimer extends StatelessWidget {
   final CountDownController controller;
   final int restTime;
   final bool isPaused;
+  final Function sendScheduledNotif;
   final Function toggleTimer;
   final Function onTimerFinish;
   final Function stopTimer;
@@ -110,6 +150,7 @@ class RestTimer extends StatelessWidget {
     required this.controller,
     required this.restTime,
     required this.isPaused,
+    required this.sendScheduledNotif,
     required this.toggleTimer,
     required this.onTimerFinish,
     required this.stopTimer,
@@ -175,7 +216,10 @@ class RestTimer extends StatelessWidget {
                   isReverse: true,
                   isTimerTextShown: true,
                   autoStart: true,
-                  onStart: () => print('Countdown Started'),
+                  onStart: () {
+                    print('Countdown Started');
+                    sendScheduledNotif(restTime);
+                  },
                   onComplete: () {
                     print('Countdown Ended');
                     onTimerFinish();

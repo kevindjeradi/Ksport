@@ -4,28 +4,67 @@ import 'package:k_sport_front/provider/auth_notifier.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
+import 'package:k_sport_front/services/notification_handler.dart';
 import 'package:k_sport_front/theme/theme_light.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/auth/register_page.dart';
 import 'package:k_sport_front/views/home.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:logger/logger.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+var logger = Logger(
+  printer: PrettyPrinter(),
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize the plugin.
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  logger.i("trying to configure LocalTimeZone");
+  await _configureLocalTimeZone();
+  logger.i("configured LocalTimeZone");
+
   const AndroidInitializationSettings initializationSettingsAndroid =
-      AndroidInitializationSettings('hakedj'); // Use your app's icon here
-  const InitializationSettings initializationSettings = InitializationSettings(
-    android: initializationSettingsAndroid,
+      AndroidInitializationSettings('hakedj');
+
+  final DarwinInitializationSettings initializationSettingsDarwin =
+      DarwinInitializationSettings(
+    requestSoundPermission: true,
+    requestBadgePermission: true,
+    requestAlertPermission: true,
+    onDidReceiveLocalNotification:
+        (int id, String? title, String? body, String? payload) async {},
   );
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+    iOS: initializationSettingsDarwin,
+  );
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse:
+        (NotificationResponse notificationResponse) {
+      logger.i("onDidReceiveNotificationResponse");
+    },
+    onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
+  );
+
+  _isAndroidPermissionGranted();
+
+  final notificationHandler =
+      NotificationHandler(flutterLocalNotificationsPlugin);
+
   runApp(
     MultiProvider(
       providers: [
+        Provider<NotificationHandler>.value(value: notificationHandler),
         ChangeNotifierProvider(create: (context) => AuthNotifier()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => ScheduleTrainingProvider()),
@@ -66,5 +105,40 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const Home(),
       },
     );
+  }
+}
+
+Future<void> _configureLocalTimeZone() async {
+  tz.initializeTimeZones();
+  final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+  logger.i("timeZoneName: $timeZoneName");
+  tz.setLocalLocation(tz.getLocation(timeZoneName));
+}
+
+void notificationTapBackground(NotificationResponse notificationResponse) {
+  logger.i('notification(${notificationResponse.id}) action tapped: '
+      '${notificationResponse.actionId} with'
+      ' payload: ${notificationResponse.payload}');
+  if (notificationResponse.input?.isNotEmpty ?? false) {
+    logger.i(
+        'notification action tapped with input: ${notificationResponse.input}');
+  }
+}
+
+Future<void> _isAndroidPermissionGranted() async {
+  final bool granted = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.areNotificationsEnabled() ??
+      false;
+
+  logger.i("is android permission granted: $granted");
+
+  final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+      flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+
+  if (!granted) {
+    await androidImplementation?.requestNotificationsPermission();
   }
 }
