@@ -11,7 +11,8 @@ class CompletedTrainings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
-    final completedTrainings = userProvider.completedTrainings;
+    final completedTrainings =
+        userProvider.completedTrainings?.reversed.toList();
     final theme = Theme.of(context);
 
     return ListView.builder(
