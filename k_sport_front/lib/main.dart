@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       title: 'K Sports',
-      theme: themeLight(themeProvider.colorScheme),
+      theme: themeLight(themeProvider.colorScheme, themeProvider.textTheme),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.blue,

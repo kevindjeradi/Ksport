@@ -2,6 +2,45 @@
 import 'package:flutter/material.dart';
 
 class ThemeColorSchemeProvider with ChangeNotifier {
+  TextTheme _getTextTheme(ColorScheme colorScheme) {
+    return TextTheme(
+      displayLarge: TextStyle(
+          fontSize: 32.0,
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onBackground),
+      displayMedium: TextStyle(
+          fontSize: 28.0,
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onBackground),
+      displaySmall: TextStyle(
+          fontSize: 24.0,
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onBackground),
+      headlineMedium: TextStyle(
+          fontSize: 20.0,
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onBackground),
+      headlineSmall: TextStyle(
+          fontSize: 18.0,
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onBackground),
+      titleLarge: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onBackground),
+      titleMedium: TextStyle(fontSize: 16.0, color: colorScheme.onBackground),
+      titleSmall: TextStyle(fontSize: 14.0, color: colorScheme.onBackground),
+      bodyLarge: TextStyle(fontSize: 16.0, color: colorScheme.onBackground),
+      bodyMedium: TextStyle(fontSize: 14.0, color: colorScheme.onBackground),
+      labelLarge: TextStyle(
+          fontSize: 16.0,
+          fontWeight: FontWeight.bold,
+          color: colorScheme.onBackground),
+      bodySmall: TextStyle(fontSize: 12.0, color: colorScheme.onBackground),
+      labelSmall: TextStyle(fontSize: 10.0, color: colorScheme.onBackground),
+    );
+  }
+
   final List<CustomColorScheme> _themes = [
     CustomColorScheme(
       name: "Moderne et Lisse",
@@ -12,12 +51,29 @@ class ThemeColorSchemeProvider with ChangeNotifier {
         secondaryContainer: Color(0xFFFFE8D6),
         background: Color(0xFFF0F4F8),
         surface: Colors.white,
-        error: Color(0xFFE76F51),
+        error: Color(0xFFE74C3C),
         onPrimary: Colors.white,
         onSecondary: Colors.black,
         onBackground: Colors.black,
         onSurface: Colors.black,
         onError: Colors.white,
+      ),
+    ),
+    CustomColorScheme(
+      name: "Sombre bleu gris",
+      colorScheme: const ColorScheme.dark(
+        primary: Color(0xFF2C3E50),
+        primaryContainer: Color(0xFF34495E),
+        secondary: Color(0xFF2C3E50),
+        secondaryContainer: Color(0xFF34495E),
+        background: Color(0xFF1C1C1C),
+        surface: Color(0xFF2C2C2C),
+        error: Color(0xFFE74C3C),
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onBackground: Colors.white,
+        onSurface: Colors.white,
+        onError: Colors.black,
       ),
     ),
     CustomColorScheme(
@@ -60,6 +116,7 @@ class ThemeColorSchemeProvider with ChangeNotifier {
 
   ColorScheme get colorScheme => _themes[_currentIndex].colorScheme;
   String get currentThemeName => _themes[_currentIndex].name;
+  TextTheme get textTheme => _getTextTheme(colorScheme);
   List<String> get availableThemes => _themes.map((t) => t.name).toList();
 
   void setColorScheme(int index) {
