@@ -1,7 +1,13 @@
 // theme_color_scheme_provider.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:k_sport_front/helpers/logger.dart';
+import 'package:k_sport_front/services/api.dart';
 
 class ThemeColorSchemeProvider with ChangeNotifier {
+  static final String baseUrl = dotenv.env['API_URL'] ??
+      'http://10.0.2.2:3000'; // Default URL if .env is not loaded
+
   TextTheme _getTextTheme(ColorScheme colorScheme) {
     return TextTheme(
       displayLarge: TextStyle(
@@ -122,6 +128,35 @@ class ThemeColorSchemeProvider with ChangeNotifier {
   void setColorScheme(int index) {
     _currentIndex = index;
     notifyListeners();
+  }
+
+  Future<void> updateTheme(String themeName) async {
+    final index = _themes.indexWhere((t) => t.name == themeName);
+    if (index != -1) {
+      _currentIndex = index;
+      notifyListeners();
+
+      final response = await Api().patch(
+        '$baseUrl/user/updateTheme',
+        {'theme': themeName},
+      );
+
+      if (response.statusCode != 200) {
+        // Handle error
+      }
+    }
+  }
+
+  void setThemeByName(String themeName) {
+    final index = _themes.indexWhere((t) => t.name == themeName);
+    Log.logger.i("setThemeByName: $themeName\n index: $index");
+    if (index != -1) {
+      _currentIndex = index;
+      notifyListeners();
+    } else {
+      Log.logger.e(themeName);
+      // Optionally handle the case where the themeName is not found
+    }
   }
 }
 
