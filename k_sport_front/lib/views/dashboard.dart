@@ -49,9 +49,7 @@ class Dashboard extends StatelessWidget {
             const SizedBox(height: 20),
             const TodaysWorkout(),
             const SizedBox(height: 20),
-            const WeeklyActivity(
-              progress: [false, true, false, true, true, true, true],
-            ),
+            const WeeklyActivity(),
           ],
         ),
       ),

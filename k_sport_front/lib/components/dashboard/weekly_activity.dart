@@ -1,24 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:k_sport_front/provider/user_provider.dart';
 
-class WeeklyActivity extends StatelessWidget {
-  final List<bool> progress;
+class WeeklyActivity extends StatefulWidget {
+  const WeeklyActivity({super.key});
 
-  const WeeklyActivity({super.key, required this.progress});
+  @override
+  WeeklyActivityState createState() => WeeklyActivityState();
+}
+
+class WeeklyActivityState extends State<WeeklyActivity> {
+  List<bool> progress = [false, false, false, false, false, false, false];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchProgress();
+  }
+
+  void fetchProgress() {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final completedTrainings = userProvider.completedTrainings;
+
+    // Assume the week starts on Monday
+    final now = DateTime.now();
+    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
+    final endOfWeek = startOfWeek.add(const Duration(days: 6));
+
+    for (var training in completedTrainings!) {
+      final dateCompleted = training.dateCompleted;
+      if (dateCompleted.isAfter(startOfWeek) &&
+          dateCompleted.isBefore(endOfWeek)) {
+        final dayOfWeek = dateCompleted.weekday - 1; // 0-indexed
+        setState(() {
+          progress[dayOfWeek] = true;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (progress.length != 7) {
-      throw ArgumentError(
-          'The progress list should contain exactly 7 values for each day of the week.');
-    }
-
     ThemeData theme = Theme.of(context);
     TextTheme textTheme = theme.textTheme;
     ColorScheme colorScheme = theme.colorScheme;
 
     return Column(
       children: [
-        Text("La semaine dernière", style: textTheme.headlineMedium),
+        Text("Cette semaine", style: textTheme.headlineMedium),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -53,9 +82,7 @@ class WeeklyActivity extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               TextButton(
-                onPressed: () {
-                  // Add navigation or detailed view functionality here
-                },
+                onPressed: () {},
                 child: Text("Voir les détails >", style: textTheme.bodyMedium),
               )
             ],
