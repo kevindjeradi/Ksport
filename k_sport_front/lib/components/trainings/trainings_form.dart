@@ -142,6 +142,7 @@ class TrainingFormState extends State<TrainingForm> {
     ThemeData theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: ReturnAppBar(
           barTitle: widget.editingTraining == null
               ? 'Nouvel entrainement'

@@ -94,6 +94,7 @@ class CreateMusclePageState extends State<CreateMusclePage> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: ReturnAppBar(
         barTitle: 'Ajouter un muscle',
         bgColor: theme.colorScheme.primary,

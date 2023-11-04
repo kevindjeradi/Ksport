@@ -45,6 +45,7 @@ class TrainingsListPageState extends State<TrainingsListPage> {
     ThemeData theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
         child: Column(

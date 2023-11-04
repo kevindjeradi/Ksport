@@ -112,12 +112,12 @@ class ScheduleComponentState extends State<ScheduleComponent> {
 
     switch (status) {
       case Status.checked:
-        bgColor = Colors.red;
+        bgColor = theme.colorScheme.error;
         icon = Icons.check_circle;
         break;
       case Status.current:
         bgColor = theme.colorScheme.surface;
-        textColor = theme.colorScheme.primary;
+        textColor = theme.colorScheme.onBackground;
         containerBorder =
             Border.all(width: 2.0, color: theme.colorScheme.primary);
         break;
@@ -252,8 +252,8 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 18,
-                                                  color:
-                                                      theme.colorScheme.primary,
+                                                  color: theme
+                                                      .colorScheme.onBackground,
                                                 ),
                                               ),
                                             ],

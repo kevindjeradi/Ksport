@@ -95,6 +95,7 @@ class _TimerPageState extends State<TimerPage> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: ReturnAppBar(
           bgColor: theme.colorScheme.primary,
           barTitle: widget.currentExercise['name'],

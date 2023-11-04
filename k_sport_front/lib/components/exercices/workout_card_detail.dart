@@ -20,6 +20,7 @@ class WorkoutCardDetail extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: ReturnAppBar(
           barTitle: "${title.toLowerCase()} pour $muscleLabel",
           bgColor: theme.colorScheme.primary,

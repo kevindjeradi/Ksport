@@ -46,6 +46,7 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
     final textTheme = theme.textTheme;
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: ReturnAppBar(
         bgColor: colorScheme.primary,
         barTitle: "Résumé de la séance",

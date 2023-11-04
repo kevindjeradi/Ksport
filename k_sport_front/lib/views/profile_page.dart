@@ -15,6 +15,7 @@ class ProfilePage extends StatelessWidget {
     final themeProvider = Provider.of<ThemeColorSchemeProvider>(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: ReturnAppBar(
         barTitle: "Profil",
         bgColor: theme.colorScheme.primary,
@@ -105,7 +106,7 @@ class ProfilePage extends StatelessWidget {
                             Text(
                               'Paramètres du compte',
                               style: theme.textTheme.titleLarge?.copyWith(
-                                color: theme.colorScheme.primary,
+                                color: theme.colorScheme.onBackground,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),

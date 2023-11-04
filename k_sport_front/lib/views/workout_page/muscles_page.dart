@@ -28,6 +28,7 @@ class MusclesPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: isSelectionMode
           ? ReturnAppBar(
               bgColor: theme.colorScheme.primary,

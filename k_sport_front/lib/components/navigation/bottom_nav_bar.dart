@@ -36,7 +36,7 @@ class CustomBottomNavBar extends StatelessWidget {
       currentIndex: currentIndex,
       onTap: onTap,
       selectedItemColor:
-          theme.colorScheme.primary, // Highlight color for active tab
+          theme.colorScheme.onBackground, // Highlight color for active tab
       unselectedItemColor: Colors.grey, // Non-active items color
       backgroundColor: theme.colorScheme.surface,
     );

@@ -25,6 +25,7 @@ class ExercisesPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: ReturnAppBar(
           barTitle: "Exercices",
           bgColor: theme.colorScheme.primary,
