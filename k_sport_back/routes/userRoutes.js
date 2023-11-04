@@ -1,3 +1,4 @@
+// userRoutes.js
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('../models/User');
@@ -61,7 +62,7 @@ router.get('/user/details', async (req, res) => {
             dateJoined: user.dateJoined,
             profileImage: user.profileImage,
             numberOfTrainings: numberOfTrainings,
-
+            theme: user.settings.theme,
         };
         res.json(userDetails);
     } catch (error) {
@@ -151,6 +152,29 @@ router.delete('/user/deleteTrainingForDay/:day', async (req, res) => {
         res.status(200).json({ message: 'Training deleted successfully' });
     } catch (error) {
         console.log("\n\n-------------->user trainingsSchedule[day] -->" + user.trainingsSchedule[day])
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.patch('/user/updateTheme', async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const userId = decoded.userId;
+        const { theme } = req.body;
+        console.log("\n\n->Going to update theme : " + theme)
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        
+        user.settings.theme = theme;
+        await user.save();
+        console.log("Updated theme : " + user.settings.theme)
+        res.status(200).json({ message: 'Theme updated successfully' });
+    } catch (error) {
+        console.log("Updated theme error: " + error.message)
         res.status(500).json({ error: error.message });
     }
 });
