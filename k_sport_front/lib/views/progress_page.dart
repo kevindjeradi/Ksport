@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:k_sport_front/components/history/completed_training.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
+import 'package:k_sport_front/views/history_page.dart';
 
 class ProgressPage extends StatelessWidget {
   const ProgressPage({super.key});
@@ -22,7 +23,31 @@ class ProgressPage extends StatelessWidget {
                   style: theme.textTheme.displaySmall,
                 ),
               ),
-              const Expanded(child: CompletedTrainings()),
+              InkWell(
+                onTap: () {
+                  CustomNavigation.push(context, const HistoryPage());
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Card(
+                    color: theme.colorScheme.surface,
+                    elevation: 5.0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      side: BorderSide(
+                          color: theme.colorScheme.onSurface, width: 1.0),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.history,
+                          size: 40, color: theme.colorScheme.onSurface),
+                      title: Center(
+                        child: Text('Historique de mes séances',
+                            style: theme.textTheme.headlineMedium),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
