@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/trainings/trainings_form.dart';
@@ -17,6 +18,8 @@ class TrainingsListPage extends StatefulWidget {
 
 class TrainingsListPageState extends State<TrainingsListPage> {
   List<Training> trainings = [];
+  static final String baseUrl = dotenv.env['API_URL'] ??
+      'http://10.0.2.2:3000'; // Default URL if .env is not loaded
 
   @override
   void initState() {
@@ -25,7 +28,7 @@ class TrainingsListPageState extends State<TrainingsListPage> {
   }
 
   _fetchTrainings() async {
-    final response = await Api().get('http://10.0.2.2:3000/trainings');
+    final response = await Api().get('$baseUrl/trainings');
     if (response.statusCode == 200) {
       setState(() {
         var jsonResponse = jsonDecode(response.body);
@@ -98,8 +101,7 @@ class TrainingsListPageState extends State<TrainingsListPage> {
               color: theme.colorScheme.error,
             ),
             onPressed: () async {
-              await Api().delete(
-                  'http://10.0.2.2:3000/trainings/${trainings[index].id}');
+              await Api().delete('$baseUrl/trainings/${trainings[index].id}');
               setState(() {
                 trainings.removeAt(index);
               });

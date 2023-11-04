@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/components/dashboard/schedule.dart';
 import 'package:k_sport_front/components/dashboard/todays_workout.dart';
 import 'package:k_sport_front/components/dashboard/weekly_activity.dart';
@@ -11,6 +12,9 @@ import 'package:provider/provider.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
+
+  static final String baseUrl = dotenv.env['API_URL'] ??
+      'http://10.0.2.2:3000'; // Default URL if .env is not loaded
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +34,7 @@ class Dashboard extends StatelessWidget {
                 trainingProvider.updateTrainingForDay(dayIndex - 1, training);
                 if (training != null) {
                   final response = await Api().post(
-                    'http://10.0.2.2:3000/user/updateTrainingForDay',
+                    '$baseUrl/user/updateTrainingForDay',
                     {"day": dayIndex, "trainingId": training.id},
                   );
 
