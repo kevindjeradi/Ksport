@@ -1,6 +1,6 @@
 // main.dart
 import 'package:flutter/material.dart';
-import 'package:k_sport_front/provider/auth_notifier.dart';
+import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
@@ -19,17 +19,17 @@ import 'package:timezone/timezone.dart' as tz;
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-var logger = Logger(
+final logger = Logger(
   printer: PrettyPrinter(),
 );
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  logger.i("trying to configure LocalTimeZone");
+  logger.i("Trying to configure LocalTimeZone");
   await _configureLocalTimeZone();
-  logger.i("configured LocalTimeZone");
 
+  logger.i("Trying to initialize flutter locale notifications");
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('hakedj');
 
@@ -51,7 +51,8 @@ void main() async {
     initializationSettings,
     onDidReceiveNotificationResponse:
         (NotificationResponse notificationResponse) {
-      logger.i("onDidReceiveNotificationResponse");
+      logger.i(
+          "Received notification response -> notification id: ${notificationResponse.id}");
     },
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
   );
@@ -65,7 +66,7 @@ void main() async {
     MultiProvider(
       providers: [
         Provider<NotificationHandler>.value(value: notificationHandler),
-        ChangeNotifierProvider(create: (context) => AuthNotifier()),
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => ScheduleTrainingProvider()),
         ChangeNotifierProvider(create: (context) => ThemeColorSchemeProvider()),
@@ -92,7 +93,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => Consumer<AuthNotifier>(
+        '/': (context) => Consumer<AuthProvider>(
               builder: (context, auth, child) {
                 if (auth.isAuthenticated) {
                   return const Home();

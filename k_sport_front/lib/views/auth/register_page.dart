@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/services/user_service.dart';
-import 'package:k_sport_front/provider/auth_notifier.dart';
+import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:provider/provider.dart';
 
@@ -70,7 +70,7 @@ class RegisterPageState extends State<RegisterPage> {
       _loading = false;
       if (response.containsKey('token')) {
         if (mounted) {
-          Provider.of<AuthNotifier>(context, listen: false)
+          Provider.of<AuthProvider>(context, listen: false)
               .login(_usernameController.text, _passwordController.text);
           showCustomSnackBar(
               context, 'Inscription réussie !', SnackBarType.success);

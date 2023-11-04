@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:k_sport_front/services/token_service.dart';
 import 'package:k_sport_front/services/user_service.dart';
 
-class AuthNotifier extends ChangeNotifier {
+class AuthProvider extends ChangeNotifier {
   bool _isAuthenticated = false;
   final _tokenService = TokenService();
   final _userService = UserService();
