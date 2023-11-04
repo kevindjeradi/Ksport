@@ -90,9 +90,18 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
             },
             child: Column(
               children: [
-                Text(
-                  "Entraînement du jour",
-                  style: textTheme.headlineMedium,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.ads_click),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Lancer l'entraînement du jour",
+                      style: textTheme.headlineMedium,
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
