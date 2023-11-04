@@ -1,3 +1,4 @@
+// user.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
@@ -25,7 +26,10 @@ const userSchema = new mongoose.Schema({
         dimanche: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
     },
     trainings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Training' }],
-    profileImage: String
+    profileImage: String,
+    settings: {
+        theme: String,
+    }
 });
 
 
