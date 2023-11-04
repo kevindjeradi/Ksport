@@ -66,6 +66,18 @@ class Api {
         ));
   }
 
+  Future<http.Response> patch(String url, Map<String, dynamic> data) async {
+    final token = await _tokenService.getToken();
+    return _handleRequest(() => http.patch(
+          Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+          body: jsonEncode(data),
+        ));
+  }
+
   Future<http.Response> delete(String url) async {
     final token = await _tokenService.getToken();
     return _handleRequest(() => http.delete(
