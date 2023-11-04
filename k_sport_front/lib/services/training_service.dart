@@ -55,6 +55,24 @@ class TrainingService {
     }
   }
 
+  static Future<Training?> fetchTraining(String? trainingId) async {
+    if (trainingId == null) return null; // Handle null trainingId
+
+    try {
+      final response = await Api().get('$baseUrl/trainings/$trainingId');
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return Training.fromJson(data);
+      } else {
+        throw Exception(
+            'Error fetching training, status code: ${response.statusCode}');
+      }
+    } catch (e, s) {
+      Log.logger.e('Error fetching training: $e\nStack trace: $s');
+      rethrow;
+    }
+  }
+
   static Future<Training?> fetchTrainingForDay(String day) async {
     try {
       final trainingData = await Api().fetchTrainingForDay(day.toLowerCase());
