@@ -65,10 +65,10 @@ void main() async {
     MultiProvider(
       providers: [
         Provider<NotificationHandler>.value(value: notificationHandler),
+        ChangeNotifierProvider(create: (context) => ThemeColorSchemeProvider()),
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => ScheduleTrainingProvider()),
-        ChangeNotifierProvider(create: (context) => ThemeColorSchemeProvider()),
       ],
       child: const MyApp(),
     ),

@@ -48,7 +48,6 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
 
       if (mounted) {
         training = await TrainingService.fetchTrainingForDay(day);
-        Log.logger.i("Todays training day: $day, training: $training");
         setState(() {
           isLoading = false;
         });

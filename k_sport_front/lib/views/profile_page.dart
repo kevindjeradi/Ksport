@@ -132,13 +132,19 @@ class ProfilePage extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                                 onChanged: (String? newValue) {
-                                  final newIndex = themeProvider.availableThemes
-                                      .indexOf(newValue!);
-                                  themeProvider.setColorScheme(newIndex);
-                                  showCustomSnackBar(
-                                      context,
-                                      "Thème changé avec succès!",
-                                      SnackBarType.success);
+                                  themeProvider
+                                      .updateTheme(newValue!)
+                                      .then((_) {
+                                    showCustomSnackBar(
+                                        context,
+                                        "Thème changé avec succès!",
+                                        SnackBarType.success);
+                                  }).catchError((error) {
+                                    showCustomSnackBar(
+                                        context,
+                                        "Erreur lors du changement de thème: $error",
+                                        SnackBarType.error);
+                                  });
                                 },
                                 items: themeProvider.availableThemes
                                     .map<DropdownMenuItem<String>>(

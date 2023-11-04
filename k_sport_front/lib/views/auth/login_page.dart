@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
+import 'package:k_sport_front/helpers/logger.dart';
+import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/services/token_service.dart';
@@ -79,7 +81,10 @@ class LoginPageState extends State<LoginPage> {
           // Fetch user details
           final userProvider =
               Provider.of<UserProvider>(context, listen: false);
+          final themeProvider =
+              Provider.of<ThemeColorSchemeProvider>(context, listen: false);
           await Api.populateUserProvider(userProvider);
+          themeProvider.setThemeByName(userProvider.theme);
         }
         if (mounted) {
           CustomNavigation.pushReplacement(context, const Home());
