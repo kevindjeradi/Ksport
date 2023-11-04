@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/services/user_service.dart';
 import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
@@ -76,10 +77,10 @@ class RegisterPageState extends State<RegisterPage> {
               context, 'Inscription réussie !', SnackBarType.success);
         }
       } else {
-        print("An error occurred: ${response['error']}");
+        Log.logger.e("An error occurred in register: ${response['error']}");
       }
     } catch (e) {
-      print("An error occurred: $e");
+      Log.logger.e("An error occurred in register: $e");
     }
   }
 
@@ -89,7 +90,7 @@ class RegisterPageState extends State<RegisterPage> {
       children: [
         if (_loading) const Center(child: CustomLoader()),
         Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.background, // Updated
+          backgroundColor: Theme.of(context).colorScheme.background,
           body: Center(
             child: SingleChildScrollView(
               child: Padding(
@@ -97,9 +98,7 @@ class RegisterPageState extends State<RegisterPage> {
                 child: Column(
                   children: [
                     Text('Inscription',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displayLarge), // Updated
+                        style: Theme.of(context).textTheme.displayLarge),
                     const SizedBox(height: 32),
                     TextField(
                       controller: _usernameController,

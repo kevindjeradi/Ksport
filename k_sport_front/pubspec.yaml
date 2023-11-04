@@ -45,6 +45,7 @@ dependencies:
   flutter_local_notifications: ^16.1.0
   flutter_timezone: ^1.0.8
   logger: ^2.0.2+1
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +72,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/muscles/groupes/
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

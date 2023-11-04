@@ -80,8 +80,6 @@ class LoginPageState extends State<LoginPage> {
           final userProvider =
               Provider.of<UserProvider>(context, listen: false);
           await Api.populateUserProvider(userProvider);
-          print(
-              "\n-------------in login page: ${userProvider.username}-------------\n");
         }
         if (mounted) {
           CustomNavigation.pushReplacement(context, const Home());

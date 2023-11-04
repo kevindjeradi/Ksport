@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/services/training_service.dart';
@@ -51,8 +52,8 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
           isLoading = false;
         });
       }
-    } catch (e) {
-      print('Error: $e');
+    } catch (e, s) {
+      Log.logger.e('Error: $e\nStack trace: $s');
       setState(() {
         isLoading = false;
       });

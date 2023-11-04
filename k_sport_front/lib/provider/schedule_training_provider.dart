@@ -103,7 +103,7 @@ class ScheduleTrainingProvider with ChangeNotifier {
       isLoading = true;
       notifyListeners();
       // Delete training from the database
-      await Api.deleteTrainingForDay(dayName);
+      await Api().deleteTrainingForDay(dayName);
 
       // Remove training from weekTrainings list
       weekTrainings[dayIndex] = null;

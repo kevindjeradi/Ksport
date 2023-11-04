@@ -34,8 +34,8 @@ class ExercisesPage extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: FutureBuilder<List<Exercice>>(
           future: isGroup
-              ? Api.fetchExercisesByMuscleGroup(muscleLabel)
-              : Api.fetchExercisesByMuscle(muscleLabel),
+              ? Api().fetchExercisesByMuscleGroup(muscleLabel)
+              : Api().fetchExercisesByMuscle(muscleLabel),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CustomLoader());

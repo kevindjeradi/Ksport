@@ -1,16 +1,19 @@
 // user_service.dart
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/services/token_service.dart';
 
 class UserService {
-  static const String _baseUrl = 'http://10.0.2.2:3000';
+  static final String baseUrl = dotenv.env['API_URL'] ??
+      'http://10.0.2.2:3000'; // Default URL if .env is not loaded
 
   Future<Map<String, dynamic>> signup(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/signup'),
+        Uri.parse('$baseUrl/signup'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -18,8 +21,8 @@ class UserService {
       );
 
       return json.decode(response.body);
-    } catch (e) {
-      print("An error occurred on signup: $e");
+    } catch (e, s) {
+      Log.logger.e("An error occurred on signup: $e\n Stack trace: $s");
       rethrow;
     }
   }
@@ -27,7 +30,7 @@ class UserService {
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/login'),
+        Uri.parse('$baseUrl/login'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -36,7 +39,7 @@ class UserService {
 
       return json.decode(response.body);
     } catch (e) {
-      print("An error occurred on login: $e");
+      Log.logger.e("An error occurred on login: $e");
       rethrow;
     }
   }
@@ -44,7 +47,7 @@ class UserService {
   Future<Map<String, dynamic>> fetchUserDetails(
       TokenService tokenService) async {
     try {
-      final response = await Api.get('$_baseUrl/user/details');
+      final response = await Api().get('$baseUrl/user/details');
 
       if (response.statusCode == 200) {
         return json.decode(response.body);
@@ -52,7 +55,7 @@ class UserService {
         throw Exception('Failed to fetch user details');
       }
     } catch (e) {
-      print("An error occurred fetching user details: $e");
+      Log.logger.e("An error occurred fetching user details: $e");
       rethrow;
     }
   }

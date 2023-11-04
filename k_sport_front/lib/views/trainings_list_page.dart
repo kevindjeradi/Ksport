@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/trainings/trainings_form.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/services/api.dart';
 
@@ -24,13 +25,12 @@ class TrainingsListPageState extends State<TrainingsListPage> {
   }
 
   _fetchTrainings() async {
-    final response = await Api.get('http://10.0.2.2:3000/trainings');
-    print(
-        "\n\n---------------response code: ${response.statusCode}---------------\n\n");
+    final response = await Api().get('http://10.0.2.2:3000/trainings');
     if (response.statusCode == 200) {
       setState(() {
         var jsonResponse = jsonDecode(response.body);
-        print("\n\n$jsonResponse\n\n");
+        Log.logger.i(
+            "_fetchTrainings in trainings_list_page -> response: $jsonResponse");
 
         trainings = jsonResponse
             .map<Training>((training) => Training.fromJson(training))
@@ -98,7 +98,7 @@ class TrainingsListPageState extends State<TrainingsListPage> {
               color: theme.colorScheme.error,
             ),
             onPressed: () async {
-              await Api.delete(
+              await Api().delete(
                   'http://10.0.2.2:3000/trainings/${trainings[index].id}');
               setState(() {
                 trainings.removeAt(index);

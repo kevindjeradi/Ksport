@@ -3,8 +3,8 @@ import 'package:k_sport_front/components/dashboard/schedule.dart';
 import 'package:k_sport_front/components/dashboard/todays_workout.dart';
 import 'package:k_sport_front/components/dashboard/weekly_activity.dart';
 import 'package:k_sport_front/components/dashboard/welcome_banner.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/training.dart';
-import 'package:http/http.dart' as http;
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:provider/provider.dart';
@@ -29,26 +29,25 @@ class Dashboard extends StatelessWidget {
                     listen: false);
                 trainingProvider.updateTrainingForDay(dayIndex - 1, training);
                 if (training != null) {
-                  final response = await Api.post(
+                  final response = await Api().post(
                     'http://10.0.2.2:3000/user/updateTrainingForDay',
                     {"day": dayIndex, "trainingId": training.id},
                   );
 
                   if (response.statusCode == 200) {
-                    print('Training updated successfully');
+                    Log.logger.i('Training updated successfully');
                   } else {
-                    print('Error updating training: ${response.body}');
+                    Log.logger.e('Error updating training: ${response.body}');
                   }
                 } else {
-                  final response = await http.delete(
-                    Uri.parse(
-                        'http://10.0.2.2:3000/user/deleteTrainingForDay/$dayIndex'),
-                  );
+                  final response = await Api().delete(
+                      'http://10.0.2.2:3000/user/deleteTrainingForDay/$dayIndex');
 
                   if (response.statusCode == 200) {
-                    print('Training deleted successfully');
+                    Log.logger.i('Training deleted successfully');
                   } else {
-                    print('Error deleting training');
+                    Log.logger.e(
+                        'Error deleting training response status: ${response.statusCode}');
                   }
                 }
               },

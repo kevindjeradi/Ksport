@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
-import 'package:k_sport_front/services/notification_handler.dart';
+import 'package:k_sport_front/helpers/notification_handler.dart';
 import 'package:k_sport_front/views/training_session/timer_page.dart';
 import 'package:provider/provider.dart';
 
@@ -103,7 +104,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
 
   void _finishTrainingSession() {
     // Implement the logic to finish the training session
-    print('Training Session Finished');
+    Log.logger.i('Training Session Finished');
     Navigator.pop(context);
   }
 

@@ -119,14 +119,10 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(12),
                           onTap: () async {
-                            print('Exercise tapped: ${exercise['label']}');
-                            print('Exercise tapped: ${exercise['_id']}');
-
                             final exerciseLabel = exercise['label'];
                             if (exerciseLabel != null) {
-                              final exerciseDetails =
-                                  await Api.fetchExerciseDetailsByLabel(
-                                      exerciseLabel);
+                              final exerciseDetails = await Api()
+                                  .fetchExerciseDetailsByLabel(exerciseLabel);
                               if (exerciseDetails != null && mounted) {
                                 CustomNavigation.push(
                                     context,

@@ -4,6 +4,7 @@ import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/components/trainings/exercise_fields_list.dart';
 import 'package:k_sport_front/components/trainings/training_form_input.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/services/training_service.dart';
 import 'package:k_sport_front/views/workout_page/muscles_page.dart'; // You should import MusclesPage
@@ -24,23 +25,23 @@ class TrainingFormState extends State<TrainingForm> {
   final List<Map<String, TextEditingController>> _exerciseControllers = [];
   final TrainingService _trainingService = TrainingService();
 
-  void _addWeightController(int exerciseIndex) {
-    int currentSets =
-        int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
-    _exerciseControllers[exerciseIndex]['sets']!.text =
-        (currentSets + 1).toString();
-    _updateWeightControllers(exerciseIndex);
-  }
+  // void _addWeightController(int exerciseIndex) {
+  //   int currentSets =
+  //       int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
+  //   _exerciseControllers[exerciseIndex]['sets']!.text =
+  //       (currentSets + 1).toString();
+  //   _updateWeightControllers(exerciseIndex);
+  // }
 
-  void _removeWeightController(int exerciseIndex) {
-    int currentSets =
-        int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
-    if (currentSets > 0) {
-      _exerciseControllers[exerciseIndex]['sets']!.text =
-          (currentSets - 1).toString();
-      _updateWeightControllers(exerciseIndex);
-    }
-  }
+  // void _removeWeightController(int exerciseIndex) {
+  //   int currentSets =
+  //       int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
+  //   if (currentSets > 0) {
+  //     _exerciseControllers[exerciseIndex]['sets']!.text =
+  //         (currentSets - 1).toString();
+  //     _updateWeightControllers(exerciseIndex);
+  //   }
+  // }
 
   void _updateWeightControllers(int exerciseIndex) {
     int currentSets =
@@ -221,7 +222,6 @@ class TrainingFormState extends State<TrainingForm> {
             .split(',')
             .map((e) => double.tryParse(e) ?? 0.0)
             .toList();
-        print('\n\n\nweights: $weights\n\n\n');
         exercisesData.add({
           'label': controller['label']!.text,
           'exerciseId': controller['exerciseId']!.text,
@@ -247,11 +247,15 @@ class TrainingFormState extends State<TrainingForm> {
             Navigator.pop(context);
           }
         } else {
-          print('Error saving the training: ${response.body}');
+          Log.logger.e(
+              'Error saving the training in training_form: ${response.body}');
         }
-      } catch (e) {
-        print('Error saving the training: $e');
+      } catch (e, s) {
+        Log.logger.e(
+            'Error saving the training in training_form -> error: $e\nStack trace: $s');
       }
+    } else {
+      Log.logger.w('Form validation failed in training_form');
     }
   }
 }

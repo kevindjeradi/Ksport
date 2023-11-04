@@ -49,7 +49,7 @@ class MusclesPage extends StatelessWidget {
                 onGroupSelected: (group) => _onGroupSelected(group, context)),
             Expanded(
               child: FutureBuilder<List<Muscle>>(
-                future: Api.fetchMuscles(),
+                future: Api().fetchMuscles(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CustomLoader());

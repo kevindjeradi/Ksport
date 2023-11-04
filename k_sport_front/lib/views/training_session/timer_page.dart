@@ -3,7 +3,8 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
-import 'package:k_sport_front/services/notification_handler.dart';
+import 'package:k_sport_front/helpers/logger.dart';
+import 'package:k_sport_front/helpers/notification_handler.dart';
 
 class TimerPage extends StatefulWidget {
   final int restTime;
@@ -68,13 +69,14 @@ class _TimerPageState extends State<TimerPage> {
               _sendScheduledNotif(
                   remainingTimeInSeconds, widget.currentExercise['name']);
             } else {
-              print('Failed to parse minutes and/or seconds');
+              Log.logger
+                  .e('Failed to parse minutes and/or seconds in timer_page');
             }
           } else {
-            print('Unexpected time format');
+            Log.logger.e('Unexpected time format in timer_page');
           }
         } else {
-          print('Failed to get remaining time');
+          Log.logger.e('Failed to get remaining time in timer_page');
         }
         _controller.resume();
       } else {
@@ -221,11 +223,11 @@ class RestTimer extends StatelessWidget {
                   isTimerTextShown: true,
                   autoStart: true,
                   onStart: () {
-                    print('Countdown Started');
+                    Log.logger.i('Countdown Started');
                     sendScheduledNotif(restTime, currentExerciseName);
                   },
                   onComplete: () {
-                    print('Countdown Ended');
+                    Log.logger.i('Countdown Ended');
                     onTimerFinish();
                   },
                 ),

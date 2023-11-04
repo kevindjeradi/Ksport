@@ -62,7 +62,7 @@ class CreateMusclePageState extends State<CreateMusclePage> {
           groupe: _groupController.text,
         );
 
-        await Api.addMuscle(muscle);
+        await Api().addMuscle(muscle);
         if (mounted) {
           showCustomSnackBar(
               context, "Le muscle a bien été ajouté!", SnackBarType.success);

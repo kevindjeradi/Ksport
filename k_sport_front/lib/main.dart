@@ -1,10 +1,12 @@
 // main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
-import 'package:k_sport_front/services/notification_handler.dart';
+import 'package:k_sport_front/helpers/notification_handler.dart';
 import 'package:k_sport_front/theme/theme_light.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/auth/register_page.dart';
@@ -12,24 +14,21 @@ import 'package:k_sport_front/views/home.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:logger/logger.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-final logger = Logger(
-  printer: PrettyPrinter(),
-);
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  logger.i("Trying to configure LocalTimeZone");
+  await dotenv.load(fileName: ".env");
+
+  Log.logger.i("Trying to configure LocalTimeZone");
   await _configureLocalTimeZone();
 
-  logger.i("Trying to initialize flutter locale notifications");
+  Log.logger.i("Trying to initialize flutter locale notifications");
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('hakedj');
 
@@ -51,7 +50,7 @@ void main() async {
     initializationSettings,
     onDidReceiveNotificationResponse:
         (NotificationResponse notificationResponse) {
-      logger.i(
+      Log.logger.i(
           "Received notification response -> notification id: ${notificationResponse.id}");
     },
     onDidReceiveBackgroundNotificationResponse: notificationTapBackground,
@@ -112,16 +111,16 @@ class MyApp extends StatelessWidget {
 Future<void> _configureLocalTimeZone() async {
   tz.initializeTimeZones();
   final String timeZoneName = await FlutterTimezone.getLocalTimezone();
-  logger.i("timeZoneName: $timeZoneName");
+  Log.logger.i("timeZoneName: $timeZoneName");
   tz.setLocalLocation(tz.getLocation(timeZoneName));
 }
 
 void notificationTapBackground(NotificationResponse notificationResponse) {
-  logger.i('notification(${notificationResponse.id}) action tapped: '
+  Log.logger.i('notification(${notificationResponse.id}) action tapped: '
       '${notificationResponse.actionId} with'
       ' payload: ${notificationResponse.payload}');
   if (notificationResponse.input?.isNotEmpty ?? false) {
-    logger.i(
+    Log.logger.i(
         'notification action tapped with input: ${notificationResponse.input}');
   }
 }
@@ -133,7 +132,7 @@ Future<void> _isAndroidPermissionGranted() async {
           ?.areNotificationsEnabled() ??
       false;
 
-  logger.i("is android permission granted: $granted");
+  Log.logger.i("is android permission granted: $granted");
 
   final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
       flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
