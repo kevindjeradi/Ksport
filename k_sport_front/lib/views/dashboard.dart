@@ -39,16 +39,6 @@ class Dashboard extends StatelessWidget {
                   } else {
                     Log.logger.e('Error updating training: ${response.body}');
                   }
-                } else {
-                  final response = await Api().delete(
-                      'http://10.0.2.2:3000/user/deleteTrainingForDay/$dayIndex');
-
-                  if (response.statusCode == 200) {
-                    Log.logger.i('Training deleted successfully');
-                  } else {
-                    Log.logger.e(
-                        'Error deleting training response status: ${response.statusCode}');
-                  }
                 }
               },
             ),

@@ -60,6 +60,7 @@ class ScheduleTrainingProvider with ChangeNotifier {
       notifyListeners();
       for (int index = 0; index < 7; index++) {
         await fetchTrainingForDay(dayNames[index], index);
+        notifyListeners();
       }
       isLoading = false;
       notifyListeners();

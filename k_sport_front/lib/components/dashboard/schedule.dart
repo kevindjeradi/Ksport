@@ -279,12 +279,12 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                       child: Text(training.name),
                                     );
                                   }).toList(),
-                                  onChanged: (Training? newValue) {
+                                  onChanged: (Training? newValue) async {
                                     setState(() {
                                       trainingProvider.updateTrainingForDay(
                                           index, newValue);
                                     });
-                                    widget.onTrainingAssigned(
+                                    await widget.onTrainingAssigned(
                                         index + 1, newValue);
                                   },
                                 )
