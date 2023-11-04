@@ -4,6 +4,7 @@ import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/helpers/notification_handler.dart';
+import 'package:k_sport_front/services/training_service.dart';
 import 'package:k_sport_front/views/training_session/timer_page.dart';
 import 'package:provider/provider.dart';
 
@@ -102,10 +103,25 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     }
   }
 
-  void _finishTrainingSession() {
+  void _finishTrainingSession() async {
     // Implement the logic to finish the training session
+    final provider =
+        Provider.of<ScheduleTrainingProvider>(context, listen: false);
+    final today = DateTime.now().weekday -
+        1; // DateTime.now().weekday returns 1 for Monday, 2 for Tuesday, etc.
+    final trainingId = provider.weekTrainings[today]!.id;
     Log.logger.i('Training Session Finished');
-    Navigator.pop(context);
+    try {
+      Log.logger.i('Try');
+      Log.logger.i(trainingId.toString());
+
+      await TrainingService.recordCompletedTraining(trainingId);
+      Log.logger.i('Training recorded successfully');
+    } catch (e) {
+      Log.logger.e('Failed to record training: $e');
+    }
+
+    // Navigator.pop(context);
   }
 
   @override
