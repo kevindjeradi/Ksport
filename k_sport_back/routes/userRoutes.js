@@ -63,6 +63,7 @@ router.get('/user/details', async (req, res) => {
             profileImage: user.profileImage,
             numberOfTrainings: numberOfTrainings,
             theme: user.settings.theme,
+            completedTrainings: user.history.completedTrainings,
         };
         res.json(userDetails);
     } catch (error) {
@@ -178,5 +179,29 @@ router.patch('/user/updateTheme', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+router.post('/user/recordCompletedTraining', async (req, res) => {
+    try {
+        const { trainingId, dateCompleted } = req.body;
+        const token = req.headers.authorization.split(' ')[1];
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const userId = decoded.userId;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        if (!mongoose.Types.ObjectId.isValid(trainingId)) {
+            return res.status(400).json({ error: 'Invalid trainingId format' });
+        }
+        const newCompletedTraining = { trainingId, dateCompleted };
+        user.history.completedTrainings.push(newCompletedTraining);
+        await user.save();
+        res.status(200).json({ message: 'Training recorded successfully' });
+    } catch (error) {
+        console.log("recordCompletedTraining error: " + error.message)
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 module.exports = router;

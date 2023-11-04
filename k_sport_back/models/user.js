@@ -16,6 +16,8 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    profileImage: String,
+    trainings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Training' }],
     trainingsSchedule: {
         lundi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
         mardi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
@@ -25,11 +27,15 @@ const userSchema = new mongoose.Schema({
         samedi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
         dimanche: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
     },
-    trainings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Training' }],
-    profileImage: String,
     settings: {
         theme: String,
-    }
+    },
+    history: {
+        completedTrainings: [{
+            trainingId: { type: mongoose.Schema.Types.ObjectId, ref: 'Training', required: true },
+            dateCompleted: { type: Date, required: true },
+        }],
+    },
 });
 
 
