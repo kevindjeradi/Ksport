@@ -19,14 +19,16 @@ class MuscleGroupRepartitionPie extends StatelessWidget {
       const Color(0xffffd54f),
     ];
 
+    final total = muscleGroupProportions.values.fold(0, (a, b) => a + b);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
             Text(
-              textAlign: TextAlign.center,
               "Répartition des groupes musculaires travaillés par l'utilisateur",
+              textAlign: TextAlign.center,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
@@ -41,8 +43,10 @@ class MuscleGroupRepartitionPie extends StatelessWidget {
                       .map((mapEntry) {
                     int index = mapEntry.key;
                     MapEntry<String, int> entry = mapEntry.value;
+                    final percentage =
+                        ((entry.value / total) * 100).toStringAsFixed(1);
                     return PieChartSectionData(
-                      title: entry.key,
+                      title: '$percentage%',
                       titleStyle: TextStyle(color: theme.colorScheme.onPrimary),
                       value: entry.value.toDouble(),
                       color: pieColors[index % pieColors.length],
@@ -50,6 +54,32 @@ class MuscleGroupRepartitionPie extends StatelessWidget {
                   }).toList(),
                 ),
               ),
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8.0,
+              runSpacing: 4.0,
+              children: muscleGroupProportions.keys
+                  .toList()
+                  .asMap()
+                  .entries
+                  .map((mapEntry) {
+                int index = mapEntry.key;
+                String key = mapEntry.value;
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 16,
+                      height: 16,
+                      color: pieColors[index % pieColors.length],
+                    ),
+                    const SizedBox(width: 4),
+                    Text(key, style: theme.textTheme.bodyMedium),
+                  ],
+                );
+              }).toList(),
             ),
           ],
         ),
