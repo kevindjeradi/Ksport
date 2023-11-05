@@ -68,33 +68,68 @@ class DataPreparation {
     };
   }
 
-  Future<Map<String, int>> computeMuscleGroupProportions() async {
+  Future<Map<String, Map<String, int>>> computeMuscleGroupProportions() async {
     final completedTrainings = userProvider.completedTrainings;
     if (completedTrainings == null || completedTrainings.isEmpty) {
-      return {}; // Return empty map if there are no completed trainings
+      return {
+        'allTime': {},
+        'lastThreeMonths': {},
+        'currentMonth': {},
+      }; // Return empty maps if there are no completed trainings
     }
 
-    Map<String, int> muscleGroupCounts = {
-      'Jambes': 0,
-      'Dos': 0,
-      'Torse': 0,
-      'Bras': 0,
-    };
+    Map<String, int> emptyMuscleGroupCounts() {
+      return {
+        'Jambes': 0,
+        'Dos': 0,
+        'Torse': 0,
+        'Bras': 0,
+      };
+    }
+
+    Map<String, int> allTimeMuscleGroupCounts = emptyMuscleGroupCounts();
+    Map<String, int> lastThreeMonthsMuscleGroupCounts =
+        emptyMuscleGroupCounts();
+    Map<String, int> currentMonthMuscleGroupCounts = emptyMuscleGroupCounts();
+
+    final now = DateTime.now();
+    final threeMonthsAgo = now.subtract(const Duration(days: 90));
+    final firstDayOfCurrentMonth = DateTime(now.year, now.month, 1);
+    final lastDayOfCurrentMonth = DateTime(now.year, now.month + 1, 0);
 
     for (var completedTraining in completedTrainings) {
       final trainingId = completedTraining.trainingId;
       final training = await TrainingService.fetchTraining(trainingId);
       for (var exercise in training!.exercises) {
         final exerciseId = exercise['exerciseId'];
-        // Fetch the exercise data using the exerciseId
         final exerciseData = await Api().getExerciseById(exerciseId);
         final muscleLabel = exerciseData['muscleLabel'];
         final muscleGroup = await Api().getMuscleGroup(muscleLabel);
-        muscleGroupCounts[muscleGroup] =
-            (muscleGroupCounts[muscleGroup] ?? 0) + 1;
+
+        // Update all-time counts
+        allTimeMuscleGroupCounts[muscleGroup] =
+            (allTimeMuscleGroupCounts[muscleGroup] ?? 0) + 1;
+
+        // Update last three months counts
+        if (completedTraining.dateCompleted.isAfter(threeMonthsAgo) &&
+            completedTraining.dateCompleted.isBefore(now)) {
+          lastThreeMonthsMuscleGroupCounts[muscleGroup] =
+              (lastThreeMonthsMuscleGroupCounts[muscleGroup] ?? 0) + 1;
+        }
+
+        // Update current month counts
+        if (completedTraining.dateCompleted.isAfter(firstDayOfCurrentMonth) &&
+            completedTraining.dateCompleted.isBefore(lastDayOfCurrentMonth)) {
+          currentMonthMuscleGroupCounts[muscleGroup] =
+              (currentMonthMuscleGroupCounts[muscleGroup] ?? 0) + 1;
+        }
       }
     }
 
-    return muscleGroupCounts;
+    return {
+      'allTime': allTimeMuscleGroupCounts,
+      'lastThreeMonths': lastThreeMonthsMuscleGroupCounts,
+      'currentMonth': currentMonthMuscleGroupCounts,
+    };
   }
 }
