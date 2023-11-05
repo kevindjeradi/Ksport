@@ -42,7 +42,6 @@ class CompletedTrainings extends StatelessWidget {
                 child: Card(
                   elevation: 4.0,
                   margin: const EdgeInsets.all(8.0),
-                  color: theme.colorScheme.secondaryContainer,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
