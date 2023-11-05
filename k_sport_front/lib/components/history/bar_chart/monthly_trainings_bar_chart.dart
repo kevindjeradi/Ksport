@@ -1,59 +1,62 @@
-// File: trainings_bar_chart.dart
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class TrainingsBarChart extends StatelessWidget {
+class MonthlyTrainingsBarChart extends StatelessWidget {
   final List<BarChartGroupData> monthlyTrainingData;
+  final Color textColor;
 
-  const TrainingsBarChart({super.key, required this.monthlyTrainingData});
+  const MonthlyTrainingsBarChart({
+    super.key,
+    required this.monthlyTrainingData,
+    required this.textColor,
+  });
 
   Widget getMonthTitles(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.black,
+    final style = TextStyle(
+      color: textColor,
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
     Widget text;
     switch (value.toInt()) {
       case 1:
-        text = const Text('Jan', style: style);
+        text = Text('Jan', style: style);
         break;
       case 2:
-        text = const Text('Fev', style: style);
+        text = Text('Fev', style: style);
         break;
       case 3:
-        text = const Text('Mar', style: style);
+        text = Text('Mar', style: style);
         break;
       case 4:
-        text = const Text('Avr', style: style);
+        text = Text('Avr', style: style);
         break;
       case 5:
-        text = const Text('Mai', style: style);
+        text = Text('Mai', style: style);
         break;
       case 6:
-        text = const Text('Jun', style: style);
+        text = Text('Jun', style: style);
         break;
       case 7:
-        text = const Text('Jui', style: style);
+        text = Text('Jui', style: style);
         break;
       case 8:
-        text = const Text('Aou', style: style);
+        text = Text('Aou', style: style);
         break;
       case 9:
-        text = const Text('Sep', style: style);
+        text = Text('Sep', style: style);
         break;
       case 10:
-        text = const Text('Oct', style: style);
+        text = Text('Oct', style: style);
         break;
       case 11:
-        text = const Text('Nov', style: style);
+        text = Text('Nov', style: style);
         break;
       case 12:
-        text = const Text('Dec', style: style);
+        text = Text('Dec', style: style);
         break;
       default:
-        text = const Text('', style: style);
+        text = Text('', style: style);
         break;
     }
     return SideTitleWidget(
@@ -64,8 +67,8 @@ class TrainingsBarChart extends StatelessWidget {
   }
 
   Widget leftTitles(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff7589a2),
+    final style = TextStyle(
+      color: textColor,
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );

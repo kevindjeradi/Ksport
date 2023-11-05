@@ -57,11 +57,6 @@ class DataPreparation {
             training.dateCompleted.year == currentYear)
         .length;
 
-    Log.logger.i("Total trainings: $totalTrainings");
-    Log.logger.i("Total weight lifted: $totalWeightLifted");
-    Log.logger.i("Mean trainings per week: $meanTrainingsPerWeekFormatted");
-    Log.logger.i("Trainings this month: $trainingsThisMonth");
-
     return {
       'totalTrainings': totalTrainings,
       'totalWeightLifted': totalWeightLifted,
@@ -148,7 +143,7 @@ class DataPreparation {
     return monthlyTrainingCounts.entries.map((entry) {
       final month = entry.key;
       final trainingCount = entry.value;
-      Log.logger.i("Training count for month $month: $trainingCount");
+
       return BarChartGroupData(
         x: month,
         barRods: [
@@ -157,5 +152,43 @@ class DataPreparation {
         showingTooltipIndicators: [0],
       );
     }).toList();
+  }
+
+  Future<List<BarChartGroupData>> getWeeklyTrainingData() async {
+    final completedTrainings = userProvider.completedTrainings;
+    if (completedTrainings == null || completedTrainings.isEmpty) {
+      return [];
+    }
+
+    // Determine the date range for the data.
+    final startDate = completedTrainings.first.dateCompleted;
+    final endDate = completedTrainings.last.dateCompleted;
+
+    // Determine the total number of weeks between the start and end dates.
+    final totalWeeks = endDate.difference(startDate).inDays ~/ 7;
+
+    // Initialize a map to hold the count of trainings per week.
+    Map<int, int> weeklyTrainingCounts = {};
+
+    // Loop through each training session and increment the count for the corresponding week.
+    for (var training in completedTrainings) {
+      final weekNumber =
+          training.dateCompleted.difference(startDate).inDays ~/ 7;
+      weeklyTrainingCounts[weekNumber] =
+          (weeklyTrainingCounts[weekNumber] ?? 0) + 1;
+    }
+
+    // Convert the map of weekly training counts to a list of BarChartGroupData.
+    return List.generate(totalWeeks + 1, (weekNumber) {
+      final trainingCount = weeklyTrainingCounts[weekNumber] ?? 0;
+
+      return BarChartGroupData(
+        x: weekNumber,
+        barRods: [
+          BarChartRodData(toY: trainingCount.toDouble(), color: Colors.blue)
+        ],
+        showingTooltipIndicators: [0],
+      );
+    });
   }
 }
