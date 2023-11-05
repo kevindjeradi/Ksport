@@ -17,7 +17,7 @@ class ProgressPage extends StatefulWidget {
 
 class ProgressPageState extends State<ProgressPage> {
   late final Future<Map<String, dynamic>> metricsFuture;
-  late final Future<Map<String, int>> muscleGroupProportionsFuture;
+  late final Future<Map<String, Map<String, int>>> muscleGroupProportionsFuture;
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class ProgressPageState extends State<ProgressPage> {
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
         child: SingleChildScrollView(
           child: Center(
             child: Column(
@@ -66,73 +66,77 @@ class ProgressPageState extends State<ProgressPage> {
                         leading: Icon(Icons.history,
                             size: 40, color: theme.colorScheme.onSurface),
                         title: Center(
-                          child: Text('Historique de mes séances',
+                          child: Text('Voir l\'historique de mes séances',
                               style: theme.textTheme.headlineMedium),
                         ),
                       ),
                     ),
                   ),
                 ),
-                FutureBuilder<Map<String, dynamic>>(
-                  future: metricsFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CustomLoader();
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      final metrics = snapshot.data;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Column(
-                          children: [
-                            IntrinsicHeight(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: MetricCard(
-                                        title:
-                                            'Nombre d\'entrainements depuis la création du compte',
-                                        value: metrics!['totalTrainings']),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: MetricCard(
-                                        title:
-                                            'Poids manipulés depuis la création du compte',
-                                        value: metrics['totalWeightLifted'],
-                                        particle: 'kg'),
-                                  ),
-                                ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: FutureBuilder<Map<String, dynamic>>(
+                    future: metricsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CustomLoader();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else {
+                        final metrics = snapshot.data;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Column(
+                            children: [
+                              IntrinsicHeight(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: MetricCard(
+                                          title:
+                                              'Nombre d\'entrainements depuis la création du compte',
+                                          value: metrics!['totalTrainings']),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: MetricCard(
+                                          title:
+                                              'Poids manipulés depuis la création du compte',
+                                          value: metrics['totalWeightLifted'],
+                                          particle: 'kg'),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            IntrinsicHeight(
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: MetricCard(
-                                        title:
-                                            'Nombre d\'entrainements moyen par semaine',
-                                        value: metrics['meanTrainingsPerWeek']),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: MetricCard(
-                                        title:
-                                            'Nombre d\'entrainements ce mois',
-                                        value: metrics['trainingsThisMonth']),
-                                  ),
-                                ],
+                              const SizedBox(height: 8),
+                              IntrinsicHeight(
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: MetricCard(
+                                          title:
+                                              'Nombre d\'entrainements moyen par semaine',
+                                          value:
+                                              metrics['meanTrainingsPerWeek']),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: MetricCard(
+                                          title:
+                                              'Nombre d\'entrainements ce mois',
+                                          value: metrics['trainingsThisMonth']),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
-                FutureBuilder<Map<String, int>>(
+                FutureBuilder<Map<String, Map<String, int>>>(
                   future: muscleGroupProportionsFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
@@ -143,8 +147,53 @@ class ProgressPageState extends State<ProgressPage> {
                       final muscleGroupProportions = snapshot.data;
                       return Padding(
                         padding: const EdgeInsets.all(16.0),
-                        child: MuscleGroupRepartitionPie(
-                          muscleGroupProportions: muscleGroupProportions!,
+                        child: Card(
+                          child: DefaultTabController(
+                            length: 3,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Text(
+                                    "Répartition des groupes musculaires travaillés",
+                                    textAlign: TextAlign.center,
+                                    style: theme.textTheme.titleLarge,
+                                  ),
+                                ),
+                                TabBar(
+                                  tabs: const [
+                                    Tab(text: 'Mois en cours'),
+                                    Tab(text: 'Trimestre'),
+                                    Tab(text: 'Tout le temps'),
+                                  ],
+                                  labelColor: theme.colorScheme.onBackground,
+                                  indicatorColor:
+                                      theme.colorScheme.onBackground,
+                                ),
+                                SizedBox(
+                                  height: 200,
+                                  child: TabBarView(
+                                    children: [
+                                      MuscleGroupRepartitionPie(
+                                        muscleGroupProportions:
+                                            muscleGroupProportions![
+                                                'currentMonth']!,
+                                      ),
+                                      MuscleGroupRepartitionPie(
+                                        muscleGroupProportions:
+                                            muscleGroupProportions[
+                                                'lastThreeMonths']!,
+                                      ),
+                                      MuscleGroupRepartitionPie(
+                                        muscleGroupProportions:
+                                            muscleGroupProportions['allTime']!,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       );
                     }
