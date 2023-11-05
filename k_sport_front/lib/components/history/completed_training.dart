@@ -1,3 +1,4 @@
+// completed_training.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';

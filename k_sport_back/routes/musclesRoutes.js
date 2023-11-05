@@ -14,6 +14,19 @@ router.get('/muscles', async (req, res) => {
     }
 });
 
+// GET a specific muscle by label
+router.get('/muscles/label/:label', async (req, res) => {
+    try {
+        console.log("\n\n>>>>>>>>>>>>>>>>" + req.params.label)
+        const muscle = await Muscle.findOne({ label: req.params.label });
+        console.log("muscle ->" + muscle)
+        if (!muscle) return res.status(404).json({ message: 'Muscle not found' });
+        res.json(muscle);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // GET all muscles by group
 router.get('/muscles/byGroup', async (req, res) => {
     const group = req.query.group;
