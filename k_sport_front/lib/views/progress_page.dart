@@ -1,8 +1,10 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/history/metric_card.dart';
 import 'package:k_sport_front/components/history/muscle_group_repartition_pie.dart';
+import 'package:k_sport_front/components/history/trainings_bar_chart.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/data_preparation.dart';
 import 'package:k_sport_front/views/history_page.dart';
@@ -18,6 +20,7 @@ class ProgressPage extends StatefulWidget {
 class ProgressPageState extends State<ProgressPage> {
   late final Future<Map<String, dynamic>> metricsFuture;
   late final Future<Map<String, Map<String, int>>> muscleGroupProportionsFuture;
+  late final Future<List<BarChartGroupData>> monthlyTrainingDataFuture;
 
   @override
   void initState() {
@@ -27,6 +30,87 @@ class ProgressPageState extends State<ProgressPage> {
     metricsFuture = dataPreparation.computeMetrics();
     muscleGroupProportionsFuture =
         dataPreparation.computeMuscleGroupProportions();
+    monthlyTrainingDataFuture = dataPreparation.getMonthlyTrainingData();
+  }
+
+  Widget getMonthTitles(double value, TitleMeta meta) {
+    const style = TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.bold,
+      fontSize: 14,
+    );
+    Widget text;
+    switch (value.toInt()) {
+      case 1:
+        text = const Text('Jan', style: style);
+        break;
+      case 2:
+        text = const Text('Fev', style: style);
+        break;
+      case 3:
+        text = const Text('Mar', style: style);
+        break;
+      case 4:
+        text = const Text('Avr', style: style);
+        break;
+      case 5:
+        text = const Text('Mai', style: style);
+        break;
+      case 6:
+        text = const Text('Jun', style: style);
+        break;
+      case 7:
+        text = const Text('Jui', style: style);
+        break;
+      case 8:
+        text = const Text('Aou', style: style);
+        break;
+      case 9:
+        text = const Text('Sep', style: style);
+        break;
+      case 10:
+        text = const Text('Oct', style: style);
+        break;
+      case 11:
+        text = const Text('Nov', style: style);
+        break;
+      case 12:
+        text = const Text('Dec', style: style);
+        break;
+      default:
+        text = const Text('', style: style);
+        break;
+    }
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 16,
+      child: text,
+    );
+  }
+
+  Widget leftTitles(double value, TitleMeta meta) {
+    const style = TextStyle(
+      color: Color(0xff7589a2),
+      fontWeight: FontWeight.bold,
+      fontSize: 14,
+    );
+    String text;
+    if (value == 0) {
+      text = '0';
+    } else if (value == 10) {
+      text = '10';
+    } else if (value == 20) {
+      text = '20';
+    } else if (value == 30) {
+      text = '30';
+    } else {
+      return Container();
+    }
+    return SideTitleWidget(
+      axisSide: meta.axisSide,
+      space: 0,
+      child: Text(text, style: style),
+    );
   }
 
   @override
@@ -199,6 +283,20 @@ class ProgressPageState extends State<ProgressPage> {
                     }
                   },
                 ),
+                FutureBuilder<List<BarChartGroupData>>(
+                  future: monthlyTrainingDataFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      final monthlyTrainingData = snapshot.data;
+                      return TrainingsBarChart(
+                          monthlyTrainingData: monthlyTrainingData!);
+                    }
+                  },
+                )
               ],
             ),
           ),

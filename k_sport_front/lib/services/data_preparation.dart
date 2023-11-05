@@ -1,3 +1,5 @@
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/api.dart';
@@ -131,5 +133,29 @@ class DataPreparation {
       'lastThreeMonths': lastThreeMonthsMuscleGroupCounts,
       'currentMonth': currentMonthMuscleGroupCounts,
     };
+  }
+
+  Future<List<BarChartGroupData>> getMonthlyTrainingData() async {
+    final completedTrainings = userProvider.completedTrainings;
+    if (completedTrainings == null || completedTrainings.isEmpty) {
+      return [];
+    }
+    Map<int, int> monthlyTrainingCounts = {};
+    for (var training in completedTrainings) {
+      final month = training.dateCompleted.month;
+      monthlyTrainingCounts[month] = (monthlyTrainingCounts[month] ?? 0) + 1;
+    }
+    return monthlyTrainingCounts.entries.map((entry) {
+      final month = entry.key;
+      final trainingCount = entry.value;
+      Log.logger.i("Training count for month $month: $trainingCount");
+      return BarChartGroupData(
+        x: month,
+        barRods: [
+          BarChartRodData(toY: trainingCount.toDouble(), color: Colors.blue)
+        ],
+        showingTooltipIndicators: [0],
+      );
+    }).toList();
   }
 }
