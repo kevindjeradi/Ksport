@@ -67,4 +67,34 @@ class DataPreparation {
       'trainingsThisMonth': trainingsThisMonth,
     };
   }
+
+  Future<Map<String, int>> computeMuscleGroupProportions() async {
+    final completedTrainings = userProvider.completedTrainings;
+    if (completedTrainings == null || completedTrainings.isEmpty) {
+      return {}; // Return empty map if there are no completed trainings
+    }
+
+    Map<String, int> muscleGroupCounts = {
+      'Jambes': 0,
+      'Dos': 0,
+      'Torse': 0,
+      'Bras': 0,
+    };
+
+    for (var completedTraining in completedTrainings) {
+      final trainingId = completedTraining.trainingId;
+      final training = await TrainingService.fetchTraining(trainingId);
+      for (var exercise in training!.exercises) {
+        final exerciseId = exercise['exerciseId'];
+        // Fetch the exercise data using the exerciseId
+        final exerciseData = await Api().getExerciseById(exerciseId);
+        final muscleLabel = exerciseData['muscleLabel'];
+        final muscleGroup = await Api().getMuscleGroup(muscleLabel);
+        muscleGroupCounts[muscleGroup] =
+            (muscleGroupCounts[muscleGroup] ?? 0) + 1;
+      }
+    }
+
+    return muscleGroupCounts;
+  }
 }
