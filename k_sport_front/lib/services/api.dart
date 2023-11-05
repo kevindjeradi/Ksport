@@ -127,6 +127,17 @@ class Api {
     }
   }
 
+  Future<String> getMuscleGroup(String muscleLabel) async {
+    final response = await get('$baseUrl/muscles/label/$muscleLabel');
+    if (response.statusCode == 200) {
+      final muscleData = jsonDecode(response.body);
+      Log.logger.i("muscleData['groupe']: ${muscleData['groupe']}");
+      return muscleData['groupe'];
+    } else {
+      throw Exception('Failed to load muscle data');
+    }
+  }
+
   Future<void> addMuscle(Muscle muscle) async {
     final url = '$baseUrl/muscles';
     final response = await post(
@@ -191,6 +202,15 @@ class Api {
       }
     }
     return exercises;
+  }
+
+  Future<Map<String, dynamic>> getExerciseById(String exerciseId) async {
+    final response = await get('$baseUrl/exercises/$exerciseId');
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to load exercise data');
+    }
   }
 
   static Future<List<Map<String, dynamic>>> fetchExercises() async {
