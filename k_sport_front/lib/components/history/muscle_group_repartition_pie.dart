@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 
 class MuscleGroupRepartitionPie extends StatelessWidget {
   final Map<String, int> muscleGroupProportions;
+  final String period;
 
-  const MuscleGroupRepartitionPie({
-    Key? key,
-    required this.muscleGroupProportions,
-  }) : super(key: key);
+  const MuscleGroupRepartitionPie(
+      {Key? key, required this.muscleGroupProportions, this.period = ""})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,68 +21,60 @@ class MuscleGroupRepartitionPie extends StatelessWidget {
 
     final total = muscleGroupProportions.values.fold(0, (a, b) => a + b);
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Text(
-              "Répartition des groupes musculaires travaillés par l'utilisateur",
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              height: 150,
-              child: PieChart(
-                PieChartData(
-                  sections: muscleGroupProportions.entries
-                      .toList()
-                      .asMap()
-                      .entries
-                      .map((mapEntry) {
-                    int index = mapEntry.key;
-                    MapEntry<String, int> entry = mapEntry.value;
-                    final percentage =
-                        ((entry.value / total) * 100).toStringAsFixed(1);
-                    return PieChartSectionData(
-                      title: '$percentage%',
-                      titleStyle: TextStyle(color: theme.colorScheme.onPrimary),
-                      value: entry.value.toDouble(),
-                      color: pieColors[index % pieColors.length],
-                    );
-                  }).toList(),
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 150,
+            child: PieChart(
+              PieChartData(
+                sections: muscleGroupProportions.entries
+                    .toList()
+                    .asMap()
+                    .entries
+                    .map((mapEntry) {
+                  int index = mapEntry.key;
+                  MapEntry<String, int> entry = mapEntry.value;
+                  final percentage =
+                      ((entry.value / total) * 100).toStringAsFixed(1);
+                  return PieChartSectionData(
+                    title: '$percentage%',
+                    titleStyle: TextStyle(color: theme.colorScheme.onPrimary),
+                    value: entry.value.toDouble(),
+                    color: pieColors[index % pieColors.length],
+                  );
+                }).toList(),
               ),
             ),
-            const SizedBox(height: 16),
-            Wrap(
-              alignment: WrapAlignment.center,
-              spacing: 8.0,
-              runSpacing: 4.0,
-              children: muscleGroupProportions.keys
-                  .toList()
-                  .asMap()
-                  .entries
-                  .map((mapEntry) {
-                int index = mapEntry.key;
-                String key = mapEntry.value;
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 16,
-                      height: 16,
-                      color: pieColors[index % pieColors.length],
-                    ),
-                    const SizedBox(width: 4),
-                    Text(key, style: theme.textTheme.bodyMedium),
-                  ],
-                );
-              }).toList(),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 8.0,
+            runSpacing: 4.0,
+            children: muscleGroupProportions.keys
+                .toList()
+                .asMap()
+                .entries
+                .map((mapEntry) {
+              int index = mapEntry.key;
+              String key = mapEntry.value;
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    color: pieColors[index % pieColors.length],
+                  ),
+                  const SizedBox(width: 4),
+                  Text(key, style: theme.textTheme.bodyMedium),
+                ],
+              );
+            }).toList(),
+          ),
+        ],
       ),
     );
   }
