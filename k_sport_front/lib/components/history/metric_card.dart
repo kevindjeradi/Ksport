@@ -13,15 +13,20 @@ class MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(title,
-                style: const TextStyle(
-                    fontSize: 16.0, fontWeight: FontWeight.bold)),
-            Text("$value $particle", style: const TextStyle(fontSize: 24.0)),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.titleSmall
+                    ?.copyWith(fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16.0),
+            Text("$value $particle", style: theme.textTheme.headlineMedium),
           ],
         ),
       ),
