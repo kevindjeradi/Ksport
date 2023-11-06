@@ -25,6 +25,7 @@ router.get('/trainings/:id', async (req, res) => {
     }
 });
 
+// POST (create) a new training
 router.post('/trainings', async (req, res) => {
     try {
         const { name, description, exercises } = req.body;
