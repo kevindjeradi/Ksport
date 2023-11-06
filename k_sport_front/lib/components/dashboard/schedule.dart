@@ -3,6 +3,7 @@ import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
+import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class ScheduleComponent extends StatefulWidget {
@@ -18,26 +19,52 @@ class ScheduleComponent extends StatefulWidget {
 }
 
 class ScheduleComponentState extends State<ScheduleComponent> {
-  List<Status> weekStatuses = List.filled(7, Status.comming);
+  List<Status> weekStatuses = List.filled(7, Status.coming);
 
   @override
   void initState() {
     super.initState();
-    int today = DateTime.now().weekday;
-    weekStatuses = List.generate(7, (index) {
-      if (index < today - 1) {
-        return Status.checked;
-      } else if (index == today - 1) {
-        return Status.current;
-      } else {
-        return Status.comming;
-      }
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Initialize weekStatuses with Status.coming for all days.
+    weekStatuses = List.filled(7, Status.coming);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
       final trainingProvider =
           Provider.of<ScheduleTrainingProvider>(context, listen: false);
-      trainingProvider.fetchTrainings();
-      trainingProvider.fetchAllTrainingsForTheWeek();
+
+      // Fetch all trainings scheduled for the week.
+      await trainingProvider.fetchAllTrainingsForTheWeek();
+
+      // Get today's weekday number.
+      int today = DateTime.now().weekday;
+
+      // Update the statuses for the week based on the completed trainings.
+      setState(() {
+        weekStatuses = List.generate(7, (index) {
+          // For days in the past, check if a training was completed.
+          if (index < today - 1) {
+            DateTime dayDate =
+                DateTime.now().subtract(Duration(days: today - index - 1));
+            // Check if there is a completed training for this day.
+            bool trainingCompleted = userProvider.completedTrainings?.any(
+                    (completedTraining) =>
+                        completedTraining.dateCompleted.year == dayDate.year &&
+                        completedTraining.dateCompleted.month ==
+                            dayDate.month &&
+                        completedTraining.dateCompleted.day == dayDate.day) ??
+                false;
+
+            // Return Status.checked if training was completed, otherwise Status.missed.
+            return trainingCompleted ? Status.checked : Status.missed;
+          } else if (index == today - 1) {
+            // Return Status.current for the current day.
+            return Status.current;
+          } else {
+            // Future days remain as Status.coming.
+            return Status.coming;
+          }
+        });
+      });
     });
   }
 
@@ -112,8 +139,13 @@ class ScheduleComponentState extends State<ScheduleComponent> {
 
     switch (status) {
       case Status.checked:
-        bgColor = theme.colorScheme.error;
+        bgColor = theme.colorScheme.primary;
         icon = Icons.check_circle;
+        break;
+      case Status.missed:
+        bgColor = theme.colorScheme.error;
+        icon = Icons.close;
+        textColor = theme.colorScheme.onError;
         break;
       case Status.current:
         bgColor = theme.colorScheme.surface;
@@ -121,7 +153,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
         containerBorder =
             Border.all(width: 2.0, color: theme.colorScheme.primary);
         break;
-      case Status.comming:
+      case Status.coming:
         bgColor = theme.colorScheme.background;
         textColor = theme.colorScheme.onBackground.withOpacity(0.3);
         containerBorder = Border.all(
@@ -328,4 +360,4 @@ class ScheduleComponentState extends State<ScheduleComponent> {
   }
 }
 
-enum Status { checked, current, comming }
+enum Status { checked, current, coming, missed }
