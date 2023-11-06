@@ -8,6 +8,8 @@ class ExerciseFieldsList extends StatelessWidget {
   final VoidCallback addExerciseCallback;
   final Function(int) removeExerciseCallback;
   final Function(int) updateWeightControllers;
+  final Function(int) updateRepsControllers;
+  final Function addError;
 
   const ExerciseFieldsList({
     super.key,
@@ -15,6 +17,8 @@ class ExerciseFieldsList extends StatelessWidget {
     required this.addExerciseCallback,
     required this.removeExerciseCallback,
     required this.updateWeightControllers,
+    required this.updateRepsControllers,
+    required this.addError,
   });
 
   @override
@@ -28,12 +32,14 @@ class ExerciseFieldsList extends StatelessWidget {
           var controllerMap = entry.value;
           return ExerciseCard(
             labelController: controllerMap['label']!,
-            repsController: controllerMap['repetitions']!,
             setsController: controllerMap['sets']!,
+            updateRepsControllers: () => updateRepsControllers(idx),
+            repsController: controllerMap['repetitions']!,
             updateWeightControllers: () => updateWeightControllers(idx),
             weightController: controllerMap['weight']!,
             restTimeController: controllerMap['restTime']!,
             onRemove: () => removeExerciseCallback(idx),
+            addError: addError,
           );
         }).toList(),
         const SizedBox(height: 12.0),

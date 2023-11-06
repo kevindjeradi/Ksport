@@ -1,5 +1,6 @@
 // trainings_form.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/components/trainings/exercise_fields_list.dart';
@@ -24,24 +25,7 @@ class TrainingFormState extends State<TrainingForm> {
   late TextEditingController _goalController;
   final List<Map<String, TextEditingController>> _exerciseControllers = [];
   final TrainingService _trainingService = TrainingService();
-
-  // void _addWeightController(int exerciseIndex) {
-  //   int currentSets =
-  //       int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
-  //   _exerciseControllers[exerciseIndex]['sets']!.text =
-  //       (currentSets + 1).toString();
-  //   _updateWeightControllers(exerciseIndex);
-  // }
-
-  // void _removeWeightController(int exerciseIndex) {
-  //   int currentSets =
-  //       int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
-  //   if (currentSets > 0) {
-  //     _exerciseControllers[exerciseIndex]['sets']!.text =
-  //         (currentSets - 1).toString();
-  //     _updateWeightControllers(exerciseIndex);
-  //   }
-  // }
+  final List<String> _formErrors = [];
 
   void _updateWeightControllers(int exerciseIndex) {
     int currentSets =
@@ -61,6 +45,27 @@ class TrainingFormState extends State<TrainingForm> {
     _exerciseControllers[exerciseIndex]['weight']!.text = weights.join(',');
   }
 
+  void _updateRepsControllers(int exerciseIndex) {
+    int currentSets =
+        int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
+    var repetitions = _exerciseControllers[exerciseIndex]['repetitions']!
+        .text
+        .split(',')
+        .toList();
+
+    // Adjust the repetitions list size to match currentSets
+    if (repetitions.length < currentSets) {
+      repetitions.addAll(
+          List.generate(currentSets - repetitions.length, (index) => '0'));
+    } else if (repetitions.length > currentSets) {
+      repetitions = repetitions.sublist(0, currentSets);
+    }
+
+    // Update the repetitions controller
+    _exerciseControllers[exerciseIndex]['repetitions']!.text =
+        repetitions.join(',');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -76,9 +81,9 @@ class TrainingFormState extends State<TrainingForm> {
         _exerciseControllers.add({
           'label': TextEditingController(text: exercise['label']),
           'exerciseId': TextEditingController(text: exercise['exerciseId']),
-          'repetitions':
-              TextEditingController(text: exercise['repetitions'].toString()),
           'sets': TextEditingController(text: exercise['sets'].toString()),
+          'repetitions':
+              TextEditingController(text: exercise['repetitions'].join(',')),
           'weight': TextEditingController(text: exercise['weight'].join(',')),
           'restTime':
               TextEditingController(text: exercise['restTime'].toString()),
@@ -120,8 +125,8 @@ class TrainingFormState extends State<TrainingForm> {
       _exerciseControllers.add({
         'label': TextEditingController(),
         'exerciseId': TextEditingController(),
-        'repetitions': TextEditingController(),
         'sets': TextEditingController(),
+        'repetitions': TextEditingController(),
         'weight': TextEditingController(),
         'restTime': TextEditingController(),
       });
@@ -193,6 +198,8 @@ class TrainingFormState extends State<TrainingForm> {
                         addExerciseCallback: _addExercise,
                         removeExerciseCallback: _removeExercise,
                         updateWeightControllers: _updateWeightControllers,
+                        updateRepsControllers: _updateRepsControllers,
+                        addError: _addError,
                       ),
                     ],
                   ),
@@ -223,11 +230,16 @@ class TrainingFormState extends State<TrainingForm> {
             .split(',')
             .map((e) => double.tryParse(e) ?? 0.0)
             .toList();
+        List<double> repetitions = controller['repetitions']!
+            .text
+            .split(',')
+            .map((e) => double.tryParse(e) ?? 0.0)
+            .toList();
         exercisesData.add({
           'label': controller['label']!.text,
           'exerciseId': controller['exerciseId']!.text,
-          'repetitions': int.parse(controller['repetitions']!.text),
           'sets': int.parse(controller['sets']!.text),
+          'repetitions': repetitions,
           'weight': weights,
           'restTime': int.parse(controller['restTime']!.text),
         });
@@ -257,6 +269,15 @@ class TrainingFormState extends State<TrainingForm> {
       }
     } else {
       Log.logger.w('Form validation failed in training_form');
+      showCustomSnackBar(context, _formErrors.join('\n\n'), SnackBarType.error,
+          duration: 5);
+    }
+    _formErrors.clear();
+  }
+
+  void _addError(String error) {
+    if (!_formErrors.contains(error)) {
+      _formErrors.add(error);
     }
   }
 }
