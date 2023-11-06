@@ -5,8 +5,9 @@ import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/components/exercices/workout_card.dart';
 import 'package:k_sport_front/components/exercices/workout_card_detail.dart';
-import 'package:k_sport_front/models/exercices.dart';
+import 'package:k_sport_front/models/exercise.dart';
 import 'package:k_sport_front/services/api.dart';
+import 'package:k_sport_front/views/workout_page/create_exercise_page.dart';
 
 class ExercisesPage extends StatelessWidget {
   final String muscleLabel;
@@ -33,7 +34,7 @@ class ExercisesPage extends StatelessWidget {
           elevation: 0),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: FutureBuilder<List<Exercice>>(
+        child: FutureBuilder<List<Exercise>>(
           future: isGroup
               ? Api().fetchExercisesByMuscleGroup(muscleLabel)
               : Api().fetchExercisesByMuscle(muscleLabel),
@@ -78,6 +79,17 @@ class ExercisesPage extends StatelessWidget {
             }
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: theme.colorScheme.secondaryContainer,
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => CreateExercisePage(
+              muscleLabel: muscleLabel,
+            ),
+          ));
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
