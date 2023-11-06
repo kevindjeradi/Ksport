@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 
@@ -24,13 +25,19 @@ class WeeklyActivityState extends State<WeeklyActivity> {
 
     // Assume the week starts on Monday
     final now = DateTime.now();
-    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final endOfWeek = startOfWeek.add(const Duration(days: 6));
+    final startOfWeek = DateTime(now.year, now.month, now.day)
+        .subtract(Duration(days: now.weekday - 1));
+    final endOfWeek = DateTime(now.year, now.month, now.day)
+        .add(Duration(days: 6 - now.weekday + 1))
+        .subtract(const Duration(minutes: 1));
 
     for (var training in completedTrainings!) {
       final dateCompleted = training.dateCompleted;
+      Log.logger.i(
+          "Date completed: $dateCompleted\nStart of week: $startOfWeek\nEnd of week: $endOfWeek");
       if (dateCompleted.isAfter(startOfWeek) &&
           dateCompleted.isBefore(endOfWeek)) {
+        Log.logger.i("Training completed: $training");
         final dayOfWeek = dateCompleted.weekday - 1; // 0-indexed
         setState(() {
           progress[dayOfWeek] = true;

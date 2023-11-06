@@ -1,0 +1,14 @@
+Specs of the application :
+- register / login / logout
+- show profile with pseudo, image, creation date of the account, number of trainings the user made
+- possibility to choose between multiple themes for the app
+- show exerises by muscles 
+- show exercises by muscles group (torse, jambes, bras, dos)
+- show the trainings created by the user, edit the trainings the user have, delete a training
+- create a training session by adding exercises, choosing number of repetitions, number of sets and choose weight per set.
+- show a calendar for the week and plan each day training by clicking on a day of the week, change training for a day, delete a training for the day
+- show the current training of the day, with exercises, sets and reps. Clicking on it opens an overview of the training. The overview of the training has estimation of the time taken for the training, list of exercises, details about the exercises by clicking on an item on the list and possibility to launch training session.
+- in the training session there is a summary for the current exercise with current set, reps and next rest time.
+- timer page for the rest time of the current exercise, with next exercise shown in it, possibility to skip, pause and cancel the timer. The timer sends a notification when it ends if the user changed app during rest time.
+- we can show the history of each training the user has completed with all informations, exercises, sets, reps, weights and date of the training.
+- summary of current week days with visual info about if the user trained that day or not.

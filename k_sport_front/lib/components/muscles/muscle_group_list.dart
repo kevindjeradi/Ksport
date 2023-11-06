@@ -49,7 +49,6 @@ class MuscleGroupList extends StatelessWidget {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.0),
                         gradient: LinearGradient(
                           colors: [
                             Colors.transparent,
