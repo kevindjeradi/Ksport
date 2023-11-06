@@ -66,8 +66,6 @@ class ProgressPageState extends State<ProgressPage> {
                       elevation: 5.0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
-                        side: BorderSide(
-                            color: theme.colorScheme.onSurface, width: 1.0),
                       ),
                       child: ListTile(
                         leading: Icon(Icons.history,
