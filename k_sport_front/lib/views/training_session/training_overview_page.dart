@@ -28,13 +28,18 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
       int sets = exercise['sets'];
       // Cast repetitions to List<int>
       List<int> repetitionsArray = List<int>.from(exercise['repetitions']);
-      int restTimePerSet = exercise['restTime'];
+      // Cast restTime to List<int>
+      List<int> restTimeArray = List<int>.from(exercise['restTime']);
 
       int exerciseTimeForSets = repetitionsArray.fold(
           0,
           (previousValue, element) =>
               previousValue + element * secondsPerRepetition);
-      totalDurationInSeconds += sets * (exerciseTimeForSets + restTimePerSet);
+
+      int totalRestTime = restTimeArray.fold(
+          0, (previousValue, element) => previousValue + element);
+
+      totalDurationInSeconds += sets * (exerciseTimeForSets + totalRestTime);
     }
 
     totalDurationInSeconds += additionalActivityTime;

@@ -66,14 +66,22 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     }
   }
 
-  // Method to get the rest time for the current exercise
+// Method to get the rest time for the current exercise for the current set
   int _getRestTimeForCurrentExercise() {
     final provider =
         Provider.of<ScheduleTrainingProvider>(context, listen: false);
     final exercises = provider.todayWorkouts;
 
     if (_currentExerciseIndex < exercises.length) {
-      return exercises[_currentExerciseIndex]['restTime'];
+      // Assuming each exercise's rest time array has at least as many elements as there are sets
+      List<int> restTimesForExercise =
+          List<int>.from(exercises[_currentExerciseIndex]['restTime']);
+      int currentSet = provider.currentSet;
+
+      // Check if the currentSet is within the range of the restTimes array
+      if (currentSet - 1 < restTimesForExercise.length) {
+        return restTimesForExercise[currentSet - 1];
+      }
     }
     return 0;
   }
@@ -227,7 +235,9 @@ class ExerciseInfoCard extends StatelessWidget {
               value: "$currentSet / ${exercise['series'].toString()}",
             ),
             InfoRow(label: 'Répétitions', value: repsForCurrentSet),
-            InfoRow(label: 'Repos', value: '${exercise['restTime']}s'),
+            InfoRow(
+                label: 'Repos',
+                value: '${exercise['restTime'][currentSet - 1]}s'),
             RestTimerButton(startRestTimer: startRestTimer),
           ],
         ),
