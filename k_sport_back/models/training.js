@@ -10,7 +10,7 @@ const trainingSchema = new mongoose.Schema({
         repetitions: [Number],
         sets: Number,
         weight: [Number],
-        restTime: Number  // in seconds
+        restTime: [Number]  // in seconds
     }],
     goal: String
 });

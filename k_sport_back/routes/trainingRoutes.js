@@ -57,7 +57,7 @@ router.post('/trainings', async (req, res) => {
             }
             
             // Validate restTime
-            if (typeof exercise.restTime !== "number" || exercise.restTime <= 0) {
+            if (!Array.isArray(exercise.restTime) || exercise.restTime.some(rep => typeof rep !== "number" || rep <= 0)) {
                 return res.status(400).json({ error: "Invalid rest time." });
             }
         }
