@@ -10,6 +10,7 @@ class ExerciseCard extends StatefulWidget {
   final VoidCallback onRemove;
   final Function updateRepsControllers;
   final Function updateWeightControllers;
+  final Function updateRestTimeControllers;
   final Function addError;
 
   const ExerciseCard({
@@ -22,6 +23,7 @@ class ExerciseCard extends StatefulWidget {
     required this.onRemove,
     required this.updateRepsControllers,
     required this.updateWeightControllers,
+    required this.updateRestTimeControllers,
     required this.addError,
   }) : super(key: key);
 
@@ -33,6 +35,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
   late TextEditingController setsController;
   late List<TextEditingController> repsControllers;
   late List<TextEditingController> weightControllers;
+  late List<TextEditingController> restTimeControllers;
 
   @override
   void initState() {
@@ -50,6 +53,12 @@ class _ExerciseCardState extends State<ExerciseCard> {
           text: widget.weightController.text.split(',')[index]),
     );
 
+    restTimeControllers = List.generate(
+      widget.restTimeController.text.split(',').length,
+      (index) => TextEditingController(
+          text: widget.restTimeController.text.split(',')[index]),
+    );
+
     // Update the parent reps controller when a reps controller changes
     for (var controller in repsControllers) {
       controller.addListener(() {
@@ -63,6 +72,14 @@ class _ExerciseCardState extends State<ExerciseCard> {
       controller.addListener(() {
         widget.weightController.text =
             weightControllers.map((e) => e.text).join(',');
+      });
+    }
+
+// Update the parent restTime controller when a restTime controller changes
+    for (var controller in restTimeControllers) {
+      controller.addListener(() {
+        widget.restTimeController.text =
+            restTimeControllers.map((e) => e.text).join(',');
       });
     }
 
@@ -108,6 +125,26 @@ class _ExerciseCardState extends State<ExerciseCard> {
               weightControllers.map((e) => e.text).join(',');
         });
       }
+      if (currentSets != restTimeControllers.length) {
+        setState(() {
+          if (restTimeControllers.length < currentSets) {
+            restTimeControllers.addAll(List.generate(
+                currentSets - restTimeControllers.length,
+                (index) => TextEditingController(text: '0')
+                  ..addListener(() {
+                    widget.restTimeController.text =
+                        restTimeControllers.map((e) => e.text).join(',');
+                  })));
+          } else if (restTimeControllers.length > currentSets) {
+            restTimeControllers
+                .sublist(currentSets)
+                .forEach((controller) => controller.dispose());
+            restTimeControllers = restTimeControllers.sublist(0, currentSets);
+          }
+          widget.restTimeController.text =
+              restTimeControllers.map((e) => e.text).join(',');
+        });
+      }
     });
   }
 
@@ -117,6 +154,9 @@ class _ExerciseCardState extends State<ExerciseCard> {
       controller.dispose();
     }
     for (var controller in weightControllers) {
+      controller.dispose();
+    }
+    for (var controller in restTimeControllers) {
       controller.dispose();
     }
     super.dispose();
@@ -146,63 +186,38 @@ class _ExerciseCardState extends State<ExerciseCard> {
                   ),
                 ),
                 const SizedBox(height: 12.0),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: TextFormField(
-                        controller: widget.setsController,
-                        decoration: const InputDecoration(
-                          labelText: 'Séries',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            String error =
-                                'Entrez le nombre de séries pour ${widget.labelController.text}';
-                            widget.addError(error);
-                            return error;
-                          }
-                          if (int.tryParse(value) == null ||
-                              int.tryParse(value)! <= 0) {
-                            String error =
-                                'Entrez un nombre valide de séries pour ${widget.labelController.text}';
-                            widget.addError(error);
-                            return error;
-                          }
-                          return null;
-                        },
+                Center(
+                  child: SizedBox(
+                    width: 150,
+                    child: TextFormField(
+                      controller: widget.setsController,
+                      textAlign: TextAlign.center,
+                      decoration: const InputDecoration(
+                        alignLabelWithHint: true,
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        labelText: 'Séries',
+                        border: OutlineInputBorder(),
                       ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          String error =
+                              'Entrez le nombre de séries pour ${widget.labelController.text}';
+                          widget.addError(error);
+                          return error;
+                        }
+                        if (int.tryParse(value) == null ||
+                            int.tryParse(value)! <= 0) {
+                          String error =
+                              'Entrez un nombre valide de séries pour ${widget.labelController.text}';
+                          widget.addError(error);
+                          return error;
+                        }
+                        return null;
+                      },
                     ),
-                    const SizedBox(width: 8.0),
-                    Flexible(
-                      child: TextFormField(
-                        controller: widget.restTimeController,
-                        decoration: const InputDecoration(
-                          labelText: 'Repos (sec)',
-                          border: OutlineInputBorder(),
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            String error =
-                                'Entrez le temps de repos pour ${widget.labelController.text}';
-                            widget.addError(error);
-                            return error;
-                          }
-                          if (int.tryParse(value) == null ||
-                              int.tryParse(value)! <= 0) {
-                            String error =
-                                'Entrez un temps de repos valide pour ${widget.labelController.text}';
-                            widget.addError(error);
-                            return error;
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 30),
                 Row(
@@ -212,7 +227,11 @@ class _ExerciseCardState extends State<ExerciseCard> {
                         padding: const EdgeInsets.only(right: 8.0),
                         child: TextFormField(
                           controller: repsControllers[index],
+                          textAlign: TextAlign.center,
                           decoration: InputDecoration(
+                            alignLabelWithHint: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
                             labelText: 'Reps série ${index + 1}',
                             border: const OutlineInputBorder(),
                           ),
@@ -240,13 +259,55 @@ class _ExerciseCardState extends State<ExerciseCard> {
                 ),
                 const SizedBox(height: 30),
                 Row(
+                  children: List.generate(restTimeControllers.length, (index) {
+                    return Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: TextFormField(
+                          controller: restTimeControllers[index],
+                          textAlign: TextAlign.center,
+                          decoration: InputDecoration(
+                            alignLabelWithHint: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
+                            labelText: 'Repos ${index + 1} (sec)',
+                            border: const OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              String error =
+                                  'Entrez un temps de repos pour la serie ${index + 1}';
+                              widget.addError(error);
+                              return error;
+                            }
+                            if (double.tryParse(value) == null ||
+                                int.tryParse(value)! <= 0) {
+                              String error =
+                                  'Entrez un temps de repos valide pour la serie ${index + 1}';
+                              widget.addError(error);
+                              return error;
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+                const SizedBox(height: 30),
+                Row(
                   children: List.generate(weightControllers.length, (index) {
                     return Flexible(
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: TextFormField(
                           controller: weightControllers[index],
+                          textAlign: TextAlign.center,
                           decoration: InputDecoration(
+                            alignLabelWithHint: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
                             labelText: 'Poids ${index + 1} (kg)',
                             border: const OutlineInputBorder(),
                           ),

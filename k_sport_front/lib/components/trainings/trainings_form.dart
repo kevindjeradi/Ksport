@@ -27,24 +27,6 @@ class TrainingFormState extends State<TrainingForm> {
   final TrainingService _trainingService = TrainingService();
   final List<String> _formErrors = [];
 
-  void _updateWeightControllers(int exerciseIndex) {
-    int currentSets =
-        int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
-    var weights =
-        _exerciseControllers[exerciseIndex]['weight']!.text.split(',').toList();
-
-    // Adjust the weights list size to match currentSets
-    if (weights.length < currentSets) {
-      weights
-          .addAll(List.generate(currentSets - weights.length, (index) => '0'));
-    } else if (weights.length > currentSets) {
-      weights = weights.sublist(0, currentSets);
-    }
-
-    // Update the weight controller
-    _exerciseControllers[exerciseIndex]['weight']!.text = weights.join(',');
-  }
-
   void _updateRepsControllers(int exerciseIndex) {
     int currentSets =
         int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
@@ -64,6 +46,44 @@ class TrainingFormState extends State<TrainingForm> {
     // Update the repetitions controller
     _exerciseControllers[exerciseIndex]['repetitions']!.text =
         repetitions.join(',');
+  }
+
+  void _updateWeightControllers(int exerciseIndex) {
+    int currentSets =
+        int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
+    var weights =
+        _exerciseControllers[exerciseIndex]['weight']!.text.split(',').toList();
+
+    // Adjust the weights list size to match currentSets
+    if (weights.length < currentSets) {
+      weights
+          .addAll(List.generate(currentSets - weights.length, (index) => '0'));
+    } else if (weights.length > currentSets) {
+      weights = weights.sublist(0, currentSets);
+    }
+
+    // Update the weight controller
+    _exerciseControllers[exerciseIndex]['weight']!.text = weights.join(',');
+  }
+
+  void _updateRestTimeControllers(int exerciseIndex) {
+    int currentSets =
+        int.tryParse(_exerciseControllers[exerciseIndex]['sets']!.text) ?? 0;
+    var restTimes = _exerciseControllers[exerciseIndex]['restTime']!
+        .text
+        .split(',')
+        .toList();
+
+    // Adjust the restTimes list size to match currentSets
+    if (restTimes.length < currentSets) {
+      restTimes.addAll(
+          List.generate(currentSets - restTimes.length, (index) => '0'));
+    } else if (restTimes.length > currentSets) {
+      restTimes = restTimes.sublist(0, currentSets);
+    }
+
+    // Update the restTime controller
+    _exerciseControllers[exerciseIndex]['restTime']!.text = restTimes.join(',');
   }
 
   @override
@@ -86,7 +106,7 @@ class TrainingFormState extends State<TrainingForm> {
               TextEditingController(text: exercise['repetitions'].join(',')),
           'weight': TextEditingController(text: exercise['weight'].join(',')),
           'restTime':
-              TextEditingController(text: exercise['restTime'].toString()),
+              TextEditingController(text: exercise['restTime'].join(',')),
         });
       }
     } else {
@@ -197,8 +217,9 @@ class TrainingFormState extends State<TrainingForm> {
                         exerciseControllers: _exerciseControllers,
                         addExerciseCallback: _addExercise,
                         removeExerciseCallback: _removeExercise,
-                        updateWeightControllers: _updateWeightControllers,
                         updateRepsControllers: _updateRepsControllers,
+                        updateWeightControllers: _updateWeightControllers,
+                        updateRestTimeControllers: _updateRestTimeControllers,
                         addError: _addError,
                       ),
                     ],
@@ -225,12 +246,17 @@ class TrainingFormState extends State<TrainingForm> {
     if (_formKey.currentState?.validate() == true) {
       List<Map<String, dynamic>> exercisesData = [];
       for (var controller in _exerciseControllers) {
+        List<double> repetitions = controller['repetitions']!
+            .text
+            .split(',')
+            .map((e) => double.tryParse(e) ?? 0.0)
+            .toList();
         List<double> weights = controller['weight']!
             .text
             .split(',')
             .map((e) => double.tryParse(e) ?? 0.0)
             .toList();
-        List<double> repetitions = controller['repetitions']!
+        List<double> restTimes = controller['restTime']!
             .text
             .split(',')
             .map((e) => double.tryParse(e) ?? 0.0)
@@ -241,7 +267,7 @@ class TrainingFormState extends State<TrainingForm> {
           'sets': int.parse(controller['sets']!.text),
           'repetitions': repetitions,
           'weight': weights,
-          'restTime': int.parse(controller['restTime']!.text),
+          'restTime': restTimes,
         });
       }
 
