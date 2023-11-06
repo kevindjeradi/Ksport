@@ -20,17 +20,21 @@ class TrainingOverviewPage extends StatefulWidget {
 class TrainingOverviewPageState extends State<TrainingOverviewPage> {
   int calculateTrainingDuration(Training training) {
     const int secondsPerRepetition = 3;
-    const int additionalActivityTime =
-        180; // temps de transition entre les exos
+    const int additionalActivityTime = 180; // Transition time between exercises
 
     int totalDurationInSeconds = 0;
 
     for (var exercise in training.exercises) {
       int sets = exercise['sets'];
-      int repetitions = exercise['repetitions'];
+      // Cast repetitions to List<int>
+      List<int> repetitionsArray = List<int>.from(exercise['repetitions']);
       int restTimePerSet = exercise['restTime'];
-      totalDurationInSeconds +=
-          sets * (repetitions * secondsPerRepetition + restTimePerSet);
+
+      int exerciseTimeForSets = repetitionsArray.fold(
+          0,
+          (previousValue, element) =>
+              previousValue + element * secondsPerRepetition);
+      totalDurationInSeconds += sets * (exerciseTimeForSets + restTimePerSet);
     }
 
     totalDurationInSeconds += additionalActivityTime;
@@ -176,7 +180,7 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        '${exercise['sets']} séries de ${exercise['repetitions']} répétitions',
+                                        '${exercise['sets']} séries de ${exercise['repetitions'].join('/')} répétitions',
                                         style: textTheme.bodyMedium
                                             ?.copyWith(color: Colors.grey),
                                       ),

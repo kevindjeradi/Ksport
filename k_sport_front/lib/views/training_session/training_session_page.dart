@@ -206,6 +206,8 @@ class ExerciseInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final List<int> reps = List<int>.from(exercise['reps']);
+    final String repsForCurrentSet = reps[currentSet - 1].toString();
 
     return Card(
       elevation: theme.cardTheme.elevation,
@@ -224,7 +226,7 @@ class ExerciseInfoCard extends StatelessWidget {
               label: 'Séries',
               value: "$currentSet / ${exercise['series'].toString()}",
             ),
-            InfoRow(label: 'Répétitions', value: exercise['reps'].toString()),
+            InfoRow(label: 'Répétitions', value: repsForCurrentSet),
             InfoRow(label: 'Repos', value: '${exercise['restTime']}s'),
             RestTimerButton(startRestTimer: startRestTimer),
           ],
