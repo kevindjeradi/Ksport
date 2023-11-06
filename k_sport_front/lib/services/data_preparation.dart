@@ -160,12 +160,13 @@ class DataPreparation {
       return [];
     }
 
-    // Determine the date range for the data.
+    // Determine the date range for the data, adjusting the startDate to the beginning of the week.
     final startDate = completedTrainings.first.dateCompleted;
+    final startWeekDate = startDate.subtract(Duration(days: startDate.weekday));
     final endDate = completedTrainings.last.dateCompleted;
 
     // Determine the total number of weeks between the start and end dates.
-    final totalWeeks = endDate.difference(startDate).inDays ~/ 7;
+    final totalWeeks = endDate.difference(startWeekDate).inDays ~/ 7;
 
     // Initialize a map to hold the count of trainings per week.
     Map<int, int> weeklyTrainingCounts = {};
@@ -173,7 +174,7 @@ class DataPreparation {
     // Loop through each training session and increment the count for the corresponding week.
     for (var training in completedTrainings) {
       final weekNumber =
-          training.dateCompleted.difference(startDate).inDays ~/ 7;
+          training.dateCompleted.difference(startWeekDate).inDays ~/ 7;
       weeklyTrainingCounts[weekNumber] =
           (weeklyTrainingCounts[weekNumber] ?? 0) + 1;
     }
