@@ -9,7 +9,7 @@ import 'package:k_sport_front/models/exercise.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/views/workout_page/create_exercise_page.dart';
 
-class ExercisesPage extends StatelessWidget {
+class ExercisesPage extends StatefulWidget {
   final String muscleLabel;
   final bool isSelectionMode;
   final bool isGroup;
@@ -22,22 +22,55 @@ class ExercisesPage extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  ExercisesPageState createState() => ExercisesPageState();
+}
+
+class ExercisesPageState extends State<ExercisesPage> {
+  late Future<List<Exercise>> exercisesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    exercisesFuture = fetchExercises();
+  }
+
+  Future<List<Exercise>> fetchExercises() {
+    return widget.isGroup
+        ? Api().fetchExercisesByMuscleGroup(widget.muscleLabel)
+        : Api().fetchExercisesByMuscle(widget.muscleLabel);
+  }
+
+  void refreshExercises() {
+    setState(() {
+      exercisesFuture = fetchExercises();
+    });
+  }
+
+  void _navigateAndDisplayCreation(BuildContext context) async {
+    final result = await CustomNavigation.push(
+        context, CreateExercisePage(muscleLabel: widget.muscleLabel));
+
+    if (result == true) {
+      refreshExercises();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: theme.colorScheme.background,
       appBar: ReturnAppBar(
-          barTitle: "Exercices",
-          bgColor: theme.colorScheme.primary,
-          color: theme.colorScheme.onPrimary,
-          elevation: 0),
+        barTitle: "Exercices",
+        bgColor: theme.colorScheme.primary,
+        color: theme.colorScheme.onPrimary,
+        elevation: 0,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: FutureBuilder<List<Exercise>>(
-          future: isGroup
-              ? Api().fetchExercisesByMuscleGroup(muscleLabel)
-              : Api().fetchExercisesByMuscle(muscleLabel),
+          future: exercisesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CustomLoader());
@@ -57,20 +90,19 @@ class ExercisesPage extends StatelessWidget {
                     image: Image.network(exercise.imageUrl),
                     label: exercise.label,
                     onTap: () {
-                      if (isSelectionMode) {
+                      if (widget.isSelectionMode) {
                         Navigator.of(context)
                             .pop(exercise); // Pop the ExercisesPage
-                        Navigator.of(context)
-                            .pop(exercise); // Pop the MusclesPage
                       } else {
                         CustomNavigation.push(
-                            context,
-                            WorkoutCardDetail(
-                              title: exercise.detailTitle,
-                              muscleLabel: exercise.muscleLabel,
-                              image: Image.network(exercise.imageUrl),
-                              description: exercise.detailDescription,
-                            ));
+                          context,
+                          WorkoutCardDetail(
+                            title: exercise.detailTitle,
+                            muscleLabel: exercise.muscleLabel,
+                            image: Image.network(exercise.imageUrl),
+                            description: exercise.detailDescription,
+                          ),
+                        );
                       }
                     },
                   );
@@ -82,13 +114,7 @@ class ExercisesPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: theme.colorScheme.secondaryContainer,
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => CreateExercisePage(
-              muscleLabel: muscleLabel,
-            ),
-          ));
-        },
+        onPressed: () => _navigateAndDisplayCreation(context),
         child: const Icon(Icons.add),
       ),
     );

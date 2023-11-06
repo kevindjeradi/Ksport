@@ -68,7 +68,7 @@ class CreateExercisePageState extends State<CreateExercisePage> {
         if (mounted) {
           showCustomSnackBar(
               context, 'Exercice créé avec succès!', SnackBarType.success);
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         }
       } catch (e) {
         if (mounted) {
