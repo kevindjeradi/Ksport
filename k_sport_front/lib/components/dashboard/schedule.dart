@@ -143,8 +143,8 @@ class ScheduleComponentState extends State<ScheduleComponent> {
         icon = Icons.check_circle;
         break;
       case Status.missed:
-        bgColor = theme.colorScheme.error;
-        icon = Icons.close;
+        bgColor = theme.colorScheme.error.withOpacity(0.9);
+        icon = Icons.cancel;
         textColor = theme.colorScheme.onError;
         break;
       case Status.current:
@@ -163,180 +163,192 @@ class ScheduleComponentState extends State<ScheduleComponent> {
 
     return InkWell(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return LayoutBuilder(builder: (context, constraints) {
-              return AlertDialog(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                backgroundColor: theme.cardTheme.color,
-                titlePadding: EdgeInsets.zero,
-                title: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Stack(
-                    alignment: Alignment.centerLeft,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.assignment,
-                            color: theme.iconTheme.color,
-                            size: 24.0,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            dayName,
-                            style: theme.textTheme.headlineSmall,
-                          ),
-                        ],
-                      ),
-                      Positioned(
-                        right: 0,
-                        child: TextButton(
-                          onPressed: () {
-                            if (trainingProvider.todayWorkouts.isEmpty) {
-                              Navigator.of(context).pop();
-                              showCustomSnackBar(
-                                  context,
-                                  'Aucun entrainement à supprimer',
-                                  SnackBarType.info);
-                            } else {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text(
-                                          'Supprimer l\'entrainement'),
-                                      content: const Text(
-                                          'Voulez vous supprimer l\'entrainement prévu ?'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          child: const Text('Non'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            // Call deleteTrainingForDay method from provider
-                                            trainingProvider
-                                                .deleteTrainingForDay(index);
-                                            showCustomSnackBar(
-                                                context,
-                                                'Entrainement prévu supprimé!',
-                                                SnackBarType.success);
-
-                                            Navigator.of(context).pop();
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: Text('Oui',
-                                              style: TextStyle(
-                                                  color:
-                                                      theme.colorScheme.error)),
-                                        ),
-                                      ],
-                                    );
-                                  });
-                            }
-                          },
-                          child: Text("suppr",
-                              style: TextStyle(color: theme.colorScheme.error)),
-                        ),
-                      ),
-                    ],
+        if (status == Status.missed) {
+          showCustomSnackBar(
+            context,
+            'Le passé est passé, il fallait mieux t\'organiser.',
+            SnackBarType.info,
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return LayoutBuilder(builder: (context, constraints) {
+                return AlertDialog(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                ),
-                content: trainingProvider.isLoading
-                    ? const Center(child: CustomLoader())
-                    : trainingProvider.errorMessage.isNotEmpty
-                        ? Text(
-                            trainingProvider.errorMessage,
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.error,
+                  backgroundColor: theme.cardTheme.color,
+                  titlePadding: EdgeInsets.zero,
+                  title: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Stack(
+                      alignment: Alignment.centerLeft,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.assignment,
+                              color: theme.iconTheme.color,
+                              size: 24.0,
                             ),
-                          )
-                        : SizedBox(
-                            width: constraints.maxWidth * 0.8,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                isEmpty
-                                    ? Text(
-                                        'Aucun entrainement selectionné',
-                                        style: theme.textTheme.bodyMedium,
-                                      )
-                                    : Center(
-                                        child: RichText(
-                                          text: TextSpan(
-                                            style: const TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black),
-                                            children: <TextSpan>[
-                                              const TextSpan(
-                                                  text:
-                                                      'Aujourd\'hui, c\'est '),
-                                              TextSpan(
-                                                text: currentTraining?.name
-                                                    .toUpperCase(),
+                            const SizedBox(width: 10),
+                            Text(
+                              dayName,
+                              style: theme.textTheme.headlineSmall,
+                            ),
+                          ],
+                        ),
+                        Positioned(
+                          right: 0,
+                          child: TextButton(
+                            onPressed: () {
+                              if (trainingProvider.todayWorkouts.isEmpty) {
+                                Navigator.of(context).pop();
+                                showCustomSnackBar(
+                                    context,
+                                    'Aucun entrainement à supprimer',
+                                    SnackBarType.info);
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                            'Supprimer l\'entrainement'),
+                                        content: const Text(
+                                            'Voulez vous supprimer l\'entrainement prévu ?'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(),
+                                            child: const Text('Non'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              // Call deleteTrainingForDay method from provider
+                                              trainingProvider
+                                                  .deleteTrainingForDay(index);
+                                              showCustomSnackBar(
+                                                  context,
+                                                  'Entrainement prévu supprimé!',
+                                                  SnackBarType.success);
+
+                                              Navigator.of(context).pop();
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Oui',
                                                 style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18,
-                                                  color: theme
-                                                      .colorScheme.onBackground,
+                                                    color: theme
+                                                        .colorScheme.error)),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              }
+                            },
+                            child: Text("suppr",
+                                style:
+                                    TextStyle(color: theme.colorScheme.error)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  content: trainingProvider.isLoading
+                      ? const Center(child: CustomLoader())
+                      : trainingProvider.errorMessage.isNotEmpty
+                          ? Text(
+                              trainingProvider.errorMessage,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.error,
+                              ),
+                            )
+                          : SizedBox(
+                              width: constraints.maxWidth * 0.8,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  isEmpty
+                                      ? Text(
+                                          'Aucun entrainement selectionné',
+                                          style: theme.textTheme.bodyMedium,
+                                        )
+                                      : Center(
+                                          child: RichText(
+                                            text: TextSpan(
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.black),
+                                              children: <TextSpan>[
+                                                TextSpan(
+                                                    text: status ==
+                                                            Status.current
+                                                        ? 'Aujourd\'hui, c\'est '
+                                                        : 'Ce jour là ça sera '),
+                                                TextSpan(
+                                                  text: currentTraining?.name
+                                                      .toUpperCase(),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                    color: theme.colorScheme
+                                                        .onBackground,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
+                                  const SizedBox(height: 20),
+                                  DropdownButtonFormField<Training>(
+                                    decoration: InputDecoration(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 10.0, horizontal: 10.0),
+                                      labelText:
+                                          'Modifier l\'entrainement du jour',
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                            color: theme.colorScheme.onSurface),
                                       ),
-                                const SizedBox(height: 20),
-                                DropdownButtonFormField<Training>(
-                                  decoration: InputDecoration(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10.0),
-                                    labelText:
-                                        'Modifier l\'entrainement du jour',
-                                    border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: theme.colorScheme.onSurface),
                                     ),
-                                  ),
-                                  items: trainingProvider.trainings
-                                      .map((Training training) {
-                                    return DropdownMenuItem<Training>(
-                                      value: training,
-                                      child: Text(training.name),
-                                    );
-                                  }).toList(),
-                                  onChanged: (Training? newValue) async {
-                                    setState(() {
-                                      trainingProvider.updateTrainingForDay(
-                                          index, newValue);
-                                    });
-                                    await widget.onTrainingAssigned(
-                                        index + 1, newValue);
-                                  },
-                                )
-                              ],
+                                    items: trainingProvider.trainings
+                                        .map((Training training) {
+                                      return DropdownMenuItem<Training>(
+                                        value: training,
+                                        child: Text(training.name),
+                                      );
+                                    }).toList(),
+                                    onChanged: (Training? newValue) async {
+                                      setState(() {
+                                        trainingProvider.updateTrainingForDay(
+                                            index, newValue);
+                                      });
+                                      await widget.onTrainingAssigned(
+                                          index + 1, newValue);
+                                    },
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('OK',
-                        style: TextStyle(color: theme.colorScheme.primary)),
-                  ),
-                ],
-                contentPadding: const EdgeInsets.all(20),
-                insetPadding: const EdgeInsets.all(20),
-              );
-            });
-          },
-        );
-        widget.onDayTapped(index + 1);
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('OK',
+                          style: TextStyle(color: theme.colorScheme.primary)),
+                    ),
+                  ],
+                  contentPadding: const EdgeInsets.all(20),
+                  insetPadding: const EdgeInsets.all(20),
+                );
+              });
+            },
+          );
+          widget.onDayTapped(index + 1);
+        }
       },
       child: Container(
         width: 45,
