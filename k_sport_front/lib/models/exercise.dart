@@ -1,4 +1,4 @@
-class Exercice {
+class Exercise {
   final String id;
   final String imageUrl;
   final String label;
@@ -7,7 +7,7 @@ class Exercice {
   final String detailDescription;
   int restTime;
 
-  Exercice({
+  Exercise({
     required this.id,
     required this.imageUrl,
     required this.label,
@@ -17,8 +17,8 @@ class Exercice {
     this.restTime = 0,
   });
 
-  factory Exercice.fromJson(Map<String, dynamic> json) {
-    return Exercice(
+  factory Exercise.fromJson(Map<String, dynamic> json) {
+    return Exercise(
       id: json['_id'],
       imageUrl: json['imageUrl'],
       label: json['label'],
