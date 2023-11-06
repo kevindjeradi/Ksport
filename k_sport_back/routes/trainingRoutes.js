@@ -25,7 +25,6 @@ router.get('/trainings/:id', async (req, res) => {
     }
 });
 
-// POST (create) a new training
 router.post('/trainings', async (req, res) => {
     try {
         const { name, description, exercises } = req.body;
@@ -41,10 +40,24 @@ router.post('/trainings', async (req, res) => {
         }
 
         for (let exercise of exercises) {
-            if (!exercise.exerciseId || typeof exercise.repetitions !== "number" || exercise.repetitions <= 0 ||
-                typeof exercise.sets !== "number" || exercise.sets <= 0 ||
-                typeof exercise.restTime !== "number" || exercise.restTime <= 0) {
-                return res.status(400).json({ error: "Invalid exercise data." });
+            // Validate the exerciseId
+            if (!exercise.exerciseId) {
+                return res.status(400).json({ error: "Exercise ID is required." });
+            }
+            
+            // Validate sets
+            if (typeof exercise.sets !== "number" || exercise.sets <= 0) {
+                return res.status(400).json({ error: "Invalid number of sets." });
+            }
+
+            // Validate repetitions as an array of numbers
+            if (!Array.isArray(exercise.repetitions) || exercise.repetitions.some(rep => typeof rep !== "number" || rep <= 0)) {
+                return res.status(400).json({ error: "Invalid repetitions data. Each repetition must be a number greater than 0." });
+            }
+            
+            // Validate restTime
+            if (typeof exercise.restTime !== "number" || exercise.restTime <= 0) {
+                return res.status(400).json({ error: "Invalid rest time." });
             }
         }
 
@@ -64,6 +77,7 @@ router.post('/trainings', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 // PUT (update) a training by ID
 router.put('/trainings/:id', async (req, res) => {

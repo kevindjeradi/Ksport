@@ -7,7 +7,7 @@ const trainingSchema = new mongoose.Schema({
     exercises: [{
         label: String,
         exerciseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Exercise' },
-        repetitions: Number,
+        repetitions: [Number],
         sets: Number,
         weight: [Number],
         restTime: Number  // in seconds
