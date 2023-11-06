@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:k_sport_front/helpers/logger.dart';
-import 'package:k_sport_front/models/exercices.dart';
+import 'package:k_sport_front/models/exercise.dart';
 import 'package:k_sport_front/models/muscles.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/token_service.dart';
@@ -155,13 +155,31 @@ class Api {
     }
   }
 
-  Future<List<Exercice>> fetchExercisesByMuscle(String muscleLabel) async {
+  Future<void> addExercise(Exercise exercise) async {
+    final url = '$baseUrl/exercises';
+    final response = await post(
+      url,
+      {
+        'imageUrl': exercise.imageUrl,
+        'label': exercise.label,
+        'detailTitle': exercise.detailTitle,
+        'detailDescription': exercise.detailDescription,
+        'muscleLabel': exercise.muscleLabel,
+      },
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception('Failed to add exercise');
+    }
+  }
+
+  Future<List<Exercise>> fetchExercisesByMuscle(String muscleLabel) async {
     final response = await get('$baseUrl/exercises?muscleLabel=$muscleLabel');
 
     if (response.statusCode == 200) {
       List<dynamic> responseBody = json.decode(response.body);
       return responseBody
-          .map((exercice) => Exercice.fromJson(exercice))
+          .map((exercice) => Exercise.fromJson(exercice))
           .toList();
     } else {
       throw Exception(
@@ -182,19 +200,19 @@ class Api {
     return null;
   }
 
-  Future<List<Exercice>> fetchExercisesByMuscleGroup(String group) async {
+  Future<List<Exercise>> fetchExercisesByMuscleGroup(String group) async {
     // Step 1: Fetch muscle labels by group
     List<String> muscleLabels = await fetchMusclesByGroup(group);
 
     // Step 2: Fetch exercises by muscle labels
-    List<Exercice> exercises = [];
+    List<Exercise> exercises = [];
     for (String label in muscleLabels) {
       final response = await get('$baseUrl/exercises?muscleLabel=$label');
 
       if (response.statusCode == 200) {
         List<dynamic> responseBody = json.decode(response.body);
         exercises.addAll(responseBody
-            .map((exercise) => Exercice.fromJson(exercise))
+            .map((exercise) => Exercise.fromJson(exercise))
             .toList());
       } else {
         throw Exception(
