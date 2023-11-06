@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
 void showCustomSnackBar(
-    BuildContext context, String message, SnackBarType type) {
+  BuildContext context,
+  String message,
+  SnackBarType type, {
+  int duration = 2,
+}) {
   final theme = Theme.of(context);
   Color backgroundColor;
   Color textColor;
@@ -27,7 +31,7 @@ void showCustomSnackBar(
   }
 
   final snackBar = SnackBar(
-    duration: const Duration(seconds: 2),
+    duration: Duration(seconds: duration),
     content: Row(
       children: [
         Icon(
