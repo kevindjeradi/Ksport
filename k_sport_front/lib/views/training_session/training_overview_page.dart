@@ -19,36 +19,40 @@ class TrainingOverviewPage extends StatefulWidget {
 
 class TrainingOverviewPageState extends State<TrainingOverviewPage> {
   int calculateTrainingDuration(Training training) {
-    const int secondsPerRepetition = 3;
-    const int additionalActivityTime = 180; // Transition time between exercises
+    const int secondsPerRepetition = 2;
+    const int additionalActivityTime = 150; // Transition time between exercises
+    const int showerTimeInSeconds = 10 * 60; // Shower time in seconds
 
     int totalDurationInSeconds = 0;
 
     for (var exercise in training.exercises) {
-      int sets = exercise['sets'];
       // Cast repetitions to List<int>
       List<int> repetitionsArray = List<int>.from(exercise['repetitions']);
       // Cast restTime to List<int>
       List<int> restTimeArray = List<int>.from(exercise['restTime']);
 
-      int exerciseTimeForSets = repetitionsArray.fold(
-          0,
-          (previousValue, element) =>
-              previousValue + element * secondsPerRepetition);
+      for (int i = 0; i < repetitionsArray.length; i++) {
+        int repetitionsTime = repetitionsArray[i] * secondsPerRepetition;
+        int restTime = i < restTimeArray.length ? restTimeArray[i] : 0;
 
-      int totalRestTime = restTimeArray.fold(
-          0, (previousValue, element) => previousValue + element);
+        // Add the time for the repetitions and rest for each set
+        totalDurationInSeconds += repetitionsTime + restTime;
+      }
 
-      totalDurationInSeconds += sets * (exerciseTimeForSets + totalRestTime);
+      // Add transition time after each exercise
+      totalDurationInSeconds += additionalActivityTime;
     }
 
-    totalDurationInSeconds += additionalActivityTime;
+    // Add shower time at the end
+    totalDurationInSeconds += showerTimeInSeconds;
+
+    // Convert the total duration from seconds to minutes and round up
     return (totalDurationInSeconds / 60).ceil();
   }
 
   @override
   Widget build(BuildContext context) {
-    const int showerTime = 15;
+    const int showerTime = 10;
     final int trainingDuration = calculateTrainingDuration(widget.training);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
