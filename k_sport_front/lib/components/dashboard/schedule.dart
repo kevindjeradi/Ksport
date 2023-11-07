@@ -139,7 +139,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
 
     switch (status) {
       case Status.checked:
-        bgColor = theme.colorScheme.primary;
+        bgColor = theme.colorScheme.primary.withOpacity(0.9);
         icon = Icons.check_circle;
         break;
       case Status.missed:
@@ -167,6 +167,12 @@ class ScheduleComponentState extends State<ScheduleComponent> {
           showCustomSnackBar(
             context,
             'Le passé est passé, il fallait mieux t\'organiser.',
+            SnackBarType.info,
+          );
+        } else if (status == Status.checked) {
+          showCustomSnackBar(
+            context,
+            'Le passé est passé, va plutôt voir du côté de ton historique.',
             SnackBarType.info,
           );
         } else {
