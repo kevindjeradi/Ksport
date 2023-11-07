@@ -20,11 +20,11 @@ class TrainingDetailPage extends StatelessWidget {
           color: theme.colorScheme.onPrimary,
           elevation: 0,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
+        body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const SizedBox(height: 16),
               Text(
                 'Séance ${training?.name} du ${DateFormat('dd-MM-yyyy').format(date)}',
                 style: theme.textTheme.headlineMedium,
@@ -81,15 +81,28 @@ class TrainingDetailPage extends StatelessWidget {
                     elevation: 2,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 16),
+                          horizontal: 16.0, vertical: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Exercice ${index + 1}',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Exercice ${index + 1}',
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                exercise['sets'] > 1
+                                    ? '${exercise['sets']} séries'
+                                    : '${exercise['sets']} série',
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 16.0),
                           Center(
@@ -101,58 +114,81 @@ class TrainingDetailPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16.0),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Text(
-                                '${exercise['repetitions']} Répétitions',
-                                style: theme.textTheme.bodyMedium,
-                              ),
-                              Text(
-                                '${exercise['restTime']} secondes de repos',
-                                style: theme.textTheme.bodyMedium,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Divider(color: theme.colorScheme.onPrimary),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: List.generate(
-                              exercise['sets'],
-                              (setIndex) {
-                                final setNumber = setIndex + 1;
-                                final weight = exercise['weight'][setIndex];
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Série $setNumber',
-                                      style: theme.textTheme.bodyLarge,
-                                    ),
-                                    Text(
-                                      '$weight kg',
-                                      style: theme.textTheme.bodyLarge,
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
+                          Column(
+                            children:
+                                List.generate(exercise['sets'], (setIndex) {
+                              final setNumber = setIndex + 1;
+                              final repetitions =
+                                  exercise['repetitions'][setIndex];
+                              final weight = exercise['weight'][setIndex];
+                              final restTime = exercise['restTime'][setIndex];
+
+                              return Card(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                elevation: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Série $setNumber',
+                                        style: theme.textTheme.bodyMedium
+                                            ?.copyWith(
+                                                fontWeight: FontWeight.bold),
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.repeat, size: 16),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '$repetitions',
+                                            style: theme.textTheme.bodyMedium,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.fitness_center,
+                                              size: 16),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '$weight kg',
+                                            style: theme.textTheme.bodyMedium,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          const Icon(Icons.timer, size: 16),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '$restTime s',
+                                            style: theme.textTheme.bodyMedium,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                          )
                         ],
                       ),
                     ),
                   ),
                 );
               }).toList(),
-              const SizedBox(height: 16),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text(
-                  "Entraînement fini à ${DateFormat('HH:mm:ss').format(date)}",
-                  style: theme.textTheme.bodyLarge,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    "Entraînement fini à ${DateFormat('HH:mm:ss').format(date)}",
+                    style: theme.textTheme.bodyLarge,
+                  ),
                 ),
               ),
             ],
