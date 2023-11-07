@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_image.dart';
 
 class WorkoutCard extends StatelessWidget {
-  final Image image;
+  final String imageUrl;
   final String label;
   final Function onTap;
 
   const WorkoutCard(
       {super.key,
-      required this.image,
+      required this.imageUrl,
       required this.label,
       required this.onTap});
 
@@ -18,7 +19,7 @@ class WorkoutCard extends StatelessWidget {
       child: Stack(
         alignment: Alignment.center,
         children: <Widget>[
-          image,
+          CustomImage(imagePath: imageUrl),
           Positioned(
             bottom: 0,
             child: Text(

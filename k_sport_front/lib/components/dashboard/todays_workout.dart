@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
+import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
@@ -112,8 +113,8 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
                           itemBuilder: (context, index) {
                             final workout = workouts[index];
                             return ListTile(
-                              leading: Image.network(
-                                'https://via.placeholder.com/100x30',
+                              leading: const CustomImage(
+                                imagePath: 'https://via.placeholder.com/100x30',
                                 fit: BoxFit.cover,
                                 height: 30,
                               ),

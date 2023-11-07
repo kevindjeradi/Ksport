@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_circle_avatar.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
@@ -34,11 +35,9 @@ class ProfilePage extends StatelessWidget {
                   child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      const CircleAvatar(
+                      const CustomCircleAvatar(
                         radius: 80.0,
-                        backgroundImage:
-                            NetworkImage('https://via.placeholder.com/100'),
-                        backgroundColor: Colors.transparent,
+                        imagePath: 'https://via.placeholder.com/100',
                       ),
                       Positioned(
                         bottom: 0,

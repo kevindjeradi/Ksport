@@ -22,7 +22,7 @@ class MuscleGrid extends StatelessWidget {
       mainAxisSpacing: 10.0,
       children: muscles.map((muscle) {
         return WorkoutCard(
-          image: Image.network(muscle.imageUrl),
+          imageUrl: muscle.imageUrl,
           label: muscle.label,
           onTap: () {
             CustomNavigation.push(

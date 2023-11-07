@@ -87,7 +87,7 @@ class ExercisesPageState extends State<ExercisesPage> {
                 mainAxisSpacing: 10.0,
                 children: snapshot.data!.map((exercise) {
                   return WorkoutCard(
-                    image: Image.network(exercise.imageUrl),
+                    imageUrl: exercise.imageUrl,
                     label: exercise.label,
                     onTap: () {
                       if (widget.isSelectionMode) {
@@ -99,7 +99,7 @@ class ExercisesPageState extends State<ExercisesPage> {
                           WorkoutCardDetail(
                             title: exercise.detailTitle,
                             muscleLabel: exercise.muscleLabel,
-                            image: Image.network(exercise.imageUrl),
+                            imageUrl: exercise.imageUrl,
                             description: exercise.detailDescription,
                           ),
                         );

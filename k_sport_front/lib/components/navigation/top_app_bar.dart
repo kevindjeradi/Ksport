@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/profile_page.dart';
@@ -10,8 +11,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: Image.network('https://via.placeholder.com/100x30',
-          fit: BoxFit.cover, height: 30), // placeholder logo
+      title: const CustomImage(
+          imagePath: 'https://via.placeholder.com/100x30',
+          fit: BoxFit.cover,
+          height: 30), // placeholder logo
       leading: IconButton(
         icon: const Icon(Icons.account_circle),
         onPressed: () {

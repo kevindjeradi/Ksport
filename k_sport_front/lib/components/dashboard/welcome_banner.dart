@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_circle_avatar.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -28,10 +29,9 @@ class WelcomeBanner extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const CircleAvatar(
+                  const CustomCircleAvatar(
                     radius: 40,
-                    backgroundImage:
-                        NetworkImage('https://via.placeholder.com/80'),
+                    imagePath: 'https://via.placeholder.com/80',
                   ),
                   const SizedBox(width: 10),
                   Expanded(

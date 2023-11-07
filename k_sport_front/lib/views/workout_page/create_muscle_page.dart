@@ -1,5 +1,6 @@
 // create_muscle_page.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
@@ -190,8 +191,8 @@ class CreateMusclePageState extends State<CreateMusclePage> {
                   double imageHeight = imageWidth * 0.75;
 
                   return _imageUrlPreview != null && _imageUrlPreview != ""
-                      ? Image.network(
-                          _imageUrlPreview!,
+                      ? CustomImage(
+                          imagePath: _imageUrlPreview!,
                           width: imageWidth,
                           height: imageHeight,
                           fit: BoxFit.contain,

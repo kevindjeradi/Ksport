@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 
 class WorkoutCardDetail extends StatelessWidget {
   final String title;
   final String muscleLabel;
-  final Image image;
+  final String imageUrl;
   final String description;
 
   const WorkoutCardDetail({
     Key? key,
     required this.title,
     required this.muscleLabel,
-    required this.image,
+    required this.imageUrl,
     required this.description,
   }) : super(key: key);
 
@@ -35,7 +36,7 @@ class WorkoutCardDetail extends StatelessWidget {
               child: Center(
                 child: AspectRatio(
                   aspectRatio: 16 / 9,
-                  child: image,
+                  child: CustomImage(imagePath: imageUrl),
                 ),
               ),
             ),

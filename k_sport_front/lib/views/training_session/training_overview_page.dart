@@ -146,9 +146,8 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                                       muscleLabel:
                                           exerciseDetails['muscleLabel'] ??
                                               'muscleLabel',
-                                      image: Image.network(exerciseDetails[
-                                              'imageUrl'] ??
-                                          'https://via.placeholder.com/150'),
+                                      imageUrl: exerciseDetails['imageUrl'] ??
+                                          'https://via.placeholder.com/150',
                                       description: exerciseDetails[
                                               'detailDescription'] ??
                                           'No description',
