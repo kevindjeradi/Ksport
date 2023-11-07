@@ -91,8 +91,8 @@ class ExercisesPageState extends State<ExercisesPage> {
                     label: exercise.label,
                     onTap: () {
                       if (widget.isSelectionMode) {
-                        Navigator.of(context)
-                            .pop(exercise); // Pop the ExercisesPage
+                        Navigator.of(context).pop(exercise);
+                        Navigator.of(context).pop(exercise);
                       } else {
                         CustomNavigation.push(
                           context,
