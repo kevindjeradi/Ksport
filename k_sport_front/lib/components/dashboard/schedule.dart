@@ -32,6 +32,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
       final trainingProvider =
           Provider.of<ScheduleTrainingProvider>(context, listen: false);
 
+      await trainingProvider.fetchTrainings();
       // Fetch all trainings scheduled for the week.
       await trainingProvider.fetchAllTrainingsForTheWeek();
 
