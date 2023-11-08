@@ -96,9 +96,9 @@ class ProfilePage extends StatelessWidget {
                       children: [
                         CustomCircleAvatar(
                           radius: 80.0,
-                          imagePath: userProvider.profileImage != ""
-                              ? baseUrl + userProvider.profileImage
-                              : 'https://via.placeholder.com/100',
+                          imagePath: userProvider.profileImage.isNotEmpty
+                              ? '$baseUrl${userProvider.profileImage}'
+                              : 'https://via.placeholder.com/150',
                         ),
                         Positioned(
                           bottom: -10,
@@ -113,8 +113,18 @@ class ProfilePage extends StatelessWidget {
                             child: Text(
                               'Pseudo: ${userProvider.username}',
                               style: theme.textTheme.headlineSmall?.copyWith(
-                                  color: theme.colorScheme.onSurface),
+                                color: theme.colorScheme.onSurface,
+                              ),
                             ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Icon(
+                            Icons.camera_alt,
+                            color: theme.colorScheme.primary,
+                            size: 24.0,
                           ),
                         ),
                       ],
