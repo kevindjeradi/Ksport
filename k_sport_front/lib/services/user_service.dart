@@ -59,4 +59,26 @@ class UserService {
       rethrow;
     }
   }
+
+  Future<bool> validateToken(String token) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/validate'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({'token': token}),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = json.decode(response.body);
+        return responseBody['valid'];
+      } else {
+        return false;
+      }
+    } catch (e) {
+      Log.logger.e("An error occurred during token validation: $e");
+      return false;
+    }
+  }
 }
