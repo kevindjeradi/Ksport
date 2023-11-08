@@ -52,8 +52,9 @@ class WelcomeBanner extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 TextGenerator.randomMotivationalText(),
-                style: theme.textTheme.bodyLarge
-                    ?.copyWith(color: theme.colorScheme.onBackground),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onBackground,
+                    fontWeight: FontWeight.bold),
               ),
             ],
           ),
