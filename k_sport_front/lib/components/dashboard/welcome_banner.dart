@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/components/generic/custom_circle_avatar.dart';
+import 'package:k_sport_front/helpers/TextGenerator.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -37,21 +38,21 @@ class WelcomeBanner extends StatelessWidget {
                         ? baseUrl + userProvider.profileImage
                         : 'https://via.placeholder.com/100',
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      'Hey ! Bonne journée ${userProvider.username}!',
+                      '${TextGenerator.randomGreeting()} ${userProvider.username}',
                       style: theme.textTheme.headlineSmall
                           ?.copyWith(color: theme.colorScheme.onBackground),
-                      overflow: TextOverflow.ellipsis,
+                      overflow: TextOverflow.visible,
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 16),
               Text(
-                'Message de motivation à la con',
-                style: theme.textTheme.bodyMedium
+                TextGenerator.randomMotivationalText(),
+                style: theme.textTheme.bodyLarge
                     ?.copyWith(color: theme.colorScheme.onBackground),
               ),
             ],
