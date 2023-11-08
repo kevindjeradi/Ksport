@@ -62,7 +62,7 @@ class ProfilePage extends StatelessWidget {
                               .then((response) {
                             // Assuming response contains the URL of the image
                             String newImageUrl = response['profileImage'];
-                            String finalImageUrl = baseUrl + newImageUrl;
+                            String finalImageUrl = newImageUrl;
 
                             // Update the userProvider with the new image URL
                             userProvider.updateProfileImage(finalImageUrl);
