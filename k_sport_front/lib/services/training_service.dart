@@ -1,6 +1,5 @@
 // training_service.dart
 import 'dart:convert';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 import 'package:k_sport_front/helpers/logger.dart';

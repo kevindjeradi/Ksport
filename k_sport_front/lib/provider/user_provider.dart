@@ -19,6 +19,11 @@ class UserProvider extends ChangeNotifier {
   String get theme => _theme ?? '';
   List<CompletedTraining>? get completedTrainings => _completedTrainings ?? [];
 
+  void addCompletedTraining(CompletedTraining training) {
+    completedTrainings?.add(training);
+    notifyListeners();
+  }
+
   setUserData(Map<String, dynamic> userDetails) {
     Log.logger.i(
         "user details completedTainings: ${userDetails['completedTrainings']} + type: ${userDetails['completedTrainings'].runtimeType}");
