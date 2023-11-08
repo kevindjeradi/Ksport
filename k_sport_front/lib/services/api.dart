@@ -1,5 +1,6 @@
 // api.dart
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:k_sport_front/helpers/logger.dart';
@@ -8,6 +9,8 @@ import 'package:k_sport_front/models/muscles.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/token_service.dart';
 import 'package:k_sport_front/services/user_service.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:path/path.dart';
 
 class Api {
   static final TokenService _tokenService = TokenService();
@@ -261,6 +264,35 @@ class Api {
     final response = await delete('$baseUrl/user/deleteTrainingForDay/$day');
     if (response.statusCode != 200) {
       throw Exception('Failed to delete training for day -> day: $day');
+    }
+  }
+
+  Future<Map<String, dynamic>> setUserProfileImage(File image) async {
+    try {
+      final token = await _tokenService.getToken();
+      String url = '$baseUrl/user/profileImage';
+
+      Log.logger.i("Setting profile image: ${image.path}");
+
+      var request = http.MultipartRequest('POST', Uri.parse(url))
+        ..headers['Authorization'] = 'Bearer $token'
+        ..files.add(await http.MultipartFile.fromPath(
+          'profileImage',
+          image.path,
+          contentType: MediaType('image', basename(image.path).split('.').last),
+        ));
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to set profile image: ${response.body}');
+      }
+    } catch (e) {
+      Log.logger.e("An error occurred setting profile image: $e");
+      rethrow;
     }
   }
 }
