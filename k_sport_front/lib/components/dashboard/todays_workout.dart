@@ -137,17 +137,20 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
                                 _exerciseImageUrls[workout['name']] ??
                                     'https://via.placeholder.com/100x30';
                             return ListTile(
-                              leading: CustomImage(
-                                imagePath: imageUrl,
-                                fit: BoxFit.cover,
+                              leading: SizedBox(
                                 width: 100,
+                                height: 100,
+                                child: CustomImage(
+                                  imagePath: imageUrl,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                               title: Text(
                                 workout['name'],
                                 style: textTheme.bodyLarge,
                               ),
                               subtitle: Text(
-                                '${workout['series']} séries x ${workout['reps']} rreps',
+                                '${workout['series']} séries x ${workout['reps']} reps',
                                 style: textTheme.bodySmall,
                               ),
                             );
