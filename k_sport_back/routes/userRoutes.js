@@ -87,6 +87,24 @@ router.get('/user/details', async (req, res) => {
     }
 });
 
+// Validate Token Route
+router.post('/validate', async (req, res) => {
+    try {
+        const { token } = req.body;
+        if (!token) {
+            return res.status(401).json({ error: 'Token is required' });
+        }
+
+        // Verify the token
+        const decoded = jwt.verify(token, JWT_SECRET);
+        
+        res.status(200).json({ valid: true, userId: decoded.userId });
+    } catch (error) {
+        res.status(401).json({ valid: false, error: 'Invalid Token' });
+    }
+});
+
+
 // Route to set profile image for the first time
 router.post('/user/profileImage', checkAuth, upload.single('profileImage'), async (req, res) => {
     try {
