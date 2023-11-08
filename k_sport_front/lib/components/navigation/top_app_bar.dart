@@ -12,9 +12,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       centerTitle: true,
       title: const CustomImage(
-          imagePath: 'https://via.placeholder.com/100x30',
-          fit: BoxFit.cover,
-          height: 30), // placeholder logo
+          imagePath: 'assets/icon/logo.png', fit: BoxFit.cover, height: 50),
       leading: IconButton(
         icon: const Icon(Icons.account_circle),
         onPressed: () {
