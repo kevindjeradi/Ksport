@@ -45,6 +45,8 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This application needs access to your photo gallery for uploading a profile picture.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

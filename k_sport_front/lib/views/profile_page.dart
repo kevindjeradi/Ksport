@@ -1,14 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:k_sport_front/components/generic/custom_circle_avatar.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
+import 'package:k_sport_front/services/api.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+  static final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
 
   @override
   Widget build(BuildContext context) {
@@ -32,30 +39,86 @@ class ProfilePage extends StatelessWidget {
               children: [
                 const SizedBox(height: 20.0),
                 Center(
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    children: [
-                      const CustomCircleAvatar(
-                        radius: 80.0,
-                        imagePath: 'https://via.placeholder.com/100',
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 5.0),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surface.withOpacity(0.85),
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          child: Text(
-                            'Pseudo: ${userProvider.username}',
-                            style: theme.textTheme.headlineSmall
-                                ?.copyWith(color: theme.colorScheme.onSurface),
+                  child: GestureDetector(
+                    onTap: () async {
+                      var status = await Permission.photos.status;
+                      if (status.isDenied) {
+                        showCustomSnackBar(
+                            context,
+                            "Veuillez autoriser l'accès aux photos pour continuer",
+                            SnackBarType.info);
+                        status = await Permission.photos.request();
+                      }
+                      if (status.isGranted) {
+                        // Use the image_picker to pick an image
+                        final pickedFile = await ImagePicker()
+                            .pickImage(source: ImageSource.gallery);
+                        if (pickedFile != null) {
+                          File image = File(pickedFile.path);
+
+                          // Use the setUserProfileImage to upload the image
+                          await Api()
+                              .setUserProfileImage(image)
+                              .then((response) {
+                            // Assuming response contains the URL of the image
+                            String newImageUrl = response['profileImage'];
+                            String finalImageUrl = baseUrl + newImageUrl;
+
+                            // Update the userProvider with the new image URL
+                            userProvider.updateProfileImage(finalImageUrl);
+
+                            // Show a success message
+                            showCustomSnackBar(
+                              context,
+                              "Profile image updated successfully!",
+                              SnackBarType.success,
+                            );
+                          }).catchError((error) {
+                            // Show an error message
+                            showCustomSnackBar(
+                              context,
+                              "Error updating profile image: $error",
+                              SnackBarType.error,
+                            );
+                          });
+                        }
+                      } else if (status.isPermanentlyDenied) {
+                        showCustomSnackBar(
+                            context,
+                            "Vous devez autoriser l’accès aux photos pour continuer",
+                            SnackBarType.info);
+                        openAppSettings();
+                      }
+                    },
+                    child: Stack(
+                      alignment: Alignment.bottomCenter,
+                      clipBehavior: Clip.none,
+                      children: [
+                        CustomCircleAvatar(
+                          radius: 80.0,
+                          imagePath: userProvider.profileImage != ""
+                              ? baseUrl + userProvider.profileImage
+                              : 'https://via.placeholder.com/100',
+                        ),
+                        Positioned(
+                          bottom: -10,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 5.0),
+                            decoration: BoxDecoration(
+                              color:
+                                  theme.colorScheme.surface.withOpacity(0.85),
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            child: Text(
+                              'Pseudo: ${userProvider.username}',
+                              style: theme.textTheme.headlineSmall?.copyWith(
+                                  color: theme.colorScheme.onSurface),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 40.0),

@@ -46,6 +46,8 @@ dependencies:
   flutter_timezone: ^1.0.8
   logger: ^2.0.2+1
   flutter_dotenv: ^5.1.0
+  image_picker: ^1.0.4
+  permission_handler: ^11.0.1
 
 
 dev_dependencies:
