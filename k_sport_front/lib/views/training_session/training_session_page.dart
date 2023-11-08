@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/helpers/logger.dart';
@@ -9,7 +10,10 @@ import 'package:k_sport_front/views/training_session/timer_page.dart';
 import 'package:provider/provider.dart';
 
 class TrainingSessionPage extends StatefulWidget {
-  const TrainingSessionPage({Key? key}) : super(key: key);
+  final List<String> exerciseImageUrls;
+
+  const TrainingSessionPage({Key? key, required this.exerciseImageUrls})
+      : super(key: key);
 
   @override
   TrainingSessionPageState createState() => TrainingSessionPageState();
@@ -165,6 +169,8 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                   if (exercise != null)
                     ExerciseInfoCard(
                         exercise: exercise,
+                        exerciseImage:
+                            widget.exerciseImageUrls[_currentExerciseIndex],
                         startRestTimer: _startRestTimer,
                         currentSet: provider.currentSet),
                   const SizedBox(height: 20),
@@ -201,6 +207,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
 
 class ExerciseInfoCard extends StatelessWidget {
   final Map<String, dynamic> exercise;
+  final String exerciseImage;
   final Function startRestTimer;
   final int currentSet;
 
@@ -208,7 +215,8 @@ class ExerciseInfoCard extends StatelessWidget {
       {Key? key,
       required this.exercise,
       required this.startRestTimer,
-      required this.currentSet})
+      required this.currentSet,
+      required this.exerciseImage})
       : super(key: key);
 
   @override
@@ -229,6 +237,8 @@ class ExerciseInfoCard extends StatelessWidget {
               style: theme.textTheme.headlineSmall
                   ?.copyWith(fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 10),
+            CustomImage(imagePath: exerciseImage),
             const SizedBox(height: 10),
             InfoRow(
               label: 'Séries',

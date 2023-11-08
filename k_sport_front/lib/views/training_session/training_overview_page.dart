@@ -207,13 +207,29 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CustomElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const TrainingSessionPage(),
-                      ),
-                    );
+                  onPressed: () async {
+                    List<String> imageUrls = [];
+
+                    for (var exercise in widget.training.exercises) {
+                      final exerciseLabel = exercise['label'];
+                      if (exerciseLabel != null) {
+                        final exerciseDetails = await Api()
+                            .fetchExerciseDetailsByLabel(exerciseLabel);
+                        if (exerciseDetails != null && mounted) {
+                          imageUrls.add(exerciseDetails['imageUrl'] ??
+                              'default_image_url_here');
+                        }
+                      }
+                    }
+                    if (mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              TrainingSessionPage(exerciseImageUrls: imageUrls),
+                        ),
+                      );
+                    }
                   },
                   foregroundColor: colorScheme.onPrimary,
                   backgroundColor: colorScheme.primary,
