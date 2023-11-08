@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
+import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/profile_page.dart';
+import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
@@ -22,7 +24,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           icon: const Icon(Icons.logout),
-          onPressed: () {
+          onPressed: () async {
+            final authProvider =
+                Provider.of<AuthProvider>(context, listen: false);
+            await authProvider.logout();
             CustomNavigation.pushReplacement(context, const LoginPage());
           },
         ),
