@@ -16,11 +16,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // Configure multer for profile image upload
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, 'images/') // make sure this images directory exists
+        cb(null, 'images/')
     },
     filename: function (req, file, cb) {
-        // Save the file with a unique name
-        cb(null, Date.now() + path.extname(file.originalname))
+        const userId = req.userId;
+        cb(null, `user_${userId}${path.extname(file.originalname)}`);
     }
 })
 
@@ -90,13 +90,15 @@ router.get('/user/details', async (req, res) => {
 // Route to set profile image for the first time
 router.post('/user/profileImage', checkAuth, upload.single('profileImage'), async (req, res) => {
     try {
-        const userId = req.userId; // use req.userId instead of req.user.id
+        const userId = req.userId;
         const user = await User.findById(userId);
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
+        console.log("\nreq.file.filename : " + req.file.filename)
+        console.log("\nuser.username : " + user.username)
         user.profileImage = `/images/${req.file.filename}`;
         await user.save();
 
@@ -110,7 +112,7 @@ router.post('/user/profileImage', checkAuth, upload.single('profileImage'), asyn
 // Route to update profile image
 router.patch('/user/profileImage', checkAuth ,upload.single('profileImage'), async (req, res) => {
     try {
-        const userId = req.userId; // use req.userId instead of req.user.id
+        const userId = req.userId;
         const user = await User.findById(userId);
 
         if (!user) {
