@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/components/generic/custom_circle_avatar.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class WelcomeBanner extends StatelessWidget {
   const WelcomeBanner({super.key});
+  static final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +31,11 @@ class WelcomeBanner extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const CustomCircleAvatar(
+                  CustomCircleAvatar(
                     radius: 40,
-                    imagePath: 'https://via.placeholder.com/80',
+                    imagePath: userProvider.profileImage != ""
+                        ? baseUrl + userProvider.profileImage
+                        : 'https://via.placeholder.com/100',
                   ),
                   const SizedBox(width: 10),
                   Expanded(
