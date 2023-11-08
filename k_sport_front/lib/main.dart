@@ -90,9 +90,12 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => Consumer<AuthProvider>(
+      home: FutureBuilder(
+        future:
+            Provider.of<AuthProvider>(context, listen: false).checkAuthStatus(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Consumer<AuthProvider>(
               builder: (context, auth, child) {
                 if (auth.isAuthenticated) {
                   return const Home();
@@ -100,7 +103,17 @@ class MyApp extends StatelessWidget {
                   return const LoginPage();
                 }
               },
+            );
+          }
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
             ),
+          );
+        },
+      ),
+      routes: {
+        '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
         '/home': (context) => const Home(),
       },
