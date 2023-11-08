@@ -1,5 +1,6 @@
 // register_page.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/helpers/logger.dart';
@@ -97,6 +98,10 @@ class RegisterPageState extends State<RegisterPage> {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
+                    CustomImage(
+                        imagePath: 'assets/icon/logo.png',
+                        width: MediaQuery.of(context).size.width * 0.6),
+                    const SizedBox(height: 32),
                     Text('Inscription',
                         style: Theme.of(context).textTheme.displayLarge),
                     const SizedBox(height: 32),
