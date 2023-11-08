@@ -53,42 +53,33 @@ class WeeklyActivityState extends State<WeeklyActivity> {
         Text("Cette semaine", style: textTheme.headlineMedium),
         Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(
-                  7,
-                  (index) => Expanded(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 20,
-                          height: 100,
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: progress[index]
-                                ? colorScheme.primary
-                                : Colors.grey.shade400,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          ['L', 'M', 'M', 'J', 'V', 'S', 'D'][index],
-                          style: textTheme.bodyMedium,
-                        ),
-                      ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(
+              7,
+              (index) => Expanded(
+                child: Column(
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 100,
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: progress[index]
+                            ? colorScheme.primary
+                            : Colors.grey.shade400,
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 10),
+                    Text(
+                      ['L', 'M', 'M', 'J', 'V', 'S', 'D'][index],
+                      style: textTheme.bodyMedium,
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {},
-                child: Text("Voir les détails >", style: textTheme.bodyMedium),
-              )
-            ],
+            ),
           ),
         ),
       ],
