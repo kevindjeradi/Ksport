@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/components/history/training_detail_page.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
@@ -10,6 +11,7 @@ import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/helpers/notification_handler.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/training_service.dart';
+import 'package:k_sport_front/views/home.dart';
 import 'package:k_sport_front/views/training_session/timer_page.dart';
 import 'package:provider/provider.dart';
 
@@ -40,13 +42,12 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
         final trainingDetails = await TrainingService.fetchTraining(trainingId);
 
         if (trainingDetails != null) {
-          Navigator.push(
+          CustomNavigation.pushReplacement(context, Home());
+          CustomNavigation.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => TrainingDetailPage(
-                training: trainingDetails,
-                date: firstCompletedTraining.dateCompleted,
-              ),
+            TrainingDetailPage(
+              training: trainingDetails,
+              date: firstCompletedTraining.dateCompleted,
             ),
           );
         }
@@ -148,7 +149,6 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   }
 
   void _finishTrainingSession() async {
-    // Implement the logic to finish the training session
     final provider =
         Provider.of<ScheduleTrainingProvider>(context, listen: false);
     final today = DateTime.now().weekday -
@@ -175,8 +175,6 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
           SnackBarType.error);
       Log.logger.e('Failed to record training: $e');
     }
-
-    Navigator.pop(context);
   }
 
   @override
