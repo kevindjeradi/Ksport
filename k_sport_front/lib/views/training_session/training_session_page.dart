@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
+import 'package:k_sport_front/components/generic/custom_snackbar.dart';
+import 'package:k_sport_front/components/history/training_detail_page.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/helpers/logger.dart';
+import 'package:k_sport_front/models/completed_training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/helpers/notification_handler.dart';
+import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/training_service.dart';
 import 'package:k_sport_front/views/training_session/timer_page.dart';
 import 'package:provider/provider.dart';
@@ -21,6 +25,34 @@ class TrainingSessionPage extends StatefulWidget {
 
 class TrainingSessionPageState extends State<TrainingSessionPage> {
   int _currentExerciseIndex = 0;
+
+// This could be a button press or some other trigger for navigation
+  void navigateToFirstCompletedTrainingDetail(BuildContext context) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final completedTrainings = userProvider.completedTrainings;
+
+    // Check if there are any completed trainings
+    if (completedTrainings != null && completedTrainings.isNotEmpty) {
+      final firstCompletedTraining = completedTrainings.first;
+      final trainingId = firstCompletedTraining.trainingId;
+
+      try {
+        final trainingDetails = await TrainingService.fetchTraining(trainingId);
+
+        if (trainingDetails != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TrainingDetailPage(
+                training: trainingDetails,
+                date: firstCompletedTraining.dateCompleted,
+              ),
+            ),
+          );
+        }
+      } catch (e) {}
+    }
+  }
 
   void _goToNextExercise() {
     setState(() {
@@ -122,18 +154,29 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     final today = DateTime.now().weekday -
         1; // DateTime.now().weekday returns 1 for Monday, 2 for Tuesday, etc.
     final trainingId = provider.weekTrainings[today]!.id;
-    Log.logger.i('Training Session Finished');
-    try {
-      Log.logger.i('Try');
-      Log.logger.i(trainingId.toString());
 
+    try {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final now = DateTime.now();
       await TrainingService.recordCompletedTraining(trainingId);
-      Log.logger.i('Training recorded successfully');
+      final CompletedTraining completedTraining = CompletedTraining(
+        id: now.toString(),
+        trainingId: trainingId,
+        dateCompleted: now,
+      );
+      userProvider.addCompletedTraining(completedTraining);
+      showCustomSnackBar(
+          context, 'Votre séance à bien été enregistrée', SnackBarType.success);
+      navigateToFirstCompletedTrainingDetail(context);
     } catch (e) {
+      showCustomSnackBar(
+          context,
+          'Un problèeme est survenu lors de l\'enregistrement de votre séance',
+          SnackBarType.error);
       Log.logger.e('Failed to record training: $e');
     }
 
-    // Navigator.pop(context);
+    Navigator.pop(context);
   }
 
   @override
