@@ -4,11 +4,27 @@ const mongoose = require('mongoose');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const checkAuth = require('../middleware/checkAuth');
 
 const router = express.Router();
 
 require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET;
+
+// Configure multer for profile image upload
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'images/') // make sure this images directory exists
+    },
+    filename: function (req, file, cb) {
+        // Save the file with a unique name
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({ storage: storage })
 
 router.post('/signup', async (req, res) => {
     try {
@@ -67,6 +83,46 @@ router.get('/user/details', async (req, res) => {
         };
         res.json(userDetails);
     } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to set profile image for the first time
+router.post('/user/profileImage', checkAuth, upload.single('profileImage'), async (req, res) => {
+    try {
+        const userId = req.userId; // use req.userId instead of req.user.id
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        user.profileImage = `/images/${req.file.filename}`;
+        await user.save();
+
+        res.status(200).json({ message: 'Profile image set successfully', profileImage: user.profileImage });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Route to update profile image
+router.patch('/user/profileImage', checkAuth ,upload.single('profileImage'), async (req, res) => {
+    try {
+        const userId = req.userId; // use req.userId instead of req.user.id
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+    
+        user.profileImage = `/images/${req.file.filename}`;
+        await user.save();
+    
+        res.status(200).json({ message: 'Profile image updated successfully', profileImage: user.profileImage });
+    } catch (error) {
+        console.error(error);
         res.status(500).json({ error: error.message });
     }
 });

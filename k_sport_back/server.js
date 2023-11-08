@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 const checkAuth = require('./middleware/checkAuth');
 const musclesRoutes = require('./routes/musclesRoutes');
 const exercicesRoutes = require('./routes/exercicesRoutes');
@@ -25,6 +26,9 @@ mongoose.connect(dbURI, {
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
 app.use('/', userRoutes);
 app.use('/', musclesRoutes);
 app.use('/', exercicesRoutes);
