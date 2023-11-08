@@ -18,10 +18,36 @@ class TrainingOverviewPage extends StatefulWidget {
 }
 
 class TrainingOverviewPageState extends State<TrainingOverviewPage> {
+  Map<String, String> _exerciseImageUrls = {};
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAllExerciseImageUrls(widget.training.exercises);
+  }
+
+  Future<void> fetchAllExerciseImageUrls(List exercises) async {
+    Map<String, String> exerciseImageUrls = {};
+    for (var exercise in exercises) {
+      final exerciseLabel = exercise['label'];
+      if (exerciseLabel != null) {
+        final exerciseDetails =
+            await Api().fetchExerciseDetailsByLabel(exerciseLabel);
+        if (exerciseDetails != null) {
+          exerciseImageUrls[exerciseLabel] =
+              exerciseDetails['imageUrl'] ?? 'https://via.placeholder.com/150';
+        }
+      }
+    }
+    if (mounted) {
+      setState(() => _exerciseImageUrls = exerciseImageUrls);
+    }
+  }
+
   int calculateTrainingDuration(Training training) {
     const int secondsPerRepetition = 2;
-    const int additionalActivityTime = 150; // Transition time between exercises
-    const int showerTimeInSeconds = 10 * 60; // Shower time in seconds
+    const int additionalActivityTime = 150;
+    const int showerTimeInSeconds = 10 * 60;
 
     int totalDurationInSeconds = 0;
 
@@ -34,18 +60,14 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
       for (int i = 0; i < repetitionsArray.length; i++) {
         int repetitionsTime = repetitionsArray[i] * secondsPerRepetition;
         int restTime = i < restTimeArray.length ? restTimeArray[i] : 0;
-
         // Add the time for the repetitions and rest for each set
         totalDurationInSeconds += repetitionsTime + restTime;
       }
-
       // Add transition time after each exercise
       totalDurationInSeconds += additionalActivityTime;
     }
-
     // Add shower time at the end
     totalDurationInSeconds += showerTimeInSeconds;
-
     // Convert the total duration from seconds to minutes and round up
     return (totalDurationInSeconds / 60).ceil();
   }
@@ -120,6 +142,8 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                   itemCount: widget.training.exercises.length,
                   itemBuilder: (context, index) {
                     final exercise = widget.training.exercises[index];
+                    final imageUrl = _exerciseImageUrls[exercise['label']] ??
+                        'https://via.placeholder.com/100x100';
                     return SizedBox(
                       height: MediaQuery.of(context).size.height * 0.2,
                       child: Card(
@@ -165,9 +189,7 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
                                       image: DecorationImage(
-                                        image: NetworkImage(exercise[
-                                                'imageUrl'] ??
-                                            'https://via.placeholder.com/100x100'),
+                                        image: NetworkImage(imageUrl),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
