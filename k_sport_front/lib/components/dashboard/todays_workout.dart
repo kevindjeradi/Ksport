@@ -9,6 +9,7 @@ import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
+import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/services/training_service.dart';
 import 'package:k_sport_front/views/training_session/training_overview_page.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,7 @@ class TodaysWorkout extends StatefulWidget {
 
 class TodaysWorkoutState extends State<TodaysWorkout> {
   List<Map<String, dynamic>> workouts = [];
+  Map<String, String> _exerciseImageUrls = {};
   bool isLoading = false;
   Training? training;
   bool isWorkoutsLoading = false;
@@ -38,6 +40,24 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
     _loadWorkouts();
   }
 
+  Future<void> fetchAllExerciseImageUrls(List exercises) async {
+    Map<String, String> exerciseImageUrls = {};
+    for (var exercise in exercises) {
+      final exerciseLabel = exercise['name'];
+      if (exerciseLabel != null) {
+        final exerciseDetails =
+            await Api().fetchExerciseDetailsByLabel(exerciseLabel);
+        if (exerciseDetails != null) {
+          exerciseImageUrls[exerciseLabel] =
+              exerciseDetails['imageUrl'] ?? 'https://via.placeholder.com/150';
+        }
+      }
+    }
+    if (mounted) {
+      setState(() => _exerciseImageUrls = exerciseImageUrls);
+    }
+  }
+
   _loadWorkouts() async {
     if (isWorkoutsLoading) return;
 
@@ -49,6 +69,7 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
 
       if (mounted) {
         training = await TrainingService.fetchTrainingForDay(day);
+        fetchAllExerciseImageUrls(workouts);
         setState(() {
           isLoading = false;
         });
@@ -112,18 +133,21 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
                           itemCount: workouts.length,
                           itemBuilder: (context, index) {
                             final workout = workouts[index];
+                            final imageUrl =
+                                _exerciseImageUrls[workout['name']] ??
+                                    'https://via.placeholder.com/100x30';
                             return ListTile(
-                              leading: const CustomImage(
-                                imagePath: 'https://via.placeholder.com/100x30',
+                              leading: CustomImage(
+                                imagePath: imageUrl,
                                 fit: BoxFit.cover,
-                                height: 30,
+                                width: 100,
                               ),
                               title: Text(
                                 workout['name'],
                                 style: textTheme.bodyLarge,
                               ),
                               subtitle: Text(
-                                '${workout['series']} séries x ${workout['reps']} reps',
+                                '${workout['series']} séries x ${workout['reps']} rreps',
                                 style: textTheme.bodySmall,
                               ),
                             );
