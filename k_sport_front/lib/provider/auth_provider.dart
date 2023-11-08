@@ -12,7 +12,11 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> checkAuthStatus() async {
     final token = await _tokenService.getToken();
-    _isAuthenticated = token != null;
+    if (token != null && await _userService.validateToken(token)) {
+      _isAuthenticated = true;
+    } else {
+      _isAuthenticated = false;
+    }
     notifyListeners();
   }
 
