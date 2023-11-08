@@ -26,7 +26,10 @@ class MetricCard extends StatelessWidget {
                 style: theme.textTheme.titleSmall
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 16.0),
-            Text("$value $particle", style: theme.textTheme.headlineMedium),
+            value == null
+                ? Text("vide", style: theme.textTheme.headlineMedium)
+                : Text("$value $particle",
+                    style: theme.textTheme.headlineMedium),
           ],
         ),
       ),

@@ -27,26 +27,31 @@ class MuscleGroupRepartitionPie extends StatelessWidget {
         children: [
           SizedBox(
             height: 150,
-            child: PieChart(
-              PieChartData(
-                sections: muscleGroupProportions.entries
-                    .toList()
-                    .asMap()
-                    .entries
-                    .map((mapEntry) {
-                  int index = mapEntry.key;
-                  MapEntry<String, int> entry = mapEntry.value;
-                  final percentage =
-                      ((entry.value / total) * 100).toStringAsFixed(1);
-                  return PieChartSectionData(
-                    title: '$percentage%',
-                    titleStyle: TextStyle(color: theme.colorScheme.onPrimary),
-                    value: entry.value.toDouble(),
-                    color: pieColors[index % pieColors.length],
-                  );
-                }).toList(),
-              ),
-            ),
+            child: muscleGroupProportions.isEmpty
+                ? Center(
+                    child: Text("Faut s'entraîner déjà",
+                        style: theme.textTheme.headlineMedium))
+                : PieChart(
+                    PieChartData(
+                      sections: muscleGroupProportions.entries
+                          .toList()
+                          .asMap()
+                          .entries
+                          .map((mapEntry) {
+                        int index = mapEntry.key;
+                        MapEntry<String, int> entry = mapEntry.value;
+                        final percentage =
+                            ((entry.value / total) * 100).toStringAsFixed(1);
+                        return PieChartSectionData(
+                          title: '$percentage%',
+                          titleStyle:
+                              TextStyle(color: theme.colorScheme.onPrimary),
+                          value: entry.value.toDouble(),
+                          color: pieColors[index % pieColors.length],
+                        );
+                      }).toList(),
+                    ),
+                  ),
           ),
           const SizedBox(height: 16),
           Wrap(

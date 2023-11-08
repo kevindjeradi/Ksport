@@ -74,15 +74,15 @@ class MonthlyTrainingsBarChart extends StatelessWidget {
     );
     String text;
     if (value == 0) {
-      text = '0';
+      text = ' 0';
     } else if (value == 10) {
-      text = '10';
+      text = ' 10';
+    } else if (value == 15) {
+      text = ' 15';
     } else if (value == 20) {
       text = '20';
-    } else if (value == 30) {
-      text = '30';
     } else {
-      return Container();
+      value.toInt() % 5 == 0 ? text = value.toInt().toString() : text = '';
     }
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -108,55 +108,62 @@ class MonthlyTrainingsBarChart extends StatelessWidget {
                 style: theme.textTheme.titleLarge,
               ),
             ),
-            SizedBox(
-              height: 200,
-              child: BarChart(
-                BarChartData(
-                  maxY: 30,
-                  barTouchData: BarTouchData(
-                    enabled: false,
-                    touchTooltipData: BarTouchTooltipData(
-                      tooltipBgColor: Colors.transparent,
-                      tooltipPadding: EdgeInsets.zero,
-                      tooltipMargin: 8,
+            SizedBox(height: 16),
+            monthlyTrainingData.isEmpty
+                ? SizedBox(
+                    height: 200,
+                    child: Center(
+                        child: Text("Faut s'entraîner on t'a dit",
+                            style: theme.textTheme.headlineMedium)),
+                  )
+                : SizedBox(
+                    height: 200,
+                    child: BarChart(
+                      BarChartData(
+                        barTouchData: BarTouchData(
+                          enabled: false,
+                          touchTooltipData: BarTouchTooltipData(
+                            tooltipBgColor: Colors.transparent,
+                            tooltipPadding: EdgeInsets.zero,
+                            tooltipMargin: 8,
+                          ),
+                        ),
+                        titlesData: FlTitlesData(
+                          show: true,
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 38,
+                              getTitlesWidget: getMonthTitles,
+                            ),
+                          ),
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 28,
+                              interval: 1,
+                              getTitlesWidget: leftTitles,
+                            ),
+                          ),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
+                          ),
+                        ),
+                        borderData: FlBorderData(
+                          show: false,
+                        ),
+                        barGroups: monthlyTrainingData,
+                        gridData: const FlGridData(show: false),
+                      ),
                     ),
                   ),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 38,
-                        getTitlesWidget: getMonthTitles,
-                      ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 28,
-                        interval: 1,
-                        getTitlesWidget: leftTitles,
-                      ),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                      ),
-                    ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  barGroups: monthlyTrainingData,
-                  gridData: const FlGridData(show: false),
-                ),
-              ),
-            ),
           ],
         ),
       ),

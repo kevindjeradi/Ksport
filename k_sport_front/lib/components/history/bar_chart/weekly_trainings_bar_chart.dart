@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:k_sport_front/helpers/logger.dart';
 
 class WeeklyTrainingsBarChart extends StatelessWidget {
   final List<BarChartGroupData> weeklyTrainingData;
@@ -19,7 +18,6 @@ class WeeklyTrainingsBarChart extends StatelessWidget {
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
-    Log.logger.i("Week number: $weekNumber");
     final text = Text('Semaine $weekNumber', style: style);
 
     return SideTitleWidget(
@@ -45,7 +43,7 @@ class WeeklyTrainingsBarChart extends StatelessWidget {
     } else if (value == 6) {
       text = value.toInt().toString();
     } else {
-      return Container();
+      value.toInt() % 2 == 0 ? text = value.toInt().toString() : text = '';
     }
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -71,55 +69,62 @@ class WeeklyTrainingsBarChart extends StatelessWidget {
                 style: theme.textTheme.titleLarge,
               ),
             ),
-            SizedBox(
-              height: 200,
-              child: BarChart(
-                BarChartData(
-                  maxY: 7,
-                  barTouchData: BarTouchData(
-                    enabled: false,
-                    touchTooltipData: BarTouchTooltipData(
-                      tooltipBgColor: Colors.transparent,
-                      tooltipPadding: EdgeInsets.zero,
-                      tooltipMargin: 8,
+            SizedBox(height: 16),
+            weeklyTrainingData.isEmpty
+                ? SizedBox(
+                    height: 200,
+                    child: Center(
+                        child: Text("Bon il s'agirait d'arrêter de forcer",
+                            style: theme.textTheme.headlineMedium)),
+                  )
+                : SizedBox(
+                    height: 200,
+                    child: BarChart(
+                      BarChartData(
+                        barTouchData: BarTouchData(
+                          enabled: false,
+                          touchTooltipData: BarTouchTooltipData(
+                            tooltipBgColor: Colors.transparent,
+                            tooltipPadding: EdgeInsets.zero,
+                            tooltipMargin: 8,
+                          ),
+                        ),
+                        titlesData: FlTitlesData(
+                          show: true,
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 38,
+                              getTitlesWidget: getWeekTitles,
+                            ),
+                          ),
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 28,
+                              interval: 1,
+                              getTitlesWidget: leftTitles,
+                            ),
+                          ),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
+                          ),
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
+                          ),
+                        ),
+                        borderData: FlBorderData(
+                          show: false,
+                        ),
+                        barGroups: weeklyTrainingData,
+                        gridData: const FlGridData(show: false),
+                      ),
                     ),
                   ),
-                  titlesData: FlTitlesData(
-                    show: true,
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 38,
-                        getTitlesWidget: getWeekTitles,
-                      ),
-                    ),
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 28,
-                        interval: 1,
-                        getTitlesWidget: leftTitles,
-                      ),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                      ),
-                    ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: false,
-                      ),
-                    ),
-                  ),
-                  borderData: FlBorderData(
-                    show: false,
-                  ),
-                  barGroups: weeklyTrainingData,
-                  gridData: const FlGridData(show: false),
-                ),
-              ),
-            ),
           ],
         ),
       ),
