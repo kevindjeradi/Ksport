@@ -41,7 +41,7 @@ class WelcomeBanner extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(
                     child: Text(
-                      '${TextGenerator.randomGreeting()} ${userProvider.username}',
+                      '${TextGenerator.randomGreeting()} ${userProvider.username} !',
                       style: theme.textTheme.headlineSmall
                           ?.copyWith(color: theme.colorScheme.onBackground),
                       overflow: TextOverflow.visible,

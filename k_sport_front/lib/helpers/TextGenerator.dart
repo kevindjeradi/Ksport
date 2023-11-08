@@ -26,24 +26,24 @@ class TextGenerator {
 
   static String randomGreeting() {
     final List<String> morningGreetings = [
-      "Bonjour!",
-      "Bonne matinée!",
-      "Réveillez-vous et brillez!",
-      "Un nouveau jour vous attend!",
+      "Bonjour",
+      "Bonne matinée",
+      "Réveillez-vous et brillez",
+      "Un nouveau jour vous attend",
     ];
 
     final List<String> afternoonGreetings = [
-      "Bonne après-midi!",
-      "C'est un bel après-midi!",
-      "Profitez de votre journée!",
-      "Passez un merveilleux après-midi!",
+      "Bonne après-midi",
+      "C'est un bel après-midi",
+      "Profitez de votre journée",
+      "Passez un merveilleux après-midi",
     ];
 
     final List<String> eveningGreetings = [
-      "Bonne soirée!",
-      "Quelle belle soirée!",
-      "Détendez-vous, la journée est finie.",
-      "Profitez de votre soirée!",
+      "Bonne soirée",
+      "Quelle belle soirée",
+      "Détendez-vous, la journée est finie",
+      "Profitez de votre soirée",
     ];
 
     final hour = DateTime.now().hour;
