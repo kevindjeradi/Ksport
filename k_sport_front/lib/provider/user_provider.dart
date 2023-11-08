@@ -19,6 +19,11 @@ class UserProvider extends ChangeNotifier {
   String get theme => _theme ?? '';
   List<CompletedTraining>? get completedTrainings => _completedTrainings ?? [];
 
+  void updateProfileImage(String newImageUrl) {
+    _profileImage = newImageUrl;
+    notifyListeners();
+  }
+
   void addCompletedTraining(CompletedTraining training) {
     completedTrainings?.add(training);
     notifyListeners();
