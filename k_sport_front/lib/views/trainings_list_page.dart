@@ -32,8 +32,6 @@ class TrainingsListPageState extends State<TrainingsListPage> {
     if (response.statusCode == 200) {
       setState(() {
         var jsonResponse = jsonDecode(response.body);
-        Log.logger.i(
-            "_fetchTrainings in trainings_list_page -> response: $jsonResponse");
         trainings = jsonResponse
             .map<Training>((training) => Training.fromJson(training))
             .toList();

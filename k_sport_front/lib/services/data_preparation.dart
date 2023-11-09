@@ -14,7 +14,7 @@ class DataPreparation {
   Future<Map<String, dynamic>> computeMetrics() async {
     final completedTrainings = userProvider.completedTrainings;
     if (completedTrainings == null || completedTrainings.isEmpty) {
-      Log.logger.i("No completed trainings found");
+      Log.logger.w("No completed trainings found");
       return {}; // Return empty metrics if there are no completed trainings
     }
 

@@ -149,13 +149,11 @@ class ThemeColorSchemeProvider with ChangeNotifier {
 
   void setThemeByName(String themeName) {
     final index = _themes.indexWhere((t) => t.name == themeName);
-    Log.logger.i("setThemeByName: $themeName\n index: $index");
     if (index != -1) {
       _currentIndex = index;
       notifyListeners();
     } else {
-      Log.logger.e(themeName);
-      // Optionally handle the case where the themeName is not found
+      Log.logger.w(themeName);
     }
   }
 }

@@ -224,11 +224,9 @@ class RestTimer extends StatelessWidget {
                   isTimerTextShown: true,
                   autoStart: true,
                   onStart: () {
-                    Log.logger.i('Countdown Started');
                     sendScheduledNotif(restTime, currentExerciseName);
                   },
                   onComplete: () {
-                    Log.logger.i('Countdown Ended');
                     onTimerFinish();
                   },
                 ),

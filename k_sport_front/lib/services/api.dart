@@ -134,7 +134,6 @@ class Api {
     final response = await get('$baseUrl/muscles/label/$muscleLabel');
     if (response.statusCode == 200) {
       final muscleData = jsonDecode(response.body);
-      Log.logger.i("muscleData['groupe']: ${muscleData['groupe']}");
       return muscleData['groupe'];
     } else {
       throw Exception('Failed to load muscle data');
@@ -271,8 +270,6 @@ class Api {
     try {
       final token = await _tokenService.getToken();
       String url = '$baseUrl/user/profileImage';
-
-      Log.logger.i("Setting profile image: ${image.path}");
 
       var request = http.MultipartRequest('POST', Uri.parse(url))
         ..headers['Authorization'] = 'Bearer $token'

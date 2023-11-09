@@ -30,9 +30,6 @@ class UserProvider extends ChangeNotifier {
   }
 
   setUserData(Map<String, dynamic> userDetails) {
-    Log.logger.i(
-        "user details completedTainings: ${userDetails['completedTrainings']} + type: ${userDetails['completedTrainings'].runtimeType}");
-
     _username = userDetails['username'];
     _dateJoined = DateTime.parse(userDetails['dateJoined']);
     _profileImage = userDetails['profileImage'];
