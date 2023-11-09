@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/components/generic/custom_circle_avatar.dart';
-import 'package:k_sport_front/helpers/TextGenerator.dart';
+import 'package:k_sport_front/helpers/text_generator.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
