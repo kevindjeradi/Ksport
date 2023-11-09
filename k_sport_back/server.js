@@ -34,6 +34,7 @@ app.use('/', musclesRoutes);
 app.use('/', exercicesRoutes);
 app.use('/', checkAuth, trainingRoutes);
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', function() {
   console.log(`Server is running on http://localhost:${PORT}`);
-});
+}
+);
