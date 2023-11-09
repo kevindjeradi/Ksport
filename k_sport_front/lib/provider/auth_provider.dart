@@ -22,6 +22,9 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> login(String username, String password) async {
     try {
+      // Clear any existing token before trying to log in a new user
+      await _tokenService.deleteToken();
+
       final response = await _userService.login(username, password);
       if (response.containsKey('token')) {
         await _tokenService.saveToken(response['token']);
@@ -31,6 +34,7 @@ class AuthProvider extends ChangeNotifier {
       }
       return false;
     } catch (e) {
+      // Log error or handle exception
       return false;
     }
   }
