@@ -78,39 +78,50 @@ class RegisterPageState extends State<RegisterPage> {
         // Save the token first
         await TokenService().saveToken(response['token']);
 
-        // Then populate the user provider
-        final userProvider = Provider.of<UserProvider>(context, listen: false);
-        await Api.populateUserProvider(userProvider);
-
-        // Log the user in
-        final bool isLoggedIn =
-            await Provider.of<AuthProvider>(context, listen: false)
-                .login(_usernameController.text, _passwordController.text);
-
-        // Make sure the user is logged in before navigating
-        if (isLoggedIn) {
-          showCustomSnackBar(context, 'Inscription et connexion réussies !',
-              SnackBarType.success);
-          CustomNavigation.pushReplacement(context, const Home());
-        } else {
-          showCustomSnackBar(
-              context,
-              'Inscription réussie mais erreur de connexion',
-              SnackBarType.error);
+        if (mounted) {
+          // Then populate the user provider
+          final userProvider =
+              Provider.of<UserProvider>(context, listen: false);
+          await Api.populateUserProvider(userProvider);
+          if (mounted) {
+            // Log the user in
+            final bool isLoggedIn =
+                await Provider.of<AuthProvider>(context, listen: false)
+                    .login(_usernameController.text, _passwordController.text);
+            if (mounted) {
+              // Make sure the user is logged in before navigating
+              if (isLoggedIn) {
+                showCustomSnackBar(
+                    context,
+                    'Inscription et connexion réussies !',
+                    SnackBarType.success);
+                CustomNavigation.pushReplacement(context, const Home());
+              } else {
+                showCustomSnackBar(
+                    context,
+                    'Inscription réussie mais erreur de connexion',
+                    SnackBarType.error);
+              }
+            }
+          } else {
+            // Handle registration failure
+            Log.logger.e("An error occurred in register: ${response['error']}");
+            if (mounted) {
+              showCustomSnackBar(
+                  context,
+                  "Une erreur est survenue: ${response['error']}",
+                  SnackBarType.error);
+            }
+          }
         }
-      } else {
-        // Handle registration failure
-        Log.logger.e("An error occurred in register: ${response['error']}");
-        showCustomSnackBar(
-            context,
-            "Une erreur est survenue: ${response['error']}",
-            SnackBarType.error);
       }
     } catch (e) {
       // Handle registration error
       Log.logger.e("An error occurred in register: $e");
-      showCustomSnackBar(
-          context, "Une erreur est survenue: $e", SnackBarType.error);
+      if (mounted) {
+        showCustomSnackBar(
+            context, "Une erreur est survenue: $e", SnackBarType.error);
+      }
     } finally {
       _loading = false;
       if (mounted) setState(() {});

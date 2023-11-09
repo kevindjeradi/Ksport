@@ -42,16 +42,20 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
         final trainingDetails = await TrainingService.fetchTraining(trainingId);
 
         if (trainingDetails != null) {
-          CustomNavigation.pushReplacement(context, Home());
-          CustomNavigation.push(
-            context,
-            TrainingDetailPage(
-              training: trainingDetails,
-              date: firstCompletedTraining.dateCompleted,
-            ),
-          );
+          if (mounted) {
+            CustomNavigation.pushReplacement(context, const Home());
+            CustomNavigation.push(
+              context,
+              TrainingDetailPage(
+                training: trainingDetails,
+                date: firstCompletedTraining.dateCompleted,
+              ),
+            );
+          }
         }
-      } catch (e) {}
+      } catch (e) {
+        Log.logger.e('Failed to fetch training details: $e');
+      }
     }
   }
 
@@ -165,14 +169,18 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
         dateCompleted: now,
       );
       userProvider.addCompletedTraining(completedTraining);
-      showCustomSnackBar(
-          context, 'Votre séance à bien été enregistrée', SnackBarType.success);
-      navigateToFirstCompletedTrainingDetail(context);
+      if (mounted) {
+        showCustomSnackBar(context, 'Votre séance à bien été enregistrée',
+            SnackBarType.success);
+        navigateToFirstCompletedTrainingDetail(context);
+      }
     } catch (e) {
-      showCustomSnackBar(
-          context,
-          'Un problèeme est survenu lors de l\'enregistrement de votre séance',
-          SnackBarType.error);
+      if (mounted) {
+        showCustomSnackBar(
+            context,
+            'Un problèeme est survenu lors de l\'enregistrement de votre séance',
+            SnackBarType.error);
+      }
       Log.logger.e('Failed to record training: $e');
     }
   }

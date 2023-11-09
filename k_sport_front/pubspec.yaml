@@ -55,6 +55,8 @@ dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  http_parser: ^4.0.2
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:

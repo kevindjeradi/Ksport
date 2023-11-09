@@ -69,7 +69,7 @@ class WeeklyTrainingsBarChart extends StatelessWidget {
                 style: theme.textTheme.titleLarge,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             weeklyTrainingData.isEmpty
                 ? SizedBox(
                     height: 200,

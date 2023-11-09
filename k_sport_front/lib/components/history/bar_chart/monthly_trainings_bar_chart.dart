@@ -108,7 +108,7 @@ class MonthlyTrainingsBarChart extends StatelessWidget {
                 style: theme.textTheme.titleLarge,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             monthlyTrainingData.isEmpty
                 ? SizedBox(
                     height: 200,
