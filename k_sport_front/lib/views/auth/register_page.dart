@@ -2,11 +2,16 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/helpers/logger.dart';
+import 'package:k_sport_front/provider/user_provider.dart';
+import 'package:k_sport_front/services/api.dart';
+import 'package:k_sport_front/services/token_service.dart';
 import 'package:k_sport_front/services/user_service.dart';
 import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
+import 'package:k_sport_front/views/home.dart';
 import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -69,19 +74,46 @@ class RegisterPageState extends State<RegisterPage> {
       _loading = true;
       final response = await _userService.signup(
           _usernameController.text, _passwordController.text);
-      _loading = false;
       if (response.containsKey('token')) {
-        if (mounted) {
-          Provider.of<AuthProvider>(context, listen: false)
-              .login(_usernameController.text, _passwordController.text);
+        // Save the token first
+        await TokenService().saveToken(response['token']);
+
+        // Then populate the user provider
+        final userProvider = Provider.of<UserProvider>(context, listen: false);
+        await Api.populateUserProvider(userProvider);
+
+        // Log the user in
+        final bool isLoggedIn =
+            await Provider.of<AuthProvider>(context, listen: false)
+                .login(_usernameController.text, _passwordController.text);
+
+        // Make sure the user is logged in before navigating
+        if (isLoggedIn) {
+          showCustomSnackBar(context, 'Inscription et connexion réussies !',
+              SnackBarType.success);
+          CustomNavigation.pushReplacement(context, const Home());
+        } else {
           showCustomSnackBar(
-              context, 'Inscription réussie !', SnackBarType.success);
+              context,
+              'Inscription réussie mais erreur de connexion',
+              SnackBarType.error);
         }
       } else {
+        // Handle registration failure
         Log.logger.e("An error occurred in register: ${response['error']}");
+        showCustomSnackBar(
+            context,
+            "Une erreur est survenue: ${response['error']}",
+            SnackBarType.error);
       }
     } catch (e) {
+      // Handle registration error
       Log.logger.e("An error occurred in register: $e");
+      showCustomSnackBar(
+          context, "Une erreur est survenue: $e", SnackBarType.error);
+    } finally {
+      _loading = false;
+      if (mounted) setState(() {});
     }
   }
 
