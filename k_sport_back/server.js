@@ -10,7 +10,7 @@ const trainingRoutes = require('./routes/trainingRoutes');
 const userRoutes = require('./routes/userRoutes');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 
 // Load environment variables from .env file
 require('dotenv').config();
