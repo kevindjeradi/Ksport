@@ -17,9 +17,7 @@ router.get('/muscles', async (req, res) => {
 // GET a specific muscle by label
 router.get('/muscles/label/:label', async (req, res) => {
     try {
-        console.log("\n\n>>>>>>>>>>>>>>>>" + req.params.label)
         const muscle = await Muscle.findOne({ label: req.params.label });
-        console.log("muscle ->" + muscle)
         if (!muscle) return res.status(404).json({ message: 'Muscle not found' });
         res.json(muscle);
     } catch (error) {

@@ -8,7 +8,6 @@ const checkAuth = (req, res, next) => {
         return res.status(401).json({ error: 'Authorization header format should be: Bearer [token]' });
     }
     const token = tokenParts[1];
-    console.log("\n----------backend token in checkAuth " + token)
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
         if (err) return res.status(401).json({ error: 'Invalid token', details: err.message });

@@ -115,8 +115,6 @@ router.post('/user/profileImage', checkAuth, upload.single('profileImage'), asyn
             return res.status(404).json({ error: 'User not found' });
         }
 
-        console.log("\nreq.file.filename : " + req.file.filename)
-        console.log("\nuser.username : " + user.username)
         user.profileImage = `/images/${req.file.filename}`;
         await user.save();
 
@@ -168,18 +166,13 @@ router.post('/user/updateTrainingForDay', async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(trainingId)) {
             return res.status(400).json({ error: 'Invalid trainingId format' });
         }
-        console.log("Day:", day);
-        console.log("Training ID:", trainingId);
-        console.log("Updated User:", user);
         const dayString = dayMapping[day - 1];
-        console.log("DayString:", dayString);
         if (dayString) 
         {
             user.trainingsSchedule[dayString] = new mongoose.Types.ObjectId(trainingId);
             user.markModified('trainingsSchedule');
             await user.save();
             const updatedUser = await User.findById(userId);
-            console.log("training of user After Update:", updatedUser.trainings);
         }
         else {
             console.error("Invalid day value:", day);
@@ -196,12 +189,10 @@ router.get('/user/getTrainingForDay/:day', async (req, res) => {
 
     try {
         const token = req.headers.authorization.split(' ')[1];
-        console.log("------------------token in getTrainingForDay route " + token)
 
         const decoded = jwt.verify(token, JWT_SECRET);
         const userId = decoded.userId;
         const user = await User.findById(userId).populate(`trainingsSchedule.${day}`);
-        console.log("in get /user/getTrainingForDay/:day --> day = " + day + "------------------user trainingsSchedule[day] --> " + user.trainingsSchedule[day])
         if (user.trainingsSchedule[day])
         {
             return res.status(200).json(user.trainingsSchedule[day]);
@@ -216,15 +207,12 @@ router.get('/user/getTrainingForDay/:day', async (req, res) => {
   // Delete a user's training for a specific day
 router.delete('/user/deleteTrainingForDay/:day', async (req, res) => {
     const day = req.params.day;
-    console.log("\n--------->" + day + "\n")
     try {
         const token = req.headers.authorization.split(' ')[1];
-        console.log("------------------token in delete route " + token)
         const decoded = jwt.verify(token, JWT_SECRET);
         const userId = decoded.userId;
         const user = await User.findById(userId);
         user.trainingsSchedule[day] = null;
-        console.log("\n\n-------------->user trainingsSchedule[day] -->" + user.trainingsSchedule[day])
         await user.save();
         res.status(200).json({ message: 'Training deleted successfully' });
     } catch (error) {
@@ -239,7 +227,6 @@ router.patch('/user/updateTheme', async (req, res) => {
         const decoded = jwt.verify(token, JWT_SECRET);
         const userId = decoded.userId;
         const { theme } = req.body;
-        console.log("\n\n->Going to update theme : " + theme)
 
         const user = await User.findById(userId);
         if (!user) {
@@ -248,7 +235,6 @@ router.patch('/user/updateTheme', async (req, res) => {
         
         user.settings.theme = theme;
         await user.save();
-        console.log("Updated theme : " + user.settings.theme)
         res.status(200).json({ message: 'Theme updated successfully' });
     } catch (error) {
         console.log("Updated theme error: " + error.message)

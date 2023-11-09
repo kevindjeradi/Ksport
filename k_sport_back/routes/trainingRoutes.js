@@ -110,7 +110,6 @@ router.delete('/trainings/:id', async (req, res) => {
         const user = await User.findById(req.userId);
         user.trainings = user.trainings.filter(trainingId => !trainingId.equals(deletedTraining._id));
         await user.save();
-        console.log("deleted training : " + deletedTraining._id)
         res.json({ message: 'Training deleted' });
     } catch (error) {
         res.status(500).json({ error: error.message });
