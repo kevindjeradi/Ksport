@@ -1,3 +1,4 @@
+// training_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';

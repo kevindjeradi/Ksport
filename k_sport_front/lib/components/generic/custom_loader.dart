@@ -23,50 +23,58 @@ class CustomLoader extends StatelessWidget {
 
     switch (finalLoaderType) {
       case LoaderType.circular:
-        return SizedBox(
-          width: loaderSize,
-          height: loaderSize,
-          child: CircularProgressIndicator(
-            strokeWidth: 5,
-            backgroundColor: loaderColor.withOpacity(0.1),
-            valueColor: AlwaysStoppedAnimation<Color>(loaderColor),
+        return Center(
+          child: SizedBox(
+            width: loaderSize,
+            height: loaderSize,
+            child: CircularProgressIndicator(
+              strokeWidth: 5,
+              backgroundColor: loaderColor.withOpacity(0.1),
+              valueColor: AlwaysStoppedAnimation<Color>(loaderColor),
+            ),
           ),
         );
       case LoaderType.linear:
-        return Container(
-          height: 5,
-          width: loaderSize * 2,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: LinearProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(loaderColor),
-            backgroundColor: loaderColor.withOpacity(0.3),
+        return Center(
+          child: Container(
+            height: 5,
+            width: loaderSize * 2,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: LinearProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(loaderColor),
+              backgroundColor: loaderColor.withOpacity(0.3),
+            ),
           ),
         );
       case LoaderType.dots:
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            3,
-            (index) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: AnimatedDot(
-                color: loaderColor,
-                position: index,
-                size: loaderSize / 5,
-                duration: animationDuration,
+        return Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              3,
+              (index) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                child: AnimatedDot(
+                  color: loaderColor,
+                  position: index,
+                  size: loaderSize / 5,
+                  duration: animationDuration,
+                ),
               ),
             ),
           ),
         );
       default:
-        return SizedBox(
-          width: loaderSize,
-          height: loaderSize,
-          child: CircularProgressIndicator(
-            strokeWidth: 5,
-            valueColor: AlwaysStoppedAnimation<Color>(loaderColor),
+        return Center(
+          child: SizedBox(
+            width: loaderSize,
+            height: loaderSize,
+            child: CircularProgressIndicator(
+              strokeWidth: 5,
+              valueColor: AlwaysStoppedAnimation<Color>(loaderColor),
+            ),
           ),
         );
     }

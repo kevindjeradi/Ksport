@@ -1,3 +1,4 @@
+// workout_card_detail.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
