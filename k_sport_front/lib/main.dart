@@ -1,6 +1,7 @@
 // main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:k_sport_front/auth_check.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
@@ -90,28 +91,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: FutureBuilder(
-        future:
-            Provider.of<AuthProvider>(context, listen: false).checkAuthStatus(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Consumer<AuthProvider>(
-              builder: (context, auth, child) {
-                if (auth.isAuthenticated) {
-                  return const Home();
-                } else {
-                  return const LoginPage();
-                }
-              },
-            );
-          }
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        },
-      ),
+      home: const AuthCheck(),
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),

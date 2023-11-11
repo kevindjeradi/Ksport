@@ -48,6 +48,6 @@ SPEC CHECKSUMS:
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
 
-PODFILE CHECKSUM: 7e26abb9a7e65d4ba5611fe5d1b2d77d2e367521
+PODFILE CHECKSUM: fdde8356b9de9df5b9eeafa7258291c65ed1ed1e
 
 COCOAPODS: 1.13.0
