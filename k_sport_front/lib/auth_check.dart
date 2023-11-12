@@ -37,11 +37,15 @@ class AuthCheckState extends State<AuthCheck> {
                 Provider.of<UserProvider>(context, listen: false);
             final themeProvider =
                 Provider.of<ThemeColorSchemeProvider>(context, listen: false);
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              themeProvider.setThemeByName(userProvider.theme);
+            });
+
             return FutureBuilder(
               future: Api.populateUserProvider(userProvider),
               builder: (context, userSnapshot) {
                 if (userSnapshot.connectionState == ConnectionState.done) {
-                  themeProvider.setThemeByName(userProvider.theme);
                   return const Home();
                 } else {
                   return const CircularProgressIndicator();

@@ -65,8 +65,8 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<NotificationHandler>.value(value: notificationHandler),
         ChangeNotifierProvider(create: (context) => ThemeColorSchemeProvider()),
+        Provider<NotificationHandler>.value(value: notificationHandler),
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => ScheduleTrainingProvider()),
@@ -86,11 +86,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'K Sports',
       theme: themeLight(themeProvider.colorScheme, themeProvider.textTheme),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+      themeMode: ThemeMode.light,
       home: const AuthCheck(),
       routes: {
         '/login': (context) => const LoginPage(),
