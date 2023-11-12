@@ -1,6 +1,8 @@
 // workout_card_detail.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_image.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
+import 'package:k_sport_front/components/history/exercise_history.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 
 class WorkoutCardDetail extends StatelessWidget {
@@ -49,7 +51,18 @@ class WorkoutCardDetail extends StatelessWidget {
                   style: theme.textTheme.bodyLarge,
                 ),
               ),
-            )
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  CustomNavigation.push(
+                      context, ExerciseHistory(exerciseLabel: title));
+                },
+                child: const Text("Voir vos datas sur cet exercice"))
+            // Expanded(
+            //   child: SingleChildScrollView(
+            //     child: ExerciseHistory(exerciseLabel: title),
+            //   ),
+            // )
           ],
         ),
       ),
