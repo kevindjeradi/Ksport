@@ -32,7 +32,19 @@ const userSchema = new mongoose.Schema({
     },
     history: {
         completedTrainings: [{
-            trainingId: { type: mongoose.Schema.Types.ObjectId, ref: 'Training', required: true },
+            trainingData: {
+                name: String,
+                description: String,
+                exercises: [{
+                    label: String,
+                    exerciseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Exercise' },
+                    repetitions: [Number],
+                    sets: Number,
+                    weight: [Number],
+                    restTime: [Number]  // in seconds
+                }],
+                goal: String,
+            },
             dateCompleted: { type: Date, required: true },
         }],
     },
