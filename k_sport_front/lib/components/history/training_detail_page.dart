@@ -2,32 +2,36 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
+import 'package:k_sport_front/models/completed_training.dart';
 
+// In training_detail_page.dart
 class TrainingDetailPage extends StatelessWidget {
-  final dynamic training;
+  final CompletedTraining completedTraining;
   final DateTime date;
 
   const TrainingDetailPage(
-      {super.key, required this.training, required this.date});
+      {Key? key, required this.completedTraining, required this.date})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-        appBar: ReturnAppBar(
-          barTitle: 'Retour vers mon historique',
-          bgColor: theme.colorScheme.primary,
-          color: theme.colorScheme.onPrimary,
-          elevation: 0,
-        ),
-        body: SingleChildScrollView(
+      appBar: ReturnAppBar(
+        barTitle: 'Retour vers mon historique',
+        bgColor: theme.colorScheme.primary,
+        color: theme.colorScheme.onPrimary,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 16),
               Text(
-                'Séance ${training?.name} du ${DateFormat('dd-MM-yyyy').format(date)}',
+                'Séance ${completedTraining.name} du ${DateFormat('dd-MM-yyyy').format(date)}',
                 style: theme.textTheme.headlineMedium,
               ),
               const SizedBox(height: 16),
@@ -43,7 +47,7 @@ class TrainingDetailPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${training?.description}',
+                          completedTraining.description,
                           style: theme.textTheme.bodyLarge,
                         ),
                       ],
@@ -58,7 +62,7 @@ class TrainingDetailPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${training?.goal}',
+                          completedTraining.goal,
                           style: theme.textTheme.bodyLarge,
                         ),
                       ],
@@ -66,7 +70,7 @@ class TrainingDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
-              ...?training?.exercises.asMap().entries.map((entry) {
+              ...completedTraining.exercises.asMap().entries.map((entry) {
                 final index = entry.key;
                 final exercise = entry.value;
                 return Padding(
@@ -96,9 +100,9 @@ class TrainingDetailPage extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                exercise['sets'] > 1
-                                    ? '${exercise['sets']} séries'
-                                    : '${exercise['sets']} série',
+                                exercise.sets > 1
+                                    ? '${exercise.sets} séries'
+                                    : '${exercise.sets} série',
                                 style: theme.textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -108,7 +112,7 @@ class TrainingDetailPage extends StatelessWidget {
                           const SizedBox(height: 16.0),
                           Center(
                             child: Text(
-                              '${exercise['label']}',
+                              exercise.label,
                               style: theme.textTheme.bodyLarge?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -116,13 +120,12 @@ class TrainingDetailPage extends StatelessWidget {
                           ),
                           const SizedBox(height: 16.0),
                           Column(
-                            children:
-                                List.generate(exercise['sets'], (setIndex) {
+                            children: List.generate(exercise.sets, (setIndex) {
                               final setNumber = setIndex + 1;
                               final repetitions =
-                                  exercise['repetitions'][setIndex];
-                              final weight = exercise['weight'][setIndex];
-                              final restTime = exercise['restTime'][setIndex];
+                                  exercise.repetitions[setIndex];
+                              final weight = exercise.weight[setIndex];
+                              final restTime = exercise.restTime[setIndex];
 
                               return Card(
                                 margin: const EdgeInsets.symmetric(vertical: 8),
@@ -182,6 +185,7 @@ class TrainingDetailPage extends StatelessWidget {
                   ),
                 );
               }).toList(),
+              const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Align(
@@ -194,6 +198,8 @@ class TrainingDetailPage extends StatelessWidget {
               ),
             ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
