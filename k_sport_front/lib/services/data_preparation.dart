@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/api.dart';
-import 'package:k_sport_front/services/training_service.dart';
 
 class DataPreparation {
   final UserProvider userProvider;
-  static final TrainingService trainingService = TrainingService();
 
   DataPreparation(this.userProvider);
 
@@ -20,37 +18,36 @@ class DataPreparation {
 
     int totalTrainings = completedTrainings.length;
     double totalWeightLifted = 0;
+    int totalDays = 0;
 
-    // Get the date the user joined and the date of the last training session
-    final accountCreationDate = userProvider.dateJoined;
-    final lastTrainingDate = completedTrainings.last.dateCompleted;
-
-    // Calculate the total number of days from account creation to the last training session
-    final totalDays = lastTrainingDate.difference(accountCreationDate).inDays +
-        1; // +1 to include both dates in the range
+    DateTime? accountCreationDate = userProvider.dateJoined;
+    DateTime? lastTrainingDate;
 
     for (var completedTraining in completedTrainings) {
-      final trainingId = completedTraining.trainingId;
-      final training = await TrainingService.fetchTraining(trainingId);
+      for (var exercise in completedTraining.exercises) {
+        totalWeightLifted +=
+            exercise.weight.fold(0, (total, weight) => total + weight);
+      }
 
-      // Assuming the training data has a similar structure to the example provided
-      for (var exercise in training!.exercises) {
-        for (var weight in exercise['weight']) {
-          totalWeightLifted += weight;
-        }
+      if (lastTrainingDate == null ||
+          lastTrainingDate.isBefore(completedTraining.dateCompleted)) {
+        lastTrainingDate = completedTraining.dateCompleted;
       }
     }
 
-    final double meanTrainingsPerWeek = (totalTrainings / totalDays) * 7;
-    final String meanTrainingsPerWeekFormatted =
-        meanTrainingsPerWeek.toStringAsFixed(3);
+    if (lastTrainingDate != null) {
+      totalDays = lastTrainingDate.difference(accountCreationDate).inDays + 1;
+    }
 
-    // Get the current month and year
+    final double meanTrainingsPerWeek =
+        totalDays > 0 ? (totalTrainings / totalDays) * 7 : 0;
+    final String meanTrainingsPerWeekFormatted =
+        meanTrainingsPerWeek.toStringAsFixed(2);
+
     final now = DateTime.now();
     final currentMonth = now.month;
     final currentYear = now.year;
 
-    // Filter the completedTrainings for the current month and year
     final trainingsThisMonth = completedTrainings
         .where((training) =>
             training.dateCompleted.month == currentMonth &&
@@ -95,10 +92,8 @@ class DataPreparation {
     final lastDayOfCurrentMonth = DateTime(now.year, now.month + 1, 0);
 
     for (var completedTraining in completedTrainings) {
-      final trainingId = completedTraining.trainingId;
-      final training = await TrainingService.fetchTraining(trainingId);
-      for (var exercise in training!.exercises) {
-        final exerciseId = exercise['exerciseId'];
+      for (var exercise in completedTraining.exercises) {
+        final exerciseId = exercise.exerciseId;
         final exerciseData = await Api().getExerciseById(exerciseId);
         final muscleLabel = exerciseData['muscleLabel'];
         final muscleGroup = await Api().getMuscleGroup(muscleLabel);
