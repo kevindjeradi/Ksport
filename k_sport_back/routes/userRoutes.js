@@ -7,6 +7,8 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 const checkAuth = require('../middleware/checkAuth');
+const Training = require('../models/Training');
+
 
 const router = express.Router();
 

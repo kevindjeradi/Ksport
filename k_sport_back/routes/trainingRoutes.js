@@ -17,7 +17,9 @@ router.get('/trainings', async (req, res) => {
 // GET a specific training by ID
 router.get('/trainings/:id', async (req, res) => {
     try {
+        console.log("get training by id : req.params.id ->" + req.params.id);
         const training = await Training.findById(req.params.id);
+        console.log("get training by id : training ->" + training);
         if (!training) return res.status(404).json({ message: 'Training not found' });
         res.json(training);
     } catch (error) {

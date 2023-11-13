@@ -25,7 +25,11 @@ class UserProvider extends ChangeNotifier {
   }
 
   void addCompletedTraining(CompletedTraining training) {
+    Log.logger.i(
+        "completed training in user_provider: ${training.trainingId}\nTraining.name: ${training.name}\nTraining.description: ${training.description}\nTraining.exercises: ${training.exercises}\nTraining.goal: ${training.goal}");
     completedTrainings?.add(training);
+    Log.logger
+        .i("user_provider.completedTrainings in add: $completedTrainings");
     notifyListeners();
   }
 

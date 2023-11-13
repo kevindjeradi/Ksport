@@ -58,6 +58,7 @@ class TrainingService {
     if (trainingId == null) return null; // Handle null trainingId
 
     try {
+      Log.logger.i('Fetching training: $trainingId');
       final response = await Api().get('$baseUrl/trainings/$trainingId');
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);

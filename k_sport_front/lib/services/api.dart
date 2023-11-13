@@ -100,8 +100,8 @@ class Api {
 
       // Populate the UserProvider with the fetched details
       userProvider.setUserData(userDetails);
-    } catch (e) {
-      Log.logger.e("Error populating UserProvider");
+    } catch (e, s) {
+      Log.logger.e("Error populating UserProvider + $e\n stack trace: $s");
     }
   }
 
