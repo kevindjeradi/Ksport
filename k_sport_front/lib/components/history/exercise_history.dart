@@ -1,9 +1,8 @@
 // exercise_history.dart
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:k_sport_front/components/generic/custom_loader.dart';
+import 'package:k_sport_front/components/history/bar_chart/custom_bar_chart.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
-import 'package:k_sport_front/services/training_service.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -19,90 +18,83 @@ class ExerciseHistory extends StatelessWidget {
     final userProvider = Provider.of<UserProvider>(context);
     final completedTrainings = userProvider.completedTrainings ?? [];
 
+    // Lists for storing aggregated data for charts
+    List<int> totalWeightsList = [];
+    List<int> totalRepsList = [];
+    List<int> totalRestTimesList = [];
+
+    // Aggregate data from exercises
+    for (var completedTraining in completedTrainings) {
+      final exercises = completedTraining.exercises
+          .where((exercise) => exercise.label == exerciseLabel)
+          .toList();
+
+      if (exercises.isNotEmpty) {
+        int totalWeight = 0;
+        int totalReps = 0;
+        int totalRestTime = 0;
+
+        for (var exercise in exercises) {
+          totalWeight += exercise.weight.fold(0, (sum, item) => sum + item);
+          totalReps += exercise.repetitions.fold(0, (sum, item) => sum + item);
+          totalRestTime += exercise.restTime.fold(0, (sum, item) => sum + item);
+        }
+
+        // Add to the lists
+        totalWeightsList.add(totalWeight);
+        totalRepsList.add(totalReps);
+        totalRestTimesList.add(totalRestTime);
+      }
+    }
+
+    // Prepare bar chart data for each chart
+    List<BarChartGroupData> weightBarData = _prepareBarData(totalWeightsList);
+    List<BarChartGroupData> setsBarData = _prepareBarData(totalRepsList);
+    List<BarChartGroupData> restTimeBarData =
+        _prepareBarData(totalRestTimesList);
+
     return Scaffold(
       appBar: ReturnAppBar(
-          barTitle: "datas sur $exerciseLabel",
+          barTitle: "Datas sur $exerciseLabel",
           bgColor: theme.colorScheme.primary,
           color: theme.colorScheme.onPrimary,
           elevation: 0),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: completedTrainings.length,
-              itemBuilder: (context, index) {
-                final completedTraining = completedTrainings[index];
-                final trainingId = completedTraining.trainingId;
-
-                return FutureBuilder(
-                  future: TrainingService.fetchTraining(trainingId),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CustomLoader();
-                    } else if (snapshot.hasError) {
-                      return ListTile(
-                        leading: const Icon(Icons.error),
-                        title: Text('Error: ${snapshot.error}'),
-                      );
-                    } else {
-                      final training = snapshot.data;
-                      final exercises = training?.exercises
-                          .where(
-                              (exercise) => exercise['label'] == exerciseLabel)
-                          .toList();
-
-                      if (exercises!.isEmpty) {
-                        return Container(); // No exercise found
-                      }
-
-                      return Card(
-                        margin: const EdgeInsets.all(8.0),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Training: ${training?.name}',
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                              Text(
-                                'Date: ${DateFormat('dd-MM-yyyy').format(completedTraining.dateCompleted)}',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                              const SizedBox(height: 8),
-                              ...exercises.map((exercise) {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children:
-                                      List.generate(exercise['sets'], (index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 4.0),
-                                      child: Text(
-                                        'Set ${index + 1}: ${exercise['repetitions'][index]} reps, ${exercise['weight'][index]} kg, ${exercise['restTime'][index]} s rest',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
-                                      ),
-                                    );
-                                  }),
-                                );
-                              }).toList(),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                );
-              },
+            CustomBarChart(
+              barData: weightBarData,
+              chartTitle: 'Evolution du poids soulevé',
+              textColor: theme.colorScheme.onSecondary,
+            ),
+            CustomBarChart(
+              barData: setsBarData,
+              chartTitle: 'Evolution du nombre de repetitions',
+              textColor: theme.colorScheme.onSecondary,
+            ),
+            CustomBarChart(
+              barData: restTimeBarData,
+              chartTitle: 'Evolution du temps de repos',
+              textColor: theme.colorScheme.onSecondary,
             ),
           ],
         ),
       ),
     );
+  }
+
+  List<BarChartGroupData> _prepareBarData(List<int> dataList) {
+    return dataList.asMap().entries.map((entry) {
+      return BarChartGroupData(
+        x: entry.key,
+        barRods: [
+          BarChartRodData(
+            toY: entry.value.toDouble(),
+            color: Colors.blue,
+          ),
+        ],
+        showingTooltipIndicators: [0],
+      );
+    }).toList();
   }
 }
