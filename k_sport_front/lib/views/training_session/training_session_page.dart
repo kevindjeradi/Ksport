@@ -29,24 +29,17 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   int _currentExerciseIndex = 0;
 
 // This could be a button press or some other trigger for navigation
-  void navigateToFirstCompletedTrainingDetail(BuildContext context) async {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    final completedTrainings = userProvider.completedTrainings;
-
-    // Check if there are any completed trainings
-    if (completedTrainings != null && completedTrainings.isNotEmpty) {
-      final firstCompletedTraining = completedTrainings.first;
-
-      if (mounted) {
-        // Navigate to the detail page of the first completed training
-        CustomNavigation.pushReplacement(context, const Home());
-        CustomNavigation.push(
-            context,
-            TrainingDetailPage(
-              completedTraining: firstCompletedTraining,
-              date: firstCompletedTraining.dateCompleted,
-            ));
-      }
+  void navigateToCompletedTrainingDetail(
+      BuildContext context, CompletedTraining completedTraining) async {
+    if (mounted) {
+      // Navigate to the detail page of the completed training
+      CustomNavigation.pushReplacement(context, const Home());
+      CustomNavigation.push(
+          context,
+          TrainingDetailPage(
+            completedTraining: completedTraining,
+            date: completedTraining.dateCompleted,
+          ));
     }
   }
 
@@ -156,23 +149,41 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
 
       Log.logger.i("trainingId: $trainingId");
 
-      // Fetch the training details to create a snapshot
+      // Fetch the training details to create a snapshot, but use updated reps
       final trainingDetails = await TrainingService.fetchTraining(trainingId);
+
+      List<TrainingExercise> updatedExercises =
+          provider.todayWorkouts.map((exerciseData) {
+        // Here, use the updated repetitions from your provider's data
+        List<int> updatedReps = List<int>.from(exerciseData['reps']);
+        Log.logger.i("updated reps: $updatedReps\nexerciseData: $exerciseData");
+
+        return TrainingExercise(
+          label: exerciseData['name'],
+          exerciseId: exerciseData['exerciseId'],
+          repetitions: updatedReps,
+          sets: exerciseData['series'],
+          weight: List<int>.from(exerciseData['weight']),
+          restTime: List<int>.from(exerciseData['restTime']),
+        );
+      }).toList();
+
       final CompletedTraining completedTraining = CompletedTraining(
         trainingId: trainingId,
         dateCompleted: now,
         name: trainingDetails!.name,
         description: trainingDetails.description,
-        exercises: trainingDetails.exercises
-            .map((e) => TrainingExercise.fromMap(e))
-            .toList(), // Convert each map to a TrainingExercise
+        exercises:
+            updatedExercises, // Use the list of updated TrainingExercise instances
         goal: trainingDetails.goal,
       );
+
       userProvider.addCompletedTraining(completedTraining);
+
       if (mounted) {
         showCustomSnackBar(context, 'Votre séance à bien été enregistrée',
             SnackBarType.success);
-        navigateToFirstCompletedTrainingDetail(context);
+        navigateToCompletedTrainingDetail(context, completedTraining);
       }
     } catch (e) {
       if (mounted) {
@@ -217,11 +228,21 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                   const SizedBox(height: 20),
                   if (exercise != null)
                     ExerciseInfoCard(
-                        exercise: exercise,
-                        exerciseImage:
-                            widget.exerciseImageUrls[_currentExerciseIndex],
-                        startRestTimer: _startRestTimer,
-                        currentSet: provider.currentSet),
+                      exercise: exercise,
+                      exerciseImage:
+                          widget.exerciseImageUrls[_currentExerciseIndex],
+                      startRestTimer: _startRestTimer,
+                      currentSet: provider.currentSet,
+                      onRepsUpdated: (newReps) {
+                        setState(() {
+                          Log.logger.i("newReps: $newReps");
+                          exercises[_currentExerciseIndex]['reps']
+                              [provider.currentSet - 1] = newReps;
+                          Log.logger.i(
+                              "array -> ${exercises[_currentExerciseIndex]['reps']}\nexercises current exercise currentSet ${exercises[_currentExerciseIndex]['reps'][provider.currentSet - 1]}");
+                        });
+                      },
+                    ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -259,14 +280,45 @@ class ExerciseInfoCard extends StatelessWidget {
   final String exerciseImage;
   final Function startRestTimer;
   final int currentSet;
+  final Function(int) onRepsUpdated;
 
   const ExerciseInfoCard(
       {Key? key,
       required this.exercise,
       required this.startRestTimer,
       required this.currentSet,
-      required this.exerciseImage})
+      required this.exerciseImage,
+      required this.onRepsUpdated})
       : super(key: key);
+
+  void _updateReps(BuildContext context) {
+    // Example input dialog to update reps
+    TextEditingController controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Update Reps"),
+          content: TextField(
+            controller: controller,
+            keyboardType: TextInputType.number,
+          ),
+          actions: [
+            TextButton(
+              child: const Text("Update"),
+              onPressed: () {
+                Navigator.of(context).pop(int.tryParse(controller.text));
+              },
+            ),
+          ],
+        );
+      },
+    ).then((newReps) {
+      if (newReps != null) {
+        onRepsUpdated(newReps);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -293,7 +345,10 @@ class ExerciseInfoCard extends StatelessWidget {
               label: 'Séries',
               value: "$currentSet / ${exercise['series'].toString()}",
             ),
-            InfoRow(label: 'Répétitions', value: repsForCurrentSet),
+            GestureDetector(
+              onTap: () => _updateReps(context),
+              child: InfoRow(label: 'Répétitions', value: repsForCurrentSet),
+            ),
             InfoRow(
                 label: 'Repos',
                 value: '${exercise['restTime'][currentSet - 1]}s'),

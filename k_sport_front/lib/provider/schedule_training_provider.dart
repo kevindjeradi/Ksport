@@ -79,10 +79,12 @@ class ScheduleTrainingProvider with ChangeNotifier {
     if (trainingOfToday != null) {
       return trainingOfToday.exercises
           .map((exercise) => {
+                'exerciseId': exercise['exerciseId'],
                 'name': exercise['label'],
                 'series': exercise['sets'],
                 'reps': exercise['repetitions'],
                 'restTime': exercise['restTime'],
+                'weight': exercise['weight']
               })
           .toList();
     }
