@@ -36,25 +36,16 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     // Check if there are any completed trainings
     if (completedTrainings != null && completedTrainings.isNotEmpty) {
       final firstCompletedTraining = completedTrainings.first;
-      final trainingId = firstCompletedTraining.trainingId;
 
-      try {
-        final trainingDetails = await TrainingService.fetchTraining(trainingId);
-
-        if (trainingDetails != null) {
-          if (mounted) {
-            CustomNavigation.pushReplacement(context, const Home());
-            CustomNavigation.push(
-              context,
-              TrainingDetailPage(
-                training: trainingDetails,
-                date: firstCompletedTraining.dateCompleted,
-              ),
-            );
-          }
-        }
-      } catch (e) {
-        Log.logger.e('Failed to fetch training details: $e');
+      if (mounted) {
+        // Navigate to the detail page of the first completed training
+        CustomNavigation.pushReplacement(context, const Home());
+        CustomNavigation.push(
+            context,
+            TrainingDetailPage(
+              completedTraining: firstCompletedTraining,
+              date: firstCompletedTraining.dateCompleted,
+            ));
       }
     }
   }
@@ -155,18 +146,27 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   void _finishTrainingSession() async {
     final provider =
         Provider.of<ScheduleTrainingProvider>(context, listen: false);
-    final today = DateTime.now().weekday -
-        1; // DateTime.now().weekday returns 1 for Monday, 2 for Tuesday, etc.
+    final today = DateTime.now().weekday - 1;
     final trainingId = provider.weekTrainings[today]!.id;
 
     try {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       final now = DateTime.now();
       await TrainingService.recordCompletedTraining(trainingId);
+
+      Log.logger.i("trainingId: $trainingId");
+
+      // Fetch the training details to create a snapshot
+      final trainingDetails = await TrainingService.fetchTraining(trainingId);
       final CompletedTraining completedTraining = CompletedTraining(
-        id: now.toString(),
         trainingId: trainingId,
         dateCompleted: now,
+        name: trainingDetails!.name,
+        description: trainingDetails.description,
+        exercises: trainingDetails.exercises
+            .map((e) => TrainingExercise.fromMap(e))
+            .toList(), // Convert each map to a TrainingExercise
+        goal: trainingDetails.goal,
       );
       userProvider.addCompletedTraining(completedTraining);
       if (mounted) {
@@ -178,7 +178,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
       if (mounted) {
         showCustomSnackBar(
             context,
-            'Un problèeme est survenu lors de l\'enregistrement de votre séance',
+            'Un problème est survenu lors de l\'enregistrement de votre séance',
             SnackBarType.error);
       }
       Log.logger.e('Failed to record training: $e');
