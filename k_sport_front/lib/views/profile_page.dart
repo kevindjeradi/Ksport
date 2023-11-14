@@ -157,16 +157,13 @@ class ProfilePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 20.0),
                 Card(
-                  elevation:
-                      4.0, // Slightly increased elevation for better shadow
+                  elevation: 4.0,
                   margin: const EdgeInsets.all(10.0),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                        15), // Rounded corners for the card
-                  ), // Added margin for spacing
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                   child: Padding(
-                    padding: const EdgeInsets.all(
-                        16.0), // Increased padding for more space
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       children: [
                         Row(
@@ -188,21 +185,23 @@ class ProfilePage extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "Thème de l'application:",
-                              style: theme.textTheme.titleMedium,
+                            Flexible(
+                              child: Text(
+                                "Thème de l'application:",
+                                style: theme.textTheme.titleMedium,
+                              ),
                             ),
                             DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 value: themeProvider.currentThemeName,
-                                icon:
-                                    const Icon(Icons.arrow_drop_down_outlined),
-                                elevation: 16,
-                                style: TextStyle(
-                                        color: theme.colorScheme.onBackground)
-                                    .copyWith(
+                                icon: const Icon(Icons.arrow_drop_down_outlined,
+                                    size: 24),
+                                elevation: 8,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: theme.colorScheme.onBackground,
                                   fontWeight: FontWeight.bold,
                                 ),
+                                dropdownColor: theme.colorScheme.surface,
                                 onChanged: (String? newValue) {
                                   themeProvider
                                       .updateTheme(newValue!)
@@ -223,9 +222,16 @@ class ProfilePage extends StatelessWidget {
                                         (String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
-                                    child: Text(value),
+                                    child: Text(
+                                      value,
+                                      style: TextStyle(
+                                          color: theme.colorScheme.onPrimary),
+                                    ),
                                   );
                                 }).toList(),
+                                borderRadius: BorderRadius.circular(15),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
                               ),
                             ),
                           ],
