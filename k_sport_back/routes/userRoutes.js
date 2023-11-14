@@ -110,20 +110,22 @@ router.post('/validate', async (req, res) => {
 router.post('/user/profileImage', checkAuth, upload.single('profileImage'), async (req, res) => {
     try {
         const userId = req.userId;
-        const user = await User.findById(userId);
 
-        if (!user) {
+        // Update the user's profileImage field using findOneAndUpdate
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userId },
+            { $set: { profileImage: `/images/${req.file.filename}` } },
+            { new: true } // This option returns the updated user document
+        );
+
+        if (!updatedUser) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        console.log("\n req.file.filename in post user/profileImage: ", req.file.filename);
-        user.profileImage = `/images/${req.file.filename}`;
-        console.log("\n user.profileImage in post user/profileImage: ", user.profileImage);
-        
-        // Only save the profileImage field, not the entire user object
-        await user.save({ fields: ['profileImage'] });
-
-        res.status(200).json({ message: 'Profile image set successfully', profileImage: user.profileImage });
+        res.status(200).json({
+            message: 'Profile image set successfully',
+            profileImage: updatedUser.profileImage,
+        });
     } catch (error) {
         console.error(error);
         console.log("error in post user/profileImage: " + error);
@@ -132,29 +134,32 @@ router.post('/user/profileImage', checkAuth, upload.single('profileImage'), asyn
 });
 
 // Route to update profile image
-router.patch('/user/profileImage', checkAuth ,upload.single('profileImage'), async (req, res) => {
+router.patch('/user/profileImage', checkAuth, upload.single('profileImage'), async (req, res) => {
     try {
         const userId = req.userId;
-        const user = await User.findById(userId);
 
-        if (!user) {
+        // Update the user's profileImage field using findOneAndUpdate
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userId },
+            { $set: { profileImage: `/images/${req.file.filename}` } },
+            { new: true } // This option returns the updated user document
+        );
+
+        if (!updatedUser) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        console.log("\n req.file.filename in patch user/profileImage: ", req.file.filename);
-        user.profileImage = `/images/${req.file.filename}`;
-        console.log("\n user.profileImage in patch user/profileImage: ", user.profileImage);
-        
-        // Only save the profileImage field, not the entire user object
-        await user.save({ fields: ['profileImage'] });
-
-        res.status(200).json({ message: 'Profile image updated successfully', profileImage: user.profileImage });
+        res.status(200).json({
+            message: 'Profile image updated successfully',
+            profileImage: updatedUser.profileImage,
+        });
     } catch (error) {
         console.error(error);
         console.log("error in patch user/profileImage: " + error);
         res.status(500).json({ error: error.message });
     }
 });
+
 
 
 // Update a user's training for a specific day
