@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
@@ -38,17 +39,17 @@ class AuthCheckState extends State<AuthCheck> {
             final themeProvider =
                 Provider.of<ThemeColorSchemeProvider>(context, listen: false);
 
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              themeProvider.setThemeByName(userProvider.theme);
-            });
-
             return FutureBuilder(
               future: Api.populateUserProvider(userProvider),
               builder: (context, userSnapshot) {
                 if (userSnapshot.connectionState == ConnectionState.done) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    themeProvider.setThemeByName(userProvider.theme);
+                  });
+
                   return const Home();
                 } else {
-                  return const CircularProgressIndicator();
+                  return const CustomLoader();
                 }
               },
             );
@@ -57,9 +58,7 @@ class AuthCheckState extends State<AuthCheck> {
           }
         } else {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: CustomLoader(),
           );
         }
       },
