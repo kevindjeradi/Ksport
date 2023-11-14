@@ -88,21 +88,21 @@ class TrainingService {
     }
   }
 
-  static Future<void> recordCompletedTraining(String trainingId) async {
-    final DateTime now = DateTime.now();
-    final String dateCompleted =
-        now.toIso8601String(); // Convert to a string in ISO 8601 format
+  // static Future<void> recordCompletedTraining(String trainingId) async {
+  //   final DateTime now = DateTime.now();
+  //   final String dateCompleted =
+  //       now.toIso8601String(); // Convert to a string in ISO 8601 format
 
-    final response = await Api().post(
-      '$baseUrl/user/recordCompletedTraining',
-      {
-        'trainingId': trainingId,
-        'dateCompleted': dateCompleted,
-      },
-    );
+  //   final response = await Api().post(
+  //     '$baseUrl/user/recordCompletedTraining',
+  //     {
+  //       'trainingId': trainingId,
+  //       'dateCompleted': dateCompleted,
+  //     },
+  //   );
 
-    if (response.statusCode != 200) {
-      throw Exception('Failed to record training: ${response.body}');
-    }
-  }
+  //   if (response.statusCode != 200) {
+  //     throw Exception('Failed to record training: ${response.body}');
+  //   }
+  // }
 }

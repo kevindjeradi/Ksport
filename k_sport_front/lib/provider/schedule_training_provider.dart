@@ -1,5 +1,6 @@
 // schedule_training_provider.dart
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/services/training_service.dart';
@@ -50,6 +51,8 @@ class ScheduleTrainingProvider with ChangeNotifier {
   }
 
   updateTrainingForDay(int dayIndex, Training? training) {
+    Log.logger
+        .i("updateTrainingForDay training: $training\ndayIndex: $dayIndex");
     weekTrainings[dayIndex] = training;
     notifyListeners();
   }

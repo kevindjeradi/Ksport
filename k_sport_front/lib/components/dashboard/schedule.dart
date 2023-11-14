@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
@@ -335,6 +336,8 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                     }).toList(),
                                     onChanged: (Training? newValue) async {
                                       setState(() {
+                                        Log.logger.i(
+                                            "index: $index\nnewValue: $newValue");
                                         trainingProvider.updateTrainingForDay(
                                             index, newValue);
                                       });

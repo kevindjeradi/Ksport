@@ -31,6 +31,8 @@ class Dashboard extends StatelessWidget {
                 final trainingProvider = Provider.of<ScheduleTrainingProvider>(
                     context,
                     listen: false);
+                Log.logger.i(
+                    "on training assigned : dayIndex: $dayIndex\ntraining: $training");
                 trainingProvider.updateTrainingForDay(dayIndex - 1, training);
                 if (training != null) {
                   final response = await Api().post(

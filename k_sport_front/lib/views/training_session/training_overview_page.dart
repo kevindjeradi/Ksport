@@ -26,6 +26,12 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
     fetchAllExerciseImageUrls(widget.training.exercises);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    fetchAllExerciseImageUrls(widget.training.exercises);
+  }
+
   Future<void> fetchAllExerciseImageUrls(List exercises) async {
     Map<String, String> exerciseImageUrls = {};
     for (var exercise in exercises) {
