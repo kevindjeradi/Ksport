@@ -77,6 +77,7 @@ class ThemeColorSchemeProvider with ChangeNotifier {
         error: Color(0xFFE74C3C),
         onPrimary: Colors.white,
         onSecondary: Colors.white,
+        onSecondaryContainer: Colors.white,
         onBackground: Colors.white,
         onSurface: Colors.white,
         onError: Colors.black,

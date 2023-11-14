@@ -286,9 +286,10 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                       : Center(
                                           child: RichText(
                                             text: TextSpan(
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                   fontSize: 16,
-                                                  color: Colors.black),
+                                                  color: theme.colorScheme
+                                                      .onBackground),
                                               children: <TextSpan>[
                                                 TextSpan(
                                                     text: status ==
@@ -317,6 +318,9 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                               vertical: 10.0, horizontal: 10.0),
                                       labelText:
                                           'Modifier l\'entrainement du jour',
+                                      labelStyle: TextStyle(
+                                          color:
+                                              theme.colorScheme.onBackground),
                                       border: OutlineInputBorder(
                                         borderSide: BorderSide(
                                             color: theme.colorScheme.onSurface),
@@ -345,7 +349,8 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text('OK',
-                          style: TextStyle(color: theme.colorScheme.primary)),
+                          style:
+                              TextStyle(color: theme.colorScheme.onBackground)),
                     ),
                   ],
                   contentPadding: const EdgeInsets.all(20),
