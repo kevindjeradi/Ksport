@@ -225,7 +225,8 @@ class ProfilePage extends StatelessWidget {
                                     child: Text(
                                       value,
                                       style: TextStyle(
-                                          color: theme.colorScheme.onSecondary),
+                                          color:
+                                              theme.colorScheme.onBackground),
                                     ),
                                   );
                                 }).toList(),
