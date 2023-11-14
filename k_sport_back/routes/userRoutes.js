@@ -183,7 +183,10 @@ router.post('/user/updateTrainingForDay', async (req, res) => {
         if (!mongoose.Types.ObjectId.isValid(trainingId)) {
             return res.status(400).json({ error: 'Invalid trainingId format' });
         }
+        console.log("trainingId: " + trainingId);
+        console.log("day - 1: " + day - 1);
         const dayString = dayMapping[day - 1];
+        console.log("dayString: " + dayString);
         if (dayString) 
         {
             user.trainingsSchedule[dayString] = new mongoose.Types.ObjectId(trainingId);
@@ -196,6 +199,7 @@ router.post('/user/updateTrainingForDay', async (req, res) => {
         }
         res.status(200).json({ message: 'Training updated successfully' });
     } catch (error) {
+        console.log("error in updateTrainingForDay route: " + error);
         res.status(500).json({ error: error.message });
     }
 });
