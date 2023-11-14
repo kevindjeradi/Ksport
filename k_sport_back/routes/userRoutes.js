@@ -106,7 +106,6 @@ router.post('/validate', async (req, res) => {
     }
 });
 
-
 // Route to set profile image for the first time
 router.post('/user/profileImage', checkAuth, upload.single('profileImage'), async (req, res) => {
     try {
@@ -116,10 +115,13 @@ router.post('/user/profileImage', checkAuth, upload.single('profileImage'), asyn
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+
         console.log("\n req.file.filename in post user/profileImage: ", req.file.filename);
         user.profileImage = `/images/${req.file.filename}`;
         console.log("\n user.profileImage in post user/profileImage: ", user.profileImage);
-        await user.save();
+        
+        // Only save the profileImage field, not the entire user object
+        await user.save({ fields: ['profileImage'] });
 
         res.status(200).json({ message: 'Profile image set successfully', profileImage: user.profileImage });
     } catch (error) {
@@ -138,11 +140,14 @@ router.patch('/user/profileImage', checkAuth ,upload.single('profileImage'), asy
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
+
         console.log("\n req.file.filename in patch user/profileImage: ", req.file.filename);
         user.profileImage = `/images/${req.file.filename}`;
         console.log("\n user.profileImage in patch user/profileImage: ", user.profileImage);
-        await user.save();
-    
+        
+        // Only save the profileImage field, not the entire user object
+        await user.save({ fields: ['profileImage'] });
+
         res.status(200).json({ message: 'Profile image updated successfully', profileImage: user.profileImage });
     } catch (error) {
         console.error(error);
@@ -150,6 +155,7 @@ router.patch('/user/profileImage', checkAuth ,upload.single('profileImage'), asy
         res.status(500).json({ error: error.message });
     }
 });
+
 
 // Update a user's training for a specific day
 router.post('/user/updateTrainingForDay', async (req, res) => {
