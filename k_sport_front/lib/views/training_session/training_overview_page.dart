@@ -190,7 +190,7 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                             child: Row(
                               children: [
                                 Expanded(
-                                  flex: 1,
+                                  flex: 2,
                                   child: Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(8),
@@ -203,7 +203,7 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
-                                  flex: 2,
+                                  flex: 3,
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
