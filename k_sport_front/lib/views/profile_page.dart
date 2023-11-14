@@ -198,7 +198,7 @@ class ProfilePage extends StatelessWidget {
                                     size: 24),
                                 elevation: 8,
                                 style: theme.textTheme.titleMedium?.copyWith(
-                                  color: theme.colorScheme.onBackground,
+                                  color: theme.colorScheme.onSecondary,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 dropdownColor: theme.colorScheme.surface,
@@ -225,7 +225,7 @@ class ProfilePage extends StatelessWidget {
                                     child: Text(
                                       value,
                                       style: TextStyle(
-                                          color: theme.colorScheme.onPrimary),
+                                          color: theme.colorScheme.onSecondary),
                                     ),
                                   );
                                 }).toList(),
