@@ -160,8 +160,6 @@ router.patch('/user/profileImage', checkAuth, upload.single('profileImage'), asy
     }
 });
 
-
-
 // Update a user's training for a specific day
 router.post('/user/updateTrainingForDay', async (req, res) => {
     const { day, trainingId } = req.body;
@@ -174,30 +172,34 @@ router.post('/user/updateTrainingForDay', async (req, res) => {
         5: 'samedi',
         6: 'dimanche'
     };
+
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, JWT_SECRET);
         const userId = decoded.userId;
-        const user = await User.findById(userId);
 
         if (!mongoose.Types.ObjectId.isValid(trainingId)) {
             return res.status(400).json({ error: 'Invalid trainingId format' });
         }
-        console.log("trainingId: " + trainingId);
-        console.log("day - 1: " + day - 1);
+
         const dayString = dayMapping[day - 1];
-        console.log("dayString: " + dayString);
-        if (dayString) 
-        {
-            user.trainingsSchedule[dayString] = new mongoose.Types.ObjectId(trainingId);
-            user.markModified('trainingsSchedule');
-            await user.save();
-            const updatedUser = await User.findById(userId);
-        }
-        else {
+        if (!dayString) {
             console.error("Invalid day value:", day);
+            return res.status(400).json({ error: 'Invalid day value' });
         }
-        res.status(200).json({ message: 'Training updated successfully' });
+
+        const updatePath = `trainingsSchedule.${dayString}`;
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userId },
+            { $set: { [updatePath]: new mongoose.Types.ObjectId(trainingId) } },
+            { new: true } // This option returns the updated user document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'Training updated successfully', updatedUser });
     } catch (error) {
         console.log("error in updateTrainingForDay route: " + error);
         res.status(500).json({ error: error.message });
