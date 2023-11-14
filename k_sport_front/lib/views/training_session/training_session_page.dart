@@ -292,23 +292,47 @@ class ExerciseInfoCard extends StatelessWidget {
       : super(key: key);
 
   void _updateReps(BuildContext context) {
-    // Example input dialog to update reps
     TextEditingController controller = TextEditingController();
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Update Reps"),
-          content: TextField(
-            controller: controller,
-            keyboardType: TextInputType.number,
+          title: const Text("Changer le nombre de répétitions"),
+          content: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: controller,
+              autofocus: true,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: 'Entrez le nombre de répétitions',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
           ),
           actions: [
             TextButton(
-              child: const Text("Update"),
+              onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(foregroundColor: Colors.grey),
+              child: const Text("Annuler"),
+            ),
+            TextButton(
               onPressed: () {
-                Navigator.of(context).pop(int.tryParse(controller.text));
+                final newReps = int.tryParse(controller.text);
+                if (newReps != null && newReps >= 0) {
+                  Navigator.of(context).pop(newReps);
+                } else {
+                  showCustomSnackBar(
+                      context,
+                      'Veuillez entrer un nombre valide de répétitions (supérieur ou égal à 0)',
+                      SnackBarType.error);
+                }
               },
+              style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).primaryColor),
+              child: const Text("Modifier"),
             ),
           ],
         );
