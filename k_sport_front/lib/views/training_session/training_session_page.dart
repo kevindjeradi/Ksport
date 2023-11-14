@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
-import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
-import 'package:k_sport_front/components/history/training_detail_page.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/completed_training.dart';
@@ -11,8 +9,8 @@ import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/helpers/notification_handler.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/training_service.dart';
-import 'package:k_sport_front/views/home.dart';
 import 'package:k_sport_front/views/training_session/timer_page.dart';
+import 'package:k_sport_front/views/training_session/training_completion_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TrainingSessionPage extends StatefulWidget {
@@ -27,21 +25,6 @@ class TrainingSessionPage extends StatefulWidget {
 
 class TrainingSessionPageState extends State<TrainingSessionPage> {
   int _currentExerciseIndex = 0;
-
-// This could be a button press or some other trigger for navigation
-  void navigateToCompletedTrainingDetail(
-      BuildContext context, CompletedTraining completedTraining) async {
-    if (mounted) {
-      // Navigate to the detail page of the completed training
-      CustomNavigation.pushReplacement(context, const Home());
-      CustomNavigation.push(
-          context,
-          TrainingDetailPage(
-            completedTraining: completedTraining,
-            date: completedTraining.dateCompleted,
-          ));
-    }
-  }
 
   void _goToNextExercise() {
     setState(() {
@@ -183,7 +166,13 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
       if (mounted) {
         showCustomSnackBar(context, 'Votre séance à bien été enregistrée',
             SnackBarType.success);
-        navigateToCompletedTrainingDetail(context, completedTraining);
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return TrainingCompletionDialog(
+                completedTraining: completedTraining);
+          },
+        );
       }
     } catch (e) {
       if (mounted) {
