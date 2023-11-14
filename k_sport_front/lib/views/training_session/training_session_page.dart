@@ -128,7 +128,6 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     try {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
       final now = DateTime.now();
-      await TrainingService.recordCompletedTraining(trainingId);
 
       Log.logger.i("trainingId: $trainingId");
 
