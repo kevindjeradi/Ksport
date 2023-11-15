@@ -1,7 +1,7 @@
 // main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:k_sport_front/auth_check.dart';
+import 'package:k_sport_front/helpers/auth_check.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
