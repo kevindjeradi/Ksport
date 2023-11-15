@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_image.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
-import 'package:k_sport_front/views/training_session/info_row.dart';
-import 'package:k_sport_front/views/training_session/rest_timer_button.dart';
+import 'package:k_sport_front/components/training%20session/info_row.dart';
+import 'package:k_sport_front/components/training%20session/rest_timer_button.dart';
 
 class ExerciseInfoCard extends StatelessWidget {
   final Map<String, dynamic> exercise;
