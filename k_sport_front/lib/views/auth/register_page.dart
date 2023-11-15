@@ -137,6 +137,7 @@ class RegisterPageState extends State<RegisterPage> {
           backgroundColor: Theme.of(context).colorScheme.background,
           body: Center(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(

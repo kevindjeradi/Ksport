@@ -61,6 +61,7 @@ class ExerciseHistory extends StatelessWidget {
           color: theme.colorScheme.onPrimary,
           elevation: 0),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           children: [
             CustomBarChart(

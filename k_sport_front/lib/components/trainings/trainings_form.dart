@@ -174,6 +174,7 @@ class TrainingFormState extends State<TrainingForm> {
         children: [
           Expanded(
             child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               child: Form(
                 key: _formKey,
                 child: Padding(

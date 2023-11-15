@@ -105,6 +105,7 @@ class CreateExercisePageState extends State<CreateExercisePage> {
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 Text("Muscle: ${widget.muscleLabel}",

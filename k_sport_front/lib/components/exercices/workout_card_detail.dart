@@ -46,6 +46,7 @@ class WorkoutCardDetail extends StatelessWidget {
             const SizedBox(height: 16),
             Expanded(
               child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
                 child: Text(
                   description,
                   style: theme.textTheme.bodyLarge,

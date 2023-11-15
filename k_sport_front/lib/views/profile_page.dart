@@ -39,6 +39,7 @@ class ProfilePageState extends State<ProfilePage> {
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
           return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

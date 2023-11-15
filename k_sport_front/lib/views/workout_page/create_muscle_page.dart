@@ -106,6 +106,7 @@ class CreateMusclePageState extends State<CreateMusclePage> {
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
             child: Column(
               children: [
                 Padding(

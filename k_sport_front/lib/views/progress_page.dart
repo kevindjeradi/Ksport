@@ -45,6 +45,7 @@ class ProgressPageState extends State<ProgressPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Center(
             child: Column(
               children: [
