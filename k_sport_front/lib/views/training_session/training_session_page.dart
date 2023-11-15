@@ -9,6 +9,7 @@ import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/helpers/notification_handler.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/training_service.dart';
+import 'package:k_sport_front/views/training_session/exercise_progress_indicator.dart';
 import 'package:k_sport_front/views/training_session/timer_page.dart';
 import 'package:k_sport_front/components/training%20session/training_completion_dialog.dart';
 import 'package:provider/provider.dart';
@@ -27,17 +28,34 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   int _currentExerciseIndex = 0;
 
   void _goToNextExercise() {
-    setState(() {
-      context.read<ScheduleTrainingProvider>().updateCurrentSet(1);
-      _currentExerciseIndex++;
-    });
+    final provider =
+        Provider.of<ScheduleTrainingProvider>(context, listen: false);
+    final exercises = provider.todayWorkouts;
+    int totalSets = exercises[_currentExerciseIndex]['series'];
+    int currentSet = provider.currentSet;
+
+    if (currentSet < totalSets) {
+      provider.updateCurrentSet(currentSet + 1);
+    } else if (_currentExerciseIndex < exercises.length - 1) {
+      setState(() {
+        provider.updateCurrentSet(1);
+        _currentExerciseIndex++;
+      });
+    }
   }
 
   void _goToPreviousExercise() {
-    if (_currentExerciseIndex > 0) {
+    final provider =
+        Provider.of<ScheduleTrainingProvider>(context, listen: false);
+    int currentSet = provider.currentSet;
+
+    if (currentSet > 1) {
+      provider.updateCurrentSet(currentSet - 1);
+    } else if (_currentExerciseIndex > 0) {
       setState(() {
-        context.read<ScheduleTrainingProvider>().updateCurrentSet(1);
         _currentExerciseIndex--;
+        int totalSets = provider.todayWorkouts[_currentExerciseIndex]['series'];
+        provider.updateCurrentSet(totalSets);
       });
     }
   }
@@ -62,13 +80,15 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
         context,
         MaterialPageRoute(
           builder: (context) => TimerPage(
-              restTime: restTime,
-              onTimerFinish: _onTimerFinish,
-              currentExercise: currentExercise,
-              nextExercise: nextExercise ?? {},
-              totalExercises: exercises.length,
-              currentExerciseIndex: _currentExerciseIndex,
-              notificationHandler: notificationHandler),
+            restTime: restTime,
+            onTimerFinish: _onTimerFinish,
+            currentExercise: currentExercise,
+            nextExercise: nextExercise ?? {},
+            totalExercises: exercises.length,
+            currentExerciseIndex: _currentExerciseIndex,
+            notificationHandler: notificationHandler,
+            setsPerExercise: exercises.map<int>((e) => e['series']).toList(),
+          ),
         ),
       );
     }
@@ -106,7 +126,6 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
       if (currentSet < totalSets) {
         provider.updateCurrentSet(currentSet + 1);
       } else {
-        provider.updateCurrentSet(1);
         _goToNextExercise();
       }
     } else {
@@ -191,7 +210,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
     final exercise = _currentExerciseIndex < exercises.length
         ? exercises[_currentExerciseIndex]
         : null;
-
+    List<int> setsPerExercise = exercises.map<int>((e) => e['series']).toList();
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -245,7 +264,11 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ElevatedButton(
-                        onPressed: _currentExerciseIndex > 0
+                        onPressed: _currentExerciseIndex > 0 ||
+                                Provider.of<ScheduleTrainingProvider>(context,
+                                            listen: false)
+                                        .currentSet >
+                                    1
                             ? _goToPreviousExercise
                             : null,
                         child: const Text('Précédent'),
@@ -263,7 +286,8 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                   const SizedBox(height: 20),
                   ExerciseProgressIndicator(
                     currentExerciseIndex: _currentExerciseIndex + 1,
-                    totalExercises: exercises.length,
+                    setsPerExercise: setsPerExercise,
+                    currentSet: provider.currentSet,
                   ),
                 ],
               ),
