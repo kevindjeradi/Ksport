@@ -109,10 +109,6 @@ class TrainingFormState extends State<TrainingForm> {
               TextEditingController(text: exercise['restTime'].join(',')),
         });
       }
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _addExercise(); // By default, add one exercise field
-      });
     }
   }
 
@@ -243,6 +239,11 @@ class TrainingFormState extends State<TrainingForm> {
   }
 
   void _submitForm() async {
+    if (_exerciseControllers.isEmpty) {
+      showCustomSnackBar(
+          context, 'Ajoute au moins un exercice', SnackBarType.error);
+      return;
+    }
     if (_formKey.currentState?.validate() == true) {
       List<Map<String, dynamic>> exercisesData = [];
       for (var controller in _exerciseControllers) {
