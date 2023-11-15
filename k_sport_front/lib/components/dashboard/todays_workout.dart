@@ -67,9 +67,9 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
       String day =
           DateFormat('EEEE', 'fr_FR').format(DateTime.now()).toLowerCase();
 
+      training = await TrainingService.fetchTrainingForDay(day);
+      fetchAllExerciseImageUrls(workouts);
       if (mounted) {
-        training = await TrainingService.fetchTrainingForDay(day);
-        fetchAllExerciseImageUrls(workouts);
         setState(() {
           isLoading = false;
         });

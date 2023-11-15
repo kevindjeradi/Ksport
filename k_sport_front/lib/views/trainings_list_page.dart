@@ -29,12 +29,14 @@ class TrainingsListPageState extends State<TrainingsListPage> {
   _fetchTrainings() async {
     final response = await Api().get('$baseUrl/trainings');
     if (response.statusCode == 200) {
-      setState(() {
-        var jsonResponse = jsonDecode(response.body);
-        trainings = jsonResponse
-            .map<Training>((training) => Training.fromJson(training))
-            .toList();
-      });
+      if (mounted) {
+        setState(() {
+          var jsonResponse = jsonDecode(response.body);
+          trainings = jsonResponse
+              .map<Training>((training) => Training.fromJson(training))
+              .toList();
+        });
+      }
     } else {
       throw Exception('Failed to load trainings');
     }

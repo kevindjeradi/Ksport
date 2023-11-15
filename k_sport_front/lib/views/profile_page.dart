@@ -13,8 +13,14 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => ProfilePageState();
+}
+
+class ProfilePageState extends State<ProfilePage> {
   static final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
 
   @override
@@ -43,10 +49,12 @@ class ProfilePage extends StatelessWidget {
                     onTap: () async {
                       var status = await Permission.photos.status;
                       if (status.isDenied) {
-                        showCustomSnackBar(
-                            context,
-                            "Veuillez autoriser l'accès aux photos pour continuer",
-                            SnackBarType.info);
+                        if (mounted) {
+                          showCustomSnackBar(
+                              context,
+                              "Veuillez autoriser l'accès aux photos pour continuer",
+                              SnackBarType.info);
+                        }
                         status = await Permission.photos.request();
                       }
                       if (status.isGranted) {
@@ -83,10 +91,12 @@ class ProfilePage extends StatelessWidget {
                           });
                         }
                       } else if (status.isPermanentlyDenied) {
-                        showCustomSnackBar(
-                            context,
-                            "Vous devez autoriser l’accès aux photos pour continuer",
-                            SnackBarType.info);
+                        if (mounted) {
+                          showCustomSnackBar(
+                              context,
+                              "Vous devez autoriser l'accès aux photos pour continuer",
+                              SnackBarType.info);
+                        }
                         openAppSettings();
                       }
                     },
