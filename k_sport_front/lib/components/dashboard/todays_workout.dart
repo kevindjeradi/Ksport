@@ -129,6 +129,7 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
                   child: isLoading
                       ? const CustomLoader()
                       : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: workouts.length,
                           itemBuilder: (context, index) {

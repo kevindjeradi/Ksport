@@ -16,6 +16,7 @@ class MuscleGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.count(
+      physics: const BouncingScrollPhysics(),
       crossAxisCount: 2,
       padding: const EdgeInsets.all(10.0),
       crossAxisSpacing: 10.0,

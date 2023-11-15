@@ -22,6 +22,7 @@ class MuscleGroupList extends StatelessWidget {
       child: SizedBox(
         height: 130,
         child: ListView.builder(
+          physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
           itemCount: groups.length,
           itemBuilder: (context, index) {

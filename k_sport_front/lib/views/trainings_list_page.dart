@@ -81,6 +81,7 @@ class TrainingsListPageState extends State<TrainingsListPage> {
     ThemeData theme = Theme.of(context);
 
     return ListView.separated(
+      physics: const BouncingScrollPhysics(),
       itemCount: trainings.length,
       separatorBuilder: (context, index) => const Divider(),
       itemBuilder: (context, index) {

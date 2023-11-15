@@ -145,6 +145,7 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
               ),
               Expanded(
                 child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
                   itemCount: widget.training.exercises.length,
                   itemBuilder: (context, index) {
                     final exercise = widget.training.exercises[index];

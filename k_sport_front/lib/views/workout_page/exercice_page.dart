@@ -81,6 +81,7 @@ class ExercisesPageState extends State<ExercisesPage> {
                   child: Text('Aucun exercices pour ce muscle.'));
             } else {
               return GridView.count(
+                physics: const BouncingScrollPhysics(),
                 crossAxisCount: 2,
                 padding: const EdgeInsets.all(10.0),
                 crossAxisSpacing: 10.0,

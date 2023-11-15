@@ -19,6 +19,7 @@ class CompletedTrainings extends StatelessWidget {
     Log.logger.i("Completed training: $completedTrainings");
 
     return ListView.builder(
+      physics: const BouncingScrollPhysics(),
       itemCount: completedTrainings?.length,
       itemBuilder: (context, index) {
         final completedTraining = completedTrainings?[index];
