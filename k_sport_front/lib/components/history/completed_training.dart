@@ -1,7 +1,7 @@
 // completed_training.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:k_sport_front/components/history/training_detail_page.dart';
+import 'package:k_sport_front/views/history/training_detail_page.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';

@@ -10,7 +10,7 @@ import 'package:k_sport_front/helpers/notification_handler.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/training_service.dart';
 import 'package:k_sport_front/views/training_session/timer_page.dart';
-import 'package:k_sport_front/views/training_session/training_completion_dialog.dart';
+import 'package:k_sport_front/components/training%20session/training_completion_dialog.dart';
 import 'package:provider/provider.dart';
 
 class TrainingSessionPage extends StatefulWidget {

@@ -2,13 +2,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
-import 'package:k_sport_front/components/history/bar_chart/monthly_trainings_bar_chart.dart';
-import 'package:k_sport_front/components/history/bar_chart/weekly_trainings_bar_chart.dart';
+import 'package:k_sport_front/components/history/bar_charts/monthly_trainings_bar_chart.dart';
+import 'package:k_sport_front/components/history/bar_charts/weekly_trainings_bar_chart.dart';
 import 'package:k_sport_front/components/history/metric_card.dart';
-import 'package:k_sport_front/components/history/muscle_group_repartition_pie.dart';
+import 'package:k_sport_front/components/history/pies/muscle_group_repartition_pie.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/data_preparation.dart';
-import 'package:k_sport_front/views/history_page.dart';
+import 'package:k_sport_front/views/history/history_page.dart';
 import 'package:provider/provider.dart';
 
 class ProgressPage extends StatefulWidget {

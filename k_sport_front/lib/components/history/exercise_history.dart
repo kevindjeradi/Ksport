@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:k_sport_front/components/history/bar_chart/custom_bar_chart.dart';
+import 'package:k_sport_front/components/history/bar_charts/custom_bar_chart.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';

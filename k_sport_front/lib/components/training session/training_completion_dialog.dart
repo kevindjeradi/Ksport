@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
-import 'package:k_sport_front/components/history/training_detail_page.dart';
+import 'package:k_sport_front/views/history/training_detail_page.dart';
 import 'package:k_sport_front/models/completed_training.dart';
 import 'package:k_sport_front/views/home.dart';
 import 'package:confetti/confetti.dart';
