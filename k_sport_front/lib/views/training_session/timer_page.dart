@@ -5,7 +5,6 @@ import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/components/training%20session/rest_timer.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/helpers/notification_handler.dart';
-import 'package:k_sport_front/views/training_session/exercise_progress_indicator.dart';
 
 class TimerPage extends StatefulWidget {
   final int restTime;
@@ -15,6 +14,7 @@ class TimerPage extends StatefulWidget {
   final int totalExercises;
   final int currentExerciseIndex;
   final NotificationHandler notificationHandler;
+  final List<int> setsPerExercise;
 
   const TimerPage(
       {Key? key,
@@ -24,7 +24,8 @@ class TimerPage extends StatefulWidget {
       required this.currentExercise,
       required this.totalExercises,
       required this.currentExerciseIndex,
-      required this.notificationHandler})
+      required this.notificationHandler,
+      required this.setsPerExercise})
       : super(key: key);
 
   @override
@@ -128,12 +129,15 @@ class _TimerPageState extends State<TimerPage> {
               },
             ),
             const SizedBox(height: 20),
-            ExerciseProgressIndicator(
-              currentExerciseIndex: widget.currentExerciseIndex + 1,
-              totalExercises: widget.totalExercises,
-              nextExerciseName:
-                  widget.nextExercise['name'] ?? "Fin de la séance",
-            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                widget.nextExercise.isNotEmpty
+                    ? 'Prochain exercice : ${widget.nextExercise['name']}'
+                    : '',
+                style: theme.textTheme.headlineSmall,
+              ),
+            )
           ],
         ),
       ),
