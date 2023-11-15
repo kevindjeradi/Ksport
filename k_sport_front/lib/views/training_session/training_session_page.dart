@@ -230,6 +230,15 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                               "array -> ${exercises[_currentExerciseIndex]['reps']}\nexercises current exercise currentSet ${exercises[_currentExerciseIndex]['reps'][provider.currentSet - 1]}");
                         });
                       },
+                      onWeightsUpdated: (newWeights) {
+                        setState(() {
+                          Log.logger.i("new weights: $newWeights");
+                          exercises[_currentExerciseIndex]['weight']
+                              [provider.currentSet - 1] = newWeights;
+                          Log.logger.i(
+                              "array -> ${exercises[_currentExerciseIndex]['weight']}\nexercises current exercise currentSet ${exercises[_currentExerciseIndex]['weight'][provider.currentSet - 1]}");
+                        });
+                      },
                     ),
                   const SizedBox(height: 20),
                   Row(
