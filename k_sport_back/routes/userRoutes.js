@@ -227,19 +227,31 @@ router.get('/user/getTrainingForDay/:day', async (req, res) => {
     }
 });
 
-  // Delete a user's training for a specific day
+// Delete a user's training for a specific day
 router.delete('/user/deleteTrainingForDay/:day', async (req, res) => {
     const day = req.params.day;
     try {
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, JWT_SECRET);
         const userId = decoded.userId;
-        const user = await User.findById(userId);
-        user.trainingsSchedule[day] = null;
-        await user.save();
+
+        // Prepare the update path
+        const updatePath = `trainingsSchedule.${day}`;
+
+        // Update the user document
+        const updatedUser = await User.findOneAndUpdate(
+            { _id: userId },
+            { $unset: { [updatePath]: "" } },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
         res.status(200).json({ message: 'Training deleted successfully' });
     } catch (error) {
-        console.log("\n\n--------------> error in deleteTrainingForDay route: " + error.message);
+        console.log("Error in deleteTrainingForDay route: " + error.message);
         res.status(500).json({ error: error.message });
     }
 });
