@@ -94,9 +94,19 @@ class TodaysWorkoutState extends State<TodaysWorkout> {
     return workouts.isEmpty
         ? Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(
-              "Aucun entrainement prévu aujourd'hui",
-              style: textTheme.headlineMedium,
+            child: Column(
+              children: [
+                Text(
+                  "Aucun entrainement prévu aujourd'hui",
+                  style: textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Cliquez sur un jour de la semaine sur le planning ci-dessus pour sélectionner un entraînement pour aujourd'hui",
+                  style: textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           )
         : InkWell(
