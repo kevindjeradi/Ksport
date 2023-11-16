@@ -18,7 +18,6 @@ class TextGenerator {
       "Rêvez grand, travaillez dur, restez concentré.",
       "L'effort constant crée le succès.",
       "Votre seule limite est vous-même.",
-      // New phrases
       "Chaque jour est une nouvelle chance de réussir.",
       "Votre potentiel est infini.",
       "Osez rêver et agir pour réaliser ces rêves.",
@@ -41,7 +40,6 @@ class TextGenerator {
       "Bonne matinée",
       "Réveillez-vous et brillez",
       "Un nouveau jour vous attend",
-      // New morning greetings
       "Un merveilleux matin s'annonce!",
       "Saluez ce beau matin avec un sourire.",
       "Que votre matinée soit aussi lumineuse que votre sourire.",
@@ -57,7 +55,6 @@ class TextGenerator {
       "C'est un bel après-midi",
       "Profitez de votre journée",
       "Passez un merveilleux après-midi",
-      // New afternoon greetings
       "Que cet après-midi soit rempli de surprises agréables.",
       "Profitez de chaque instant de votre après-midi.",
       "Un après-midi radieux pour une personne radieuse.",
@@ -73,7 +70,6 @@ class TextGenerator {
       "Quelle belle soirée",
       "Détendez-vous, la journée est finie",
       "Profitez de votre soirée",
-      // New evening greetings
       "Que votre soirée soit relaxante et paisible.",
       "Une belle soirée pour une fin de journée parfaite.",
       "Profitez de la tranquillité de cette soirée.",
