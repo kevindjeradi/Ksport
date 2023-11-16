@@ -1,8 +1,12 @@
 // user_provider.dart
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/completed_training.dart';
+import 'package:k_sport_front/services/api.dart';
+
+final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
 
 class UserProvider extends ChangeNotifier {
   String? _username;
@@ -31,6 +35,20 @@ class UserProvider extends ChangeNotifier {
     Log.logger
         .i("user_provider.completedTrainings in add: $completedTrainings");
     notifyListeners();
+  }
+
+  void updateTrainingNote(String trainingId, String newNote) async {
+    final trainingIndex =
+        _completedTrainings?.indexWhere((t) => t.trainingId == trainingId);
+    if (trainingIndex != null && trainingIndex >= 0) {
+      _completedTrainings![trainingIndex].note = newNote;
+      notifyListeners();
+    }
+
+    await Api().patch('$baseUrl/user/updateTrainingNote', {
+      'trainingId': trainingId,
+      'note': newNote,
+    });
   }
 
   setUserData(Map<String, dynamic> userDetails) {
