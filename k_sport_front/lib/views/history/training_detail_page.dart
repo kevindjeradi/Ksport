@@ -1,8 +1,11 @@
 // training_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:k_sport_front/components/history/user_note.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/models/completed_training.dart';
+import 'package:k_sport_front/provider/user_provider.dart';
+import 'package:provider/provider.dart';
 
 // In training_detail_page.dart
 class TrainingDetailPage extends StatelessWidget {
@@ -16,6 +19,7 @@ class TrainingDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return Scaffold(
       appBar: ReturnAppBar(
@@ -76,11 +80,11 @@ class TrainingDetailPage extends StatelessWidget {
                 final exercise = entry.value;
                 return Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                   child: Card(
                     color: theme.colorScheme.primaryContainer,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                      borderRadius: BorderRadius.circular(10.0),
                       side: BorderSide(
                           color: theme.colorScheme.onPrimary, width: 0.5),
                     ),
@@ -186,6 +190,14 @@ class TrainingDetailPage extends StatelessWidget {
                   ),
                 );
               }).toList(),
+              const SizedBox(height: 16),
+              UserNote(
+                initialNote: completedTraining.note,
+                onSave: (newNote) {
+                  userProvider.updateTrainingNote(
+                      completedTraining.trainingId, newNote);
+                },
+              ),
               const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
