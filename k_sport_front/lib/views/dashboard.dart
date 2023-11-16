@@ -57,7 +57,6 @@ class DashboardState extends State<Dashboard> {
                     Log.logger.e('Error updating training: ${response.body}');
                   }
                   await Future.delayed(const Duration(seconds: 1));
-                  Log.logger.i("setState called");
                   setState(() {
                     loading = false;
                   });
