@@ -322,16 +322,26 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                       labelStyle: TextStyle(
                                           color:
                                               theme.colorScheme.onBackground),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: theme.colorScheme.onSurface),
-                                      ),
                                     ),
+                                    style:
+                                        theme.textTheme.titleMedium?.copyWith(
+                                      color: theme.colorScheme.onSecondary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    dropdownColor: theme.colorScheme.surface,
+                                    borderRadius: BorderRadius.circular(15),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
                                     items: trainingProvider.trainings
                                         .map((Training training) {
                                       return DropdownMenuItem<Training>(
                                         value: training,
-                                        child: Text(training.name),
+                                        child: Text(
+                                          training.name,
+                                          style: TextStyle(
+                                              color: theme
+                                                  .colorScheme.onBackground),
+                                        ),
                                       );
                                     }).toList(),
                                     onChanged: (Training? newValue) async {
