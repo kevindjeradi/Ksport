@@ -239,7 +239,7 @@ router.delete('/user/deleteTrainingForDay/:day', async (req, res) => {
         await user.save();
         res.status(200).json({ message: 'Training deleted successfully' });
     } catch (error) {
-        console.log("\n\n-------------->user trainingsSchedule[day] -->" + user.trainingsSchedule[day])
+        console.log("\n\n--------------> error in deleteTrainingForDay route: " + error.message);
         res.status(500).json({ error: error.message });
     }
 });
