@@ -1,4 +1,4 @@
-// In completed_training.dart
+// completed_training.dart
 class CompletedTraining {
   final String trainingId;
   final DateTime dateCompleted;
@@ -6,6 +6,7 @@ class CompletedTraining {
   final String description;
   final List<TrainingExercise> exercises;
   final String goal;
+  String note;
 
   CompletedTraining({
     required this.trainingId,
@@ -14,6 +15,7 @@ class CompletedTraining {
     required this.description,
     required this.exercises,
     required this.goal,
+    this.note = '',
   });
 
   factory CompletedTraining.fromMap(Map<String, dynamic> map) {
@@ -28,6 +30,7 @@ class CompletedTraining {
           .map((e) => TrainingExercise.fromMap(e as Map<String, dynamic>))
           .toList(),
       goal: map['trainingData']['goal'] ?? 'Default Goal',
+      note: map['note'] ?? '',
     );
   }
 }
