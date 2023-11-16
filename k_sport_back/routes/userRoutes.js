@@ -308,6 +308,37 @@ router.post('/user/recordCompletedTraining', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+// PATCH route to update a note for a specific completed training
+router.patch('/user/updateTrainingNote', checkAuth, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { trainingId, note } = req.body;
+
+        // Find the user and the specific training
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Find the specific training to update the note
+        const trainingIndex = user.history.completedTrainings.findIndex(t => t._id.toString() === trainingId);
+        if (trainingIndex === -1) {
+            return res.status(404).json({ error: 'Training not found' });
+        }
+
+        // Update the note for the training
+        user.history.completedTrainings[trainingIndex].note = note;
+        console.log("user.history.completedTrainings[trainingIndex].note -->" + user.history.completedTrainings[trainingIndex].note);
+        console.log("completedTrainings[trainingIndex] -->" + user.history.completedTrainings[trainingIndex]);
+        console.log("trainingIndex -->" + trainingIndex);
+        await user.save();
+
+        res.status(200).json({ message: 'Note updated successfully' });
+    } catch (error) {
+        console.log("Error in updateTrainingNote route: " + error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
 
 
 module.exports = router;

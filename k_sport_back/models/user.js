@@ -46,6 +46,7 @@ const userSchema = new mongoose.Schema({
                 goal: String,
             },
             dateCompleted: { type: Date, required: true },
+            note: String,
         }],
     },
 });
