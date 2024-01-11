@@ -180,6 +180,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
       );
 
       userProvider.addCompletedTraining(completedTraining);
+      await TrainingService.recordCompletedTraining(completedTraining);
 
       if (mounted) {
         showCustomSnackBar(context, 'Votre séance à bien été enregistrée',
