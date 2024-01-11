@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart';
 import 'package:k_sport_front/helpers/logger.dart';
+import 'package:k_sport_front/models/completed_training.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/models/training.dart';
 
@@ -88,21 +89,39 @@ class TrainingService {
     }
   }
 
-  // static Future<void> recordCompletedTraining(String trainingId) async {
-  //   final DateTime now = DateTime.now();
-  //   final String dateCompleted =
-  //       now.toIso8601String(); // Convert to a string in ISO 8601 format
+  static Future<void> recordCompletedTraining(
+      CompletedTraining completedTraining) async {
+    final Map<String, dynamic> trainingData = {
+      'trainingId': completedTraining.trainingId,
+      'dateCompleted': completedTraining.dateCompleted.toIso8601String(),
+      'name': completedTraining.name,
+      'description': completedTraining.description,
+      'goal': completedTraining.goal,
+      'exercises': completedTraining.exercises
+          .map((exercise) => {
+                'label': exercise.label,
+                'exerciseId': exercise.exerciseId,
+                'repetitions': exercise.repetitions,
+                'sets': exercise.sets,
+                'weight': exercise.weight,
+                'restTime': exercise.restTime,
+              })
+          .toList(),
+      'note': completedTraining.note,
+    };
 
-  //   final response = await Api().post(
-  //     '$baseUrl/user/recordCompletedTraining',
-  //     {
-  //       'trainingId': trainingId,
-  //       'dateCompleted': dateCompleted,
-  //     },
-  //   );
+    try {
+      final response = await Api().post(
+        '$baseUrl/user/recordCompletedTraining',
+        trainingData,
+      );
 
-  //   if (response.statusCode != 200) {
-  //     throw Exception('Failed to record training: ${response.body}');
-  //   }
-  // }
+      if (response.statusCode != 200) {
+        throw Exception('Failed to record training: ${response.body}');
+      }
+    } catch (e, s) {
+      Log.logger.e('Error recording completed training: $e\nStack trace: $s');
+      rethrow;
+    }
+  }
 }
