@@ -277,7 +277,7 @@ router.post('/user/recordCompletedTraining', async (req, res) => {
     try {
         const { trainingId, dateCompleted } = req.body;
         const token = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Replace with your JWT secret
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.userId;
 
         const user = await User.findById(userId);
@@ -308,7 +308,7 @@ router.post('/user/recordCompletedTraining', async (req, res) => {
                 })),
                 goal: training.goal,
             },
-            dateCompleted: new Date(dateCompleted) // assuming dateCompleted is in a valid format
+            dateCompleted: new Date(dateCompleted)
         };
 
         user.history.completedTrainings.push(newCompletedTraining);
@@ -320,6 +320,7 @@ router.post('/user/recordCompletedTraining', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 // PATCH route to update a note for a specific completed training
 router.patch('/user/updateTrainingNote', checkAuth, async (req, res) => {
     try {
