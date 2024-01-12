@@ -66,7 +66,7 @@ class TrainingsListPageState extends State<TrainingsListPage> {
                 CustomNavigation.push(context, const TrainingForm())
                     .then((_) => _fetchTrainings());
               },
-              label: 'Créer un nouvel entraînement',
+              label: 'test Créer un nouvel entraînement',
               backgroundColor: theme.colorScheme.primary,
               foregroundColor: theme.colorScheme.onPrimary,
             ),
