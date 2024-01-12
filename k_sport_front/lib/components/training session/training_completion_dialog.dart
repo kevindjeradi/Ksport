@@ -4,6 +4,7 @@ import 'package:k_sport_front/views/history/training_detail_page.dart';
 import 'package:k_sport_front/models/completed_training.dart';
 import 'package:k_sport_front/views/home.dart';
 import 'package:confetti/confetti.dart';
+import 'package:k_sport_front/views/home_v2.dart';
 
 class TrainingCompletionDialog extends StatefulWidget {
   final CompletedTraining completedTraining;
@@ -48,7 +49,7 @@ class _TrainingCompletionDialogState extends State<TrainingCompletionDialog>
       BuildContext context, CompletedTraining completedTraining) async {
     if (mounted) {
       // Navigate to the detail page of the completed training
-      CustomNavigation.pushReplacement(context, const Home());
+      CustomNavigation.pushReplacement(context, const Home2());
       CustomNavigation.push(
           context,
           TrainingDetailPage(
@@ -75,7 +76,7 @@ class _TrainingCompletionDialogState extends State<TrainingCompletionDialog>
                 child: const Text('Non', style: TextStyle(color: Colors.red)),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  CustomNavigation.pushReplacement(context, const Home());
+                  CustomNavigation.pushReplacement(context, const Home2());
                 },
               ),
               TextButton(

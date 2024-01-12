@@ -53,7 +53,7 @@ class TrainingsListPageState extends State<TrainingsListPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(10.0),
               child: Text(
                 "Mes entraînements",
                 style: theme.textTheme.displaySmall,

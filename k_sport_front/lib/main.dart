@@ -12,6 +12,7 @@ import 'package:k_sport_front/theme/theme_light.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/auth/register_page.dart';
 import 'package:k_sport_front/views/home.dart';
+import 'package:k_sport_front/views/home_v2.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -91,7 +92,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => const RegisterPage(),
-        '/home': (context) => const Home(),
+        '/home': (context) => const Home2(),
       },
     );
   }

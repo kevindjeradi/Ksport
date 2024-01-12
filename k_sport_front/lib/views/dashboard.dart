@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/components/dashboard/schedule.dart';
+import 'package:k_sport_front/components/dashboard/schedule_v2.dart';
 import 'package:k_sport_front/components/dashboard/todays_workout.dart';
 import 'package:k_sport_front/components/dashboard/weekly_activity.dart';
 import 'package:k_sport_front/components/dashboard/welcome_banner.dart';
@@ -25,49 +26,62 @@ class DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const WelcomeBanner(),
-            ScheduleComponent(
-              onDayTapped: (int index) {},
-              onTrainingAssigned: (int dayIndex, Training? training) async {
-                setState(() {
-                  loading = true;
-                });
-                final trainingProvider = Provider.of<ScheduleTrainingProvider>(
-                    context,
-                    listen: false);
-                Log.logger.i(
-                    "on training assigned : dayIndex: $dayIndex\ntraining: $training");
-                trainingProvider.updateTrainingForDay(dayIndex - 1, training);
-                if (training != null) {
-                  final response = await Api().post(
-                    '$baseUrl/user/updateTrainingForDay',
-                    {"day": dayIndex, "trainingId": training.id},
-                  );
+    final theme = Theme.of(context);
 
-                  if (response.statusCode == 200) {
-                    Log.logger.i('Training updated successfully');
-                  } else {
-                    Log.logger.e('Error updating training: ${response.body}');
-                  }
-                  await Future.delayed(const Duration(seconds: 1));
-                  setState(() {
-                    loading = false;
-                  });
-                }
-              },
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text('Accueil', style: theme.textTheme.displaySmall),
+                ),
+                const WelcomeBanner(),
+                ScheduleComponent2(
+                  onDayTapped: (int index) {},
+                  onTrainingAssigned: (int dayIndex, Training? training) async {
+                    setState(() {
+                      loading = true;
+                    });
+                    final trainingProvider =
+                        Provider.of<ScheduleTrainingProvider>(context,
+                            listen: false);
+                    Log.logger.i(
+                        "on training assigned : dayIndex: $dayIndex\ntraining: $training");
+                    trainingProvider.updateTrainingForDay(
+                        dayIndex - 1, training);
+                    if (training != null) {
+                      final response = await Api().post(
+                        '$baseUrl/user/updateTrainingForDay',
+                        {"day": dayIndex, "trainingId": training.id},
+                      );
+
+                      if (response.statusCode == 200) {
+                        Log.logger.i('Training updated successfully');
+                      } else {
+                        Log.logger
+                            .e('Error updating training: ${response.body}');
+                      }
+                      await Future.delayed(const Duration(seconds: 1));
+                      setState(() {
+                        loading = false;
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                loading ? const CustomLoader() : const TodaysWorkout(),
+                const SizedBox(height: 20),
+                const WeeklyActivity(),
+              ],
             ),
-            const SizedBox(height: 20),
-            loading ? const CustomLoader() : const TodaysWorkout(),
-            const SizedBox(height: 20),
-            const WeeklyActivity(),
-          ],
+          ),
         ),
       ),
     );

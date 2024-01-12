@@ -42,9 +42,8 @@ class MusclesPage extends StatelessWidget {
             isSelectionMode
                 ? const SizedBox()
                 : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text('Choisir un groupe ou un muscle',
-                        style: theme.textTheme.displaySmall),
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text('Muscles', style: theme.textTheme.displaySmall),
                   ),
             MuscleGroupList(
                 onGroupSelected: (group) => _onGroupSelected(group, context)),

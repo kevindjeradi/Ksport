@@ -346,7 +346,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
                                     }).toList(),
                                     onChanged: (Training? newValue) async {
                                       setState(() {
-                                        Log.logger.i(
+                                        Log.logger.e(
                                             "index: $index\nnewValue: $newValue");
                                         trainingProvider.updateTrainingForDay(
                                             index, newValue);
