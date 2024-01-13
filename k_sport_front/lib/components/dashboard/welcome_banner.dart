@@ -16,12 +16,12 @@ class WelcomeBanner extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Card(
         color: theme.colorScheme.secondaryContainer,
         elevation: 5,
         shadowColor: colorScheme.primary.withOpacity(0.5),
-        margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),

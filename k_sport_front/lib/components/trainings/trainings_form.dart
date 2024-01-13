@@ -167,9 +167,7 @@ class TrainingFormState extends State<TrainingForm> {
       appBar: ReturnAppBar(
           barTitle: widget.editingTraining == null
               ? 'Nouvel entrainement'
-              : 'Modifier un entrainement',
-          bgColor: theme.colorScheme.primary,
-          color: theme.colorScheme.onPrimary),
+              : 'Modifier un entrainement'),
       body: Column(
         children: [
           Expanded(

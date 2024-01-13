@@ -6,7 +6,6 @@ import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/home.dart';
-import 'package:k_sport_front/views/home_v2.dart';
 import 'package:provider/provider.dart';
 
 class AuthCheck extends StatefulWidget {
@@ -48,7 +47,7 @@ class AuthCheckState extends State<AuthCheck> {
                     themeProvider.setThemeByName(userProvider.theme);
                   });
 
-                  return const Home2();
+                  return const Home();
                 } else {
                   return const CustomLoader();
                 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/components/dashboard/schedule.dart';
-import 'package:k_sport_front/components/dashboard/schedule_v2.dart';
 import 'package:k_sport_front/components/dashboard/todays_workout.dart';
 import 'package:k_sport_front/components/dashboard/weekly_activity.dart';
 import 'package:k_sport_front/components/dashboard/welcome_banner.dart';
 import 'package:k_sport_front/components/generic/custom_loader.dart';
+import 'package:k_sport_front/components/navigation/top_app_bar.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
@@ -29,21 +29,23 @@ class DashboardState extends State<Dashboard> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+      appBar: const CustomAppBar(
+        title: "Accueil",
+        position: 'left',
+      ),
+      backgroundColor: theme.colorScheme.background,
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15.0),
           child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Text('Accueil', style: theme.textTheme.displaySmall),
-                ),
                 const WelcomeBanner(),
-                ScheduleComponent2(
+                const SizedBox(height: 20),
+                ScheduleComponent(
                   onDayTapped: (int index) {},
                   onTrainingAssigned: (int dayIndex, Training? training) async {
                     setState(() {

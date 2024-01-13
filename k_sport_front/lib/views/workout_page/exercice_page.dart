@@ -61,12 +61,7 @@ class ExercisesPageState extends State<ExercisesPage> {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
-      appBar: ReturnAppBar(
-        barTitle: "Exercices",
-        bgColor: theme.colorScheme.primary,
-        color: theme.colorScheme.onPrimary,
-        elevation: 0,
-      ),
+      appBar: const ReturnAppBar(barTitle: "Exercices"),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: FutureBuilder<List<Exercise>>(

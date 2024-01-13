@@ -22,12 +22,8 @@ class TrainingDetailPage extends StatelessWidget {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return Scaffold(
-      appBar: ReturnAppBar(
-        barTitle: 'Retour vers mon historique',
-        bgColor: theme.colorScheme.primary,
-        color: theme.colorScheme.onPrimary,
-        elevation: 0,
-      ),
+      backgroundColor: theme.colorScheme.background,
+      appBar: const ReturnAppBar(barTitle: 'Retour vers mon historique'),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
@@ -82,7 +78,7 @@ class TrainingDetailPage extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 0),
                   child: Card(
-                    color: theme.colorScheme.primaryContainer,
+                    color: theme.colorScheme.surface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       side: BorderSide(
@@ -95,24 +91,26 @@ class TrainingDetailPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Exercice ${index + 1}',
-                                style: theme.textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                          SizedBox(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Exercice ${index + 1}',
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                exercise.sets > 1
-                                    ? '${exercise.sets} séries'
-                                    : '${exercise.sets} série',
-                                style: theme.textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.bold,
+                                Text(
+                                  exercise.sets > 1
+                                      ? '${exercise.sets} séries'
+                                      : '${exercise.sets} série',
+                                  style: theme.textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                           const SizedBox(height: 16.0),
                           Center(
@@ -133,6 +131,7 @@ class TrainingDetailPage extends StatelessWidget {
                               final restTime = exercise.restTime[setIndex];
 
                               return Card(
+                                color: theme.colorScheme.background,
                                 margin: const EdgeInsets.symmetric(vertical: 8),
                                 elevation: 2,
                                 child: Padding(

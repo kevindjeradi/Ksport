@@ -58,6 +58,7 @@ dependencies:
   http_parser: ^4.0.2
   path: ^1.8.3
   confetti: ^0.7.0
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

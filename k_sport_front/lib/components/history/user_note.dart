@@ -33,7 +33,7 @@ class _UserNoteState extends State<UserNote> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    Color noteBackgroundColor = theme.colorScheme.background;
+    Color noteBackgroundColor = theme.colorScheme.surface;
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -42,10 +42,9 @@ class _UserNoteState extends State<UserNote> {
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
             spreadRadius: 1,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+            blurRadius: 0,
           ),
         ],
       ),

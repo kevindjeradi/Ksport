@@ -55,11 +55,7 @@ class ExerciseHistory extends StatelessWidget {
         _prepareBarData(totalRestTimesList);
 
     return Scaffold(
-      appBar: ReturnAppBar(
-          barTitle: "Datas sur $exerciseLabel",
-          bgColor: theme.colorScheme.primary,
-          color: theme.colorScheme.onPrimary,
-          elevation: 0),
+      appBar: ReturnAppBar(barTitle: "Datas sur $exerciseLabel"),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
@@ -67,32 +63,32 @@ class ExerciseHistory extends StatelessWidget {
             CustomBarChart(
               barData: weightBarData,
               chartTitle: 'Evolution du poids soulevé',
-              textColor: theme.colorScheme.onSecondary,
+              textColor: theme.colorScheme.onBackground,
             ),
             ExerciseLineChart(
               dataList: totalWeightsList,
               chartTitle: 'Evolution du poids soulevé',
-              textColor: theme.colorScheme.onSecondary,
+              textColor: theme.colorScheme.onBackground,
             ),
             CustomBarChart(
               barData: setsBarData,
               chartTitle: 'Evolution du nombre de repetitions',
-              textColor: theme.colorScheme.onSecondary,
+              textColor: theme.colorScheme.onBackground,
             ),
             ExerciseLineChart(
               dataList: totalRepsList,
               chartTitle: 'Evolution du nombre de repetitions',
-              textColor: theme.colorScheme.onSecondary,
+              textColor: theme.colorScheme.onBackground,
             ),
             CustomBarChart(
               barData: restTimeBarData,
               chartTitle: 'Evolution du temps de repos',
-              textColor: theme.colorScheme.onSecondary,
+              textColor: theme.colorScheme.onBackground,
             ),
             ExerciseLineChart(
               dataList: totalRestTimesList,
               chartTitle: 'Evolution du temps de repos',
-              textColor: theme.colorScheme.onSecondary,
+              textColor: theme.colorScheme.onBackground,
             ),
           ],
         ),

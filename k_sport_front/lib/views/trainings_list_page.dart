@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
+import 'package:k_sport_front/components/navigation/top_app_bar.dart';
 import 'package:k_sport_front/components/trainings/trainings_form.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/services/api.dart';
@@ -47,32 +48,26 @@ class TrainingsListPageState extends State<TrainingsListPage> {
     ThemeData theme = Theme.of(context);
 
     return Scaffold(
+      appBar: const CustomAppBar(
+        title: "Mes entraînements",
+        position: 'left',
+      ),
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                "Mes entraînements",
-                style: theme.textTheme.displaySmall,
-              ),
-            ),
-            Expanded(child: _buildTrainingList(trainings)),
-            const SizedBox(height: 12.0),
-            CustomElevatedButton(
-              onPressed: () {
-                CustomNavigation.push(context, const TrainingForm())
-                    .then((_) => _fetchTrainings());
-              },
-              label: 'Créer un nouvel entraînement',
-              backgroundColor: theme.colorScheme.primary,
-              foregroundColor: theme.colorScheme.onPrimary,
-            ),
-            const SizedBox(height: 8.0),
-          ],
-        ),
+      body: Column(
+        children: [
+          Expanded(child: _buildTrainingList(trainings)),
+          const SizedBox(height: 12.0),
+          CustomElevatedButton(
+            onPressed: () {
+              CustomNavigation.push(context, const TrainingForm())
+                  .then((_) => _fetchTrainings());
+            },
+            label: 'Créer un nouvel entraînement',
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
+          ),
+          const SizedBox(height: 8.0),
+        ],
       ),
     );
   }
@@ -80,40 +75,96 @@ class TrainingsListPageState extends State<TrainingsListPage> {
   Widget _buildTrainingList(List<Training> trainings) {
     ThemeData theme = Theme.of(context);
 
-    return ListView.separated(
-      physics: const BouncingScrollPhysics(),
-      itemCount: trainings.length,
-      separatorBuilder: (context, index) => const Divider(),
-      itemBuilder: (context, index) {
-        return ListTile(
-          contentPadding: const EdgeInsets.all(8.0),
-          title: Text(
-            trainings[index].name,
-            style: theme.textTheme.headlineSmall,
-          ),
-          subtitle: Text(
-            trainings[index].description,
-            style: theme.textTheme.titleMedium,
-          ),
-          trailing: IconButton(
-            icon: Icon(
-              Icons.delete,
-              color: theme.colorScheme.error,
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ListView.builder(
+        physics: const BouncingScrollPhysics(),
+        itemCount: trainings.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: ListTile(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              tileColor: theme.colorScheme.surface,
+              contentPadding: const EdgeInsets.all(16.0),
+              leading: IconButton(
+                icon: Icon(
+                  Icons.delete,
+                  color: theme.colorScheme.error,
+                ),
+                onPressed: () async {
+                  bool confirmDelete = await showDialog(
+                    context: context,
+                    builder: (BuildContext dialogContext) {
+                      return AlertDialog(
+                        title: const Text('Êtes-vous sûr ?'),
+                        content: const Text(
+                            'Voulez-vous vraiment supprimer cet entraînement ?'),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text('Annuler',
+                                style: TextStyle(
+                                    color: theme.colorScheme.onBackground)),
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: Text('Supprimer',
+                                style: TextStyle(
+                                    color: theme.colorScheme.onBackground)),
+                            onPressed: () {
+                              Navigator.of(dialogContext).pop(true);
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  if (confirmDelete) {
+                    await Api()
+                        .delete('$baseUrl/trainings/${trainings[index].id}');
+                    setState(() {
+                      trainings.removeAt(index);
+                    });
+                  }
+                },
+              ),
+              title: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    trainings[index].name,
+                    style: theme.textTheme.headlineSmall,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    trainings[index].description,
+                    style: theme.textTheme.titleMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+              trailing: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.arrow_forward_ios,
+                  color: theme.colorScheme.onBackground,
+                ),
+              ),
+              onTap: () {
+                CustomNavigation.push(context,
+                        TrainingForm(editingTraining: trainings[index]))
+                    .then((_) => _fetchTrainings());
+              },
             ),
-            onPressed: () async {
-              await Api().delete('$baseUrl/trainings/${trainings[index].id}');
-              setState(() {
-                trainings.removeAt(index);
-              });
-            },
-          ),
-          onTap: () {
-            CustomNavigation.push(
-                    context, TrainingForm(editingTraining: trainings[index]))
-                .then((_) => _fetchTrainings());
-          },
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

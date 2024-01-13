@@ -10,6 +10,7 @@ final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
 
 class UserProvider extends ChangeNotifier {
   String? _username;
+  String? _uniqueIdentifier;
   DateTime? _dateJoined;
   String? _profileImage;
   int? _numberOfTrainings;
@@ -17,6 +18,7 @@ class UserProvider extends ChangeNotifier {
   List<CompletedTraining>? _completedTrainings;
 
   String get username => _username ?? '';
+  String get uniqueIdentifier => _uniqueIdentifier ?? '';
   DateTime get dateJoined => _dateJoined ?? DateTime.now();
   String get profileImage => _profileImage ?? '';
   int get numberOfTrainings => _numberOfTrainings ?? 0;
@@ -53,11 +55,12 @@ class UserProvider extends ChangeNotifier {
 
   setUserData(Map<String, dynamic> userDetails) {
     _username = userDetails['username'];
+    _uniqueIdentifier = userDetails['uniqueIdentifier'];
     _dateJoined = DateTime.parse(userDetails['dateJoined']);
     _profileImage = userDetails['profileImage'];
     _numberOfTrainings = userDetails['numberOfTrainings'];
     _theme = userDetails['theme'];
-
+    Log.logger.e(_uniqueIdentifier);
     // Check for null or non-list values
     if (userDetails['completedTrainings'] is List) {
       _completedTrainings = (userDetails['completedTrainings'] as List)

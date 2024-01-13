@@ -1,43 +1,38 @@
 import 'package:flutter/material.dart';
 
 class ReturnAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final Color bgColor;
   final String barTitle;
-  final Color color;
-  final double elevation;
 
   const ReturnAppBar({
     Key? key,
-    required this.bgColor,
     required this.barTitle,
-    required this.color,
-    this.elevation = 4.0,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AppBar(
-      elevation: elevation,
-      backgroundColor: bgColor,
+      backgroundColor: theme.colorScheme.background,
+      elevation: 0,
+      centerTitle: true,
       leading: IconButton(
         onPressed: () {
           Navigator.pop(context);
         },
         icon: Icon(
           Icons.arrow_back_ios_new,
-          color: color,
+          color: theme.colorScheme.onBackground,
         ),
       ),
       title: Text(
         barTitle,
-        style:
-            TextStyle(fontSize: 20, color: color, fontWeight: FontWeight.bold),
+        style: theme.textTheme.headlineMedium
+            ?.copyWith(color: theme.colorScheme.onBackground),
       ),
-      centerTitle: true,
     );
   }
 
   @override
-  Size get preferredSize =>
-      const Size.fromHeight(kToolbarHeight); // default height of AppBar
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

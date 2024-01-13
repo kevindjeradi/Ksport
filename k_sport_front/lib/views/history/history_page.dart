@@ -10,11 +10,7 @@ class HistoryPage extends StatelessWidget {
     ThemeData theme = Theme.of(context);
 
     return Scaffold(
-      appBar: ReturnAppBar(
-          barTitle: "Retour vers mes progrès",
-          bgColor: theme.colorScheme.primary,
-          color: theme.colorScheme.onPrimary,
-          elevation: 0),
+      appBar: const ReturnAppBar(barTitle: "Retour vers mes progrès"),
       backgroundColor: theme.colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
