@@ -216,10 +216,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: ReturnAppBar(
-          bgColor: theme.colorScheme.primary,
-          barTitle: "Séance d'entrainement",
-          color: theme.colorScheme.onPrimary),
+      appBar: const ReturnAppBar(barTitle: "Séance d'entrainement"),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: exercises.isEmpty

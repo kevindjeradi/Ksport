@@ -25,11 +25,8 @@ class WorkoutCardDetail extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: ReturnAppBar(
-          barTitle: "${title.toLowerCase()} pour $muscleLabel",
-          bgColor: theme.colorScheme.primary,
-          color: theme.colorScheme.onPrimary,
-          elevation: 0),
+      appBar:
+          ReturnAppBar(barTitle: "${title.toLowerCase()} pour $muscleLabel"),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(

@@ -95,10 +95,8 @@ class CreateExercisePageState extends State<CreateExercisePage> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: ReturnAppBar(
+      appBar: const ReturnAppBar(
         barTitle: 'Ajouter un exercice',
-        bgColor: theme.colorScheme.primary,
-        color: theme.colorScheme.onPrimary,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

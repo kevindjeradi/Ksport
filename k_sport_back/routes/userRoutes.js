@@ -82,6 +82,7 @@ router.get('/user/details', async (req, res) => {
             numberOfTrainings: numberOfTrainings,
             theme: user.settings.theme,
             completedTrainings: user.history.completedTrainings,
+            uniqueIdentifier: user.uniqueIdentifier,
         };
         res.json(userDetails);
     } catch (error) {

@@ -88,11 +88,7 @@ class TrainingOverviewPageState extends State<TrainingOverviewPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: ReturnAppBar(
-        bgColor: colorScheme.primary,
-        barTitle: "Résumé de la séance",
-        color: colorScheme.onPrimary,
-      ),
+      appBar: const ReturnAppBar(barTitle: "Résumé de la séance"),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(8.0),

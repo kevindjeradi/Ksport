@@ -96,11 +96,7 @@ class CreateMusclePageState extends State<CreateMusclePage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: ReturnAppBar(
-        barTitle: 'Ajouter un muscle',
-        bgColor: theme.colorScheme.primary,
-        color: theme.colorScheme.onPrimary,
-      ),
+      appBar: const ReturnAppBar(barTitle: 'Ajouter un muscle'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

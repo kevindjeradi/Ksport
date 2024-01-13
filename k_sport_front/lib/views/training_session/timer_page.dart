@@ -98,10 +98,7 @@ class _TimerPageState extends State<TimerPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: ReturnAppBar(
-          bgColor: theme.colorScheme.primary,
-          barTitle: widget.currentExercise['name'],
-          color: theme.colorScheme.onPrimary),
+      appBar: ReturnAppBar(barTitle: widget.currentExercise['name']),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
