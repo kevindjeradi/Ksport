@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:k_sport_front/components/generic/custom_circle_avatar.dart';
+import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
-import 'package:k_sport_front/components/navigation/return_app_bar.dart';
+import 'package:k_sport_front/components/navigation/top_app_bar.dart';
+import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/api.dart';
+import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -30,11 +34,9 @@ class ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: ReturnAppBar(
-        barTitle: "Profil",
-        bgColor: theme.colorScheme.primary,
-        color: theme.colorScheme.onPrimary,
-        elevation: 0,
+      appBar: const CustomAppBar(
+        title: "Mon profil",
+        position: 'left',
       ),
       body: Consumer<UserProvider>(
         builder: (context, userProvider, child) {
@@ -42,9 +44,8 @@ class ProfilePageState extends State<ProfilePage> {
             physics: const BouncingScrollPhysics(),
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 20.0),
                 Center(
                   child: GestureDetector(
                     onTap: () async {
@@ -142,7 +143,7 @@ class ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 40.0),
+                const SizedBox(height: 24.0),
                 Card(
                   elevation: 2.0,
                   child: Padding(
@@ -166,7 +167,7 @@ class ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20.0),
+                const SizedBox(height: 12.0),
                 Card(
                   elevation: 4.0,
                   margin: const EdgeInsets.all(10.0),
@@ -202,6 +203,7 @@ class ProfilePageState extends State<ProfilePage> {
                                 style: theme.textTheme.titleMedium,
                               ),
                             ),
+                            const SizedBox(width: 10),
                             DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 value: themeProvider.currentThemeName,
@@ -209,7 +211,7 @@ class ProfilePageState extends State<ProfilePage> {
                                     size: 24),
                                 elevation: 8,
                                 style: theme.textTheme.titleMedium?.copyWith(
-                                  color: theme.colorScheme.onSecondary,
+                                  color: theme.colorScheme.onBackground,
                                   fontWeight: FontWeight.bold,
                                 ),
                                 dropdownColor: theme.colorScheme.surface,
@@ -248,10 +250,69 @@ class ProfilePageState extends State<ProfilePage> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 10),
+                        if (userProvider.uniqueIdentifier.isNotEmpty)
+                          Column(
+                            children: [
+                              Text(
+                                "Partager mon compte",
+                                style: theme.textTheme.titleMedium,
+                              ),
+                              QrImageView(
+                                data: userProvider.uniqueIdentifier,
+                                version: QrVersions.auto,
+                                size: 100.0,
+                                gapless: false,
+                                dataModuleStyle: QrDataModuleStyle(
+                                    color: theme.colorScheme.onBackground),
+                                eyeStyle: QrEyeStyle(
+                                    color: theme.colorScheme.onBackground),
+                              ),
+                            ],
+                          ),
+                        const SizedBox(height: 10),
+                        Wrap(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () {},
+                              child: const Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.qr_code_scanner),
+                                  SizedBox(width: 10),
+                                  Text("Scanner un QR ami"),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                 ),
+                Wrap(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () async {
+                        final authProvider =
+                            Provider.of<AuthProvider>(context, listen: false);
+                        await authProvider.logout();
+                        if (mounted) {
+                          CustomNavigation.pushReplacement(
+                              context, const LoginPage());
+                        }
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.logout),
+                          SizedBox(width: 10),
+                          Text("Se déconnecter"),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           );
