@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/navigation/bottom_nav_bar.dart';
-import 'package:k_sport_front/components/navigation/top_app_bar.dart';
+import 'package:k_sport_front/views/profile_page.dart';
 import 'package:k_sport_front/views/progress_page.dart';
 import 'package:k_sport_front/views/dashboard.dart';
 import 'package:k_sport_front/views/trainings_list_page.dart';
@@ -14,14 +14,15 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-  int _currentIndex = 0;
+  int _currentIndex = 2;
   PageController _pageController = PageController();
 
   final List<Widget> _pages = [
-    const Dashboard(),
-    const MusclesPage(),
     const TrainingsListPage(),
+    const MusclesPage(),
+    const Dashboard(),
     const ProgressPage(),
+    const ProfilePage(),
   ];
 
   @override
@@ -39,17 +40,20 @@ class HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
-      appBar: const CustomAppBar(),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        children: _pages,
+      backgroundColor: theme.colorScheme.background,
+      body: SafeArea(
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          children: _pages,
+        ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
