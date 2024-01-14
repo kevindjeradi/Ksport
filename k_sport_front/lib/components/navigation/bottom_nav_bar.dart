@@ -44,6 +44,7 @@ class CustomBottomNavBar extends StatelessWidget {
       backgroundColor: theme.colorScheme.surface,
       showSelectedLabels: false,
       showUnselectedLabels: false,
+      type: BottomNavigationBarType.fixed,
     );
   }
 }
