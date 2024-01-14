@@ -140,7 +140,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
     IconData icon = Icons.circle;
     Color textColor = Colors.white;
     BoxBorder containerBorder =
-        Border.all(width: 1.0, color: const Color(0xFFFFFFFF));
+        Border.all(width: 0, color: theme.colorScheme.background);
 
     switch (status) {
       case Status.checked:
@@ -150,19 +150,18 @@ class ScheduleComponentState extends State<ScheduleComponent> {
       case Status.missed:
         bgColor = theme.colorScheme.error.withOpacity(0.9);
         icon = Icons.cancel;
-        textColor = theme.colorScheme.onError;
         break;
       case Status.current:
         bgColor = theme.colorScheme.surface;
         textColor = theme.colorScheme.onBackground;
         containerBorder =
-            Border.all(width: 2.0, color: theme.colorScheme.primary);
+            Border.all(width: 1.0, color: theme.colorScheme.onBackground);
         break;
       case Status.coming:
         bgColor = theme.colorScheme.background;
         textColor = theme.colorScheme.onBackground.withOpacity(0.3);
         containerBorder = Border.all(
-            width: 2.0, color: theme.colorScheme.onBackground.withOpacity(0.2));
+            width: 1.0, color: theme.colorScheme.onBackground.withOpacity(0.2));
         break;
     }
 
