@@ -130,50 +130,42 @@ class ExerciseInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final List<int> reps = List<int>.from(exercise['reps']);
     final List<int> weights = List<int>.from(exercise['weight']);
     final String repsForCurrentSet = reps[currentSet - 1].toString();
     final String weightsForCurrentSet = weights[currentSet - 1].toString();
 
-    return Card(
-      elevation: theme.cardTheme.elevation,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              '${exercise['name']}',
-              style: theme.textTheme.headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            CustomImage(
-                imagePath: exerciseImage, height: 250, fit: BoxFit.contain),
-            const SizedBox(height: 10),
-            InfoRow(
-              label: 'Séries',
-              value: "$currentSet / ${exercise['series'].toString()}",
-            ),
-            InfoRow(
-              label: 'Répétitions',
-              value: repsForCurrentSet,
-              isEditable: true,
-              onTap: () => _updateReps(context),
-            ),
-            InfoRow(
-              label: 'Poids',
-              value: "$weightsForCurrentSet kg",
-              isEditable: true,
-              onTap: () => _updateWeights(context),
-            ),
-            InfoRow(
-                label: 'Repos',
-                value: '${exercise['restTime'][currentSet - 1]}s'),
-            RestTimerButton(startRestTimer: startRestTimer),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CustomImage(
+              imagePath: exerciseImage,
+              height: MediaQuery.of(context).size.height * 0.35,
+              fit: BoxFit.contain),
+          const SizedBox(height: 10),
+          InfoRow(
+            label: 'Séries',
+            value: "$currentSet / ${exercise['series'].toString()}",
+          ),
+          InfoRow(
+            label: 'Répétitions',
+            value: repsForCurrentSet,
+            isEditable: true,
+            onTap: () => _updateReps(context),
+          ),
+          InfoRow(
+            label: 'Poids',
+            value: "$weightsForCurrentSet kg",
+            isEditable: true,
+            onTap: () => _updateWeights(context),
+          ),
+          InfoRow(
+              label: 'Repos',
+              value: '${exercise['restTime'][currentSet - 1]}s'),
+          RestTimerButton(startRestTimer: startRestTimer),
+        ],
       ),
     );
   }
