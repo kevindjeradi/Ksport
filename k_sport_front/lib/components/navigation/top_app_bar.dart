@@ -15,6 +15,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       case 'center':
         return AppBar(
           backgroundColor: theme.colorScheme.background,
+          foregroundColor: theme.colorScheme.onBackground,
           elevation: 0,
           centerTitle: true,
           title: Text(title, style: theme.textTheme.displaySmall),
@@ -22,6 +23,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       case 'left':
         return AppBar(
           backgroundColor: theme.colorScheme.background,
+          foregroundColor: theme.colorScheme.onBackground,
           elevation: 0,
           centerTitle: false,
           title: Text(title, style: theme.textTheme.displaySmall),
@@ -29,6 +31,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       case 'right':
         return AppBar(
           backgroundColor: theme.colorScheme.background,
+          foregroundColor: theme.colorScheme.onBackground,
           elevation: 0,
           centerTitle: false,
           title: Row(
@@ -42,6 +45,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       default:
         return AppBar(
           backgroundColor: theme.colorScheme.background,
+          foregroundColor: theme.colorScheme.onBackground,
           elevation: 0,
           centerTitle: true,
           title: Text(title, style: theme.textTheme.displaySmall),
