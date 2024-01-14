@@ -56,6 +56,7 @@ class ExerciseHistory extends StatelessWidget {
 
     return Scaffold(
       appBar: ReturnAppBar(barTitle: "Datas sur $exerciseLabel"),
+      backgroundColor: theme.colorScheme.background,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Column(
