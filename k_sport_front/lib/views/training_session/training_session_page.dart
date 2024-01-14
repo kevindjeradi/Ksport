@@ -224,13 +224,11 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 20),
                   if (exercise != null)
                     Text(
-                      'Exercice ${_currentExerciseIndex + 1}/${exercises.length}',
+                      'Exercice ${_currentExerciseIndex + 1}/${exercises.length} - ${exercise['name']}',
                       style: theme.textTheme.headlineMedium,
                     ),
-                  const SizedBox(height: 20),
                   if (exercise != null)
                     ExerciseInfoCard(
                       exercise: exercise,
