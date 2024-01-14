@@ -12,6 +12,7 @@
     for more information.
 -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:label="k_sport_front"
         android:name="${applicationName}"
