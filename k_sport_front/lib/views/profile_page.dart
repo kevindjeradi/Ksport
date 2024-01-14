@@ -7,11 +7,13 @@ import 'package:k_sport_front/components/generic/custom_circle_avatar.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/components/navigation/top_app_bar.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
+import 'package:k_sport_front/views/social/scan_qr.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -258,23 +260,66 @@ class ProfilePageState extends State<ProfilePage> {
                                 "Partager mon compte",
                                 style: theme.textTheme.titleMedium,
                               ),
-                              QrImageView(
-                                data: userProvider.uniqueIdentifier,
-                                version: QrVersions.auto,
-                                size: 100.0,
-                                gapless: false,
-                                dataModuleStyle: QrDataModuleStyle(
-                                    color: theme.colorScheme.onBackground),
-                                eyeStyle: QrEyeStyle(
-                                    color: theme.colorScheme.onBackground),
-                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.6,
+                                        padding: const EdgeInsets.all(20),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Text(
+                                              "Partager mon code ami",
+                                              style:
+                                                  theme.textTheme.displayMedium,
+                                            ),
+                                            QrImageView(
+                                              data:
+                                                  userProvider.uniqueIdentifier,
+                                              version: QrVersions.auto,
+                                              size: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.8,
+                                              gapless: false,
+                                              dataModuleStyle:
+                                                  QrDataModuleStyle(
+                                                      color: theme.colorScheme
+                                                          .onBackground),
+                                              eyeStyle: QrEyeStyle(
+                                                  color: theme.colorScheme
+                                                      .onBackground),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: QrImageView(
+                                  data: userProvider.uniqueIdentifier,
+                                  version: QrVersions.auto,
+                                  size: 100.0,
+                                  gapless: false,
+                                  dataModuleStyle: QrDataModuleStyle(
+                                      color: theme.colorScheme.onBackground),
+                                  eyeStyle: QrEyeStyle(
+                                      color: theme.colorScheme.onBackground),
+                                ),
+                              )
                             ],
                           ),
                         const SizedBox(height: 10),
                         Wrap(
                           children: [
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () => _navigateAndScanQR(context),
                               child: const Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -319,5 +364,15 @@ class ProfilePageState extends State<ProfilePage> {
         },
       ),
     );
+  }
+
+  void _navigateAndScanQR(BuildContext context) async {
+    final scannedData = await Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const ScanQR()),
+    );
+
+    if (scannedData != null) {
+      Log.logger.i("QR Code scanné : $scannedData");
+    }
   }
 }
