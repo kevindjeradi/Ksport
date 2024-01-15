@@ -65,38 +65,33 @@ class DataPreparation {
   Future<Map<String, Map<String, int>>> computeMuscleGroupProportions() async {
     final completedTrainings = userProvider.completedTrainings;
     if (completedTrainings == null || completedTrainings.isEmpty) {
-      return {
-        'allTime': {},
-        'lastThreeMonths': {},
-        'currentMonth': {},
-      }; // Return empty maps if there are no completed trainings
+      return {'allTime': {}, 'lastThreeMonths': {}, 'currentMonth': {}};
     }
 
-    Map<String, int> emptyMuscleGroupCounts() {
-      return {
-        'Jambes': 0,
-        'Dos': 0,
-        'Torse': 0,
-        'Bras': 0,
-      };
-    }
+    Map<String, int> emptyMuscleGroupCounts() =>
+        {'Jambes': 0, 'Dos': 0, 'Torse': 0, 'Bras': 0};
 
-    Map<String, int> allTimeMuscleGroupCounts = emptyMuscleGroupCounts();
-    Map<String, int> lastThreeMonthsMuscleGroupCounts =
-        emptyMuscleGroupCounts();
-    Map<String, int> currentMonthMuscleGroupCounts = emptyMuscleGroupCounts();
+    var allTimeMuscleGroupCounts = emptyMuscleGroupCounts();
+    var lastThreeMonthsMuscleGroupCounts = emptyMuscleGroupCounts();
+    var currentMonthMuscleGroupCounts = emptyMuscleGroupCounts();
 
     final now = DateTime.now();
     final threeMonthsAgo = now.subtract(const Duration(days: 90));
     final firstDayOfCurrentMonth = DateTime(now.year, now.month, 1);
     final lastDayOfCurrentMonth = DateTime(now.year, now.month + 1, 0);
 
+    var exerciseCache = <String, String>{};
+
     for (var completedTraining in completedTrainings) {
       for (var exercise in completedTraining.exercises) {
-        final exerciseId = exercise.exerciseId;
-        final exerciseData = await Api().getExerciseById(exerciseId);
-        final muscleLabel = exerciseData['muscleLabel'];
-        final muscleGroup = await Api().getMuscleGroup(muscleLabel);
+        String muscleGroup;
+        if (exerciseCache.containsKey(exercise.exerciseId)) {
+          muscleGroup = exerciseCache[exercise.exerciseId]!;
+        } else {
+          final exerciseData = await Api().getExerciseById(exercise.exerciseId);
+          muscleGroup = await Api().getMuscleGroup(exerciseData['muscleLabel']);
+          exerciseCache[exercise.exerciseId] = muscleGroup;
+        }
 
         // Update all-time counts
         allTimeMuscleGroupCounts[muscleGroup] =
