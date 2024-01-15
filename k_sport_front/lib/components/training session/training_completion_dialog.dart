@@ -48,7 +48,6 @@ class _TrainingCompletionDialogState extends State<TrainingCompletionDialog>
       BuildContext context, CompletedTraining completedTraining) async {
     if (mounted) {
       // Navigate to the detail page of the completed training
-      CustomNavigation.pushReplacement(context, const Home());
       CustomNavigation.push(
           context,
           TrainingDetailPage(
@@ -75,12 +74,15 @@ class _TrainingCompletionDialogState extends State<TrainingCompletionDialog>
                 child: const Text('Non', style: TextStyle(color: Colors.red)),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  CustomNavigation.pushReplacement(context, const Home());
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
               ),
               TextButton(
                 child: const Text('Oui', style: TextStyle(color: Colors.green)),
                 onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                   Navigator.of(context).pop();
                   navigateToCompletedTrainingDetail(
                       context, widget.completedTraining);

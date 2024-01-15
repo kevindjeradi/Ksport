@@ -174,8 +174,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
         dateCompleted: now,
         name: trainingDetails!.name,
         description: trainingDetails.description,
-        exercises:
-            updatedExercises, // Use the list of updated TrainingExercise instances
+        exercises: updatedExercises,
         goal: trainingDetails.goal,
       );
 
@@ -187,6 +186,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
             SnackBarType.success);
         showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) {
             return TrainingCompletionDialog(
                 completedTraining: completedTraining);
