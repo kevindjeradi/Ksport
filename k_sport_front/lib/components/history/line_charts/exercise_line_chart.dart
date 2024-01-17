@@ -25,7 +25,12 @@ class ExerciseLineChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<FlSpot> spots = _prepareLineChartData(dataList);
-
+    double maxY;
+    if (spots.isNotEmpty) {
+      maxY = spots.map((spot) => spot.y).reduce(max).toDouble() * 1.2;
+    } else {
+      maxY = 1;
+    }
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
@@ -109,8 +114,7 @@ class ExerciseLineChart extends StatelessWidget {
                     minX: 0,
                     maxX: (spots.length - 1).toDouble(),
                     minY: 0,
-                    maxY: spots.map((spot) => spot.y).reduce(max).toDouble() *
-                        1.2,
+                    maxY: maxY,
                     lineTouchData: LineTouchData(
                       touchTooltipData: LineTouchTooltipData(
                         tooltipBgColor: Colors.blueAccent,
