@@ -74,6 +74,12 @@ router.get('/user/details', async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
         const numberOfTrainings = user.trainings.length
+
+        // Fetch friends' details using uniqueIdentifier
+        const friendsDetails = await User.find({
+            'uniqueIdentifier': { $in: user.friends }
+        }).select('username dateJoined profileImage numberOfTrainings trainings');
+
         // Return the required details
         const userDetails = {
             username: user.username,
@@ -83,10 +89,57 @@ router.get('/user/details', async (req, res) => {
             theme: user.settings.theme,
             completedTrainings: user.history.completedTrainings,
             uniqueIdentifier: user.uniqueIdentifier,
+            friends: friendsDetails,
         };
         res.json(userDetails);
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+// friends
+router.post('/user/addFriend', checkAuth, async (req, res) => {
+    const userId = req.userId; // Extracted from the JWT token by your middleware
+    const { friendId } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            console.log("User not found");
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if already friends
+        if (user.friends.includes(friendId)) {
+            console.log("Already friends");
+            return res.status(400).json({ error: 'Already friends' });
+        }
+        console.log("Trying to add friend");
+        // Add friend
+        user.friends.push(friendId);
+        console.log("Added friend");
+        await user.save();
+        console.log("Saved friend");
+
+        res.json({ message: 'Friend added successfully' });
+    } catch (error) {
+        console.log("Add friend error: " + error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/user/exists/:uniqueIdentifier', async (req, res) => {
+    try {
+        const uniqueIdentifier = req.params.uniqueIdentifier;
+        const user = await User.findOne({ uniqueIdentifier: uniqueIdentifier }).select('username profileImage');
+
+        if (user) {
+            res.json({ exists: true, username: user.username, profileImage: user.profileImage });
+        } else {
+            res.json({ exists: false });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
