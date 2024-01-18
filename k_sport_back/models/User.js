@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    profileImage: String,
+    profileImage: {type: String, default: "/images/profile.png"},
     trainings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Training' }],
     trainingsSchedule: {
         lundi: { type: mongoose.Schema.Types.ObjectId, ref: 'Training' },
@@ -55,8 +55,8 @@ const userSchema = new mongoose.Schema({
             note: String,
         }],
     },
+    friends: [{ type: String, ref: 'Users' }],
 });
-
 
 // Hash the password before saving
 userSchema.pre('save', async function (next) {
