@@ -60,6 +60,34 @@ class UserService {
     }
   }
 
+  Future<Map<String, dynamic>> userExists(String uniqueIdentifier) async {
+    final response = await Api().get('$baseUrl/user/exists/$uniqueIdentifier');
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      return {'exists': false};
+    }
+  }
+
+  Future<bool> addFriend(String friendId) async {
+    try {
+      final response = await Api().post(
+        '$baseUrl/user/addFriend',
+        {'friendId': friendId},
+      );
+
+      if (response.statusCode == 200) {
+        return true; // Friend added successfully
+      } else {
+        Log.logger.e('Failed to add friend: ${response.body}');
+        return false; // Failed to add friend
+      }
+    } catch (e) {
+      Log.logger.e("An error occurred while adding friend: $e");
+      return false; // An error occurred
+    }
+  }
+
   Future<bool> validateToken(String token) async {
     try {
       final response = await http.post(
