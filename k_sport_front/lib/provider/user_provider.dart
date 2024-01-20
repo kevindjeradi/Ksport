@@ -16,6 +16,7 @@ class UserProvider extends ChangeNotifier {
   int? _numberOfTrainings;
   String? _theme;
   List<CompletedTraining>? _completedTrainings;
+  List<Map<String, dynamic>> _friends = [];
 
   String get username => _username ?? '';
   String get uniqueIdentifier => _uniqueIdentifier ?? '';
@@ -24,6 +25,7 @@ class UserProvider extends ChangeNotifier {
   int get numberOfTrainings => _numberOfTrainings ?? 0;
   String get theme => _theme ?? '';
   List<CompletedTraining>? get completedTrainings => _completedTrainings ?? [];
+  List<Map<String, dynamic>> get friends => _friends;
 
   void updateProfileImage(String newImageUrl) {
     _profileImage = newImageUrl;
@@ -60,7 +62,6 @@ class UserProvider extends ChangeNotifier {
     _profileImage = userDetails['profileImage'];
     _numberOfTrainings = userDetails['numberOfTrainings'];
     _theme = userDetails['theme'];
-    Log.logger.e(_uniqueIdentifier);
     // Check for null or non-list values
     if (userDetails['completedTrainings'] is List) {
       _completedTrainings = (userDetails['completedTrainings'] as List)
@@ -69,6 +70,13 @@ class UserProvider extends ChangeNotifier {
     } else {
       Log.logger.e(
           'Unexpected data format for completedTrainings in user_provider: ${userDetails['completedTrainings']}');
+    }
+    if (userDetails['friends'] is List) {
+      _friends = List<Map<String, dynamic>>.from(userDetails['friends']);
+      Log.logger.i('user_provider.friends: $_friends');
+    } else {
+      Log.logger.e(
+          'Unexpected data format for friends in user_provider : ${userDetails['friends']}');
     }
     notifyListeners();
   }
