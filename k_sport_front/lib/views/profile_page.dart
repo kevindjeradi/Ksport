@@ -7,12 +7,14 @@ import 'package:k_sport_front/components/generic/custom_circle_avatar.dart';
 import 'package:k_sport_front/components/generic/custom_navigation.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/components/navigation/top_app_bar.dart';
-import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/auth_provider.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/api.dart';
+import 'package:k_sport_front/services/user_service.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
+import 'package:k_sport_front/views/social/add_friend.dart';
+import 'package:k_sport_front/views/social/friends_list.dart';
 import 'package:k_sport_front/views/social/scan_qr.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +30,7 @@ class ProfilePage extends StatefulWidget {
 
 class ProfilePageState extends State<ProfilePage> {
   static final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
+  final UserService _userService = UserService();
 
   @override
   Widget build(BuildContext context) {
@@ -169,10 +172,121 @@ class ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 24.0),
+                Card(
+                  elevation: 2.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Wrap(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  CustomNavigation.push(
+                                      context, const FriendsList());
+                                },
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.people_alt),
+                                    SizedBox(width: 10),
+                                    Text("Voir mes amis"),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          if (userProvider.uniqueIdentifier.isNotEmpty)
+                            Column(
+                              children: [
+                                Text(
+                                  "Partager mon compte",
+                                  style: theme.textTheme.titleLarge,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.6,
+                                          padding: const EdgeInsets.all(20),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            children: [
+                                              Text(
+                                                "Partager mon code ami",
+                                                style: theme
+                                                    .textTheme.displayMedium,
+                                              ),
+                                              QrImageView(
+                                                data: userProvider
+                                                    .uniqueIdentifier,
+                                                version: QrVersions.auto,
+                                                size: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.8,
+                                                gapless: false,
+                                                dataModuleStyle:
+                                                    QrDataModuleStyle(
+                                                        color: theme.colorScheme
+                                                            .onBackground),
+                                                eyeStyle: QrEyeStyle(
+                                                    color: theme.colorScheme
+                                                        .onBackground),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: QrImageView(
+                                    data: userProvider.uniqueIdentifier,
+                                    version: QrVersions.auto,
+                                    size: 100.0,
+                                    gapless: false,
+                                    dataModuleStyle: QrDataModuleStyle(
+                                        color: theme.colorScheme.onBackground),
+                                    eyeStyle: QrEyeStyle(
+                                        color: theme.colorScheme.onBackground),
+                                  ),
+                                )
+                              ],
+                            ),
+                          const SizedBox(height: 10),
+                          Wrap(
+                            children: [
+                              ElevatedButton(
+                                onPressed: () => _navigateAndScanQR(context),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.person_add_alt_1),
+                                    SizedBox(width: 10),
+                                    Text("Scanner un QR ami"),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 12.0),
                 Card(
                   elevation: 4.0,
-                  margin: const EdgeInsets.all(10.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -252,85 +366,6 @@ class ProfilePageState extends State<ProfilePage> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10),
-                        if (userProvider.uniqueIdentifier.isNotEmpty)
-                          Column(
-                            children: [
-                              Text(
-                                "Partager mon compte",
-                                style: theme.textTheme.titleMedium,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.6,
-                                        padding: const EdgeInsets.all(20),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            Text(
-                                              "Partager mon code ami",
-                                              style:
-                                                  theme.textTheme.displayMedium,
-                                            ),
-                                            QrImageView(
-                                              data:
-                                                  userProvider.uniqueIdentifier,
-                                              version: QrVersions.auto,
-                                              size: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.8,
-                                              gapless: false,
-                                              dataModuleStyle:
-                                                  QrDataModuleStyle(
-                                                      color: theme.colorScheme
-                                                          .onBackground),
-                                              eyeStyle: QrEyeStyle(
-                                                  color: theme.colorScheme
-                                                      .onBackground),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: QrImageView(
-                                  data: userProvider.uniqueIdentifier,
-                                  version: QrVersions.auto,
-                                  size: 100.0,
-                                  gapless: false,
-                                  dataModuleStyle: QrDataModuleStyle(
-                                      color: theme.colorScheme.onBackground),
-                                  eyeStyle: QrEyeStyle(
-                                      color: theme.colorScheme.onBackground),
-                                ),
-                              )
-                            ],
-                          ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () => _navigateAndScanQR(context),
-                              child: const Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.qr_code_scanner),
-                                  SizedBox(width: 10),
-                                  Text("Scanner un QR ami"),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                   ),
@@ -372,7 +407,27 @@ class ProfilePageState extends State<ProfilePage> {
     );
 
     if (scannedData != null) {
-      Log.logger.i("QR Code scanné : $scannedData");
+      final result = await _userService.userExists(scannedData);
+
+      if (result['exists']) {
+        if (mounted) {
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return AddFriend(
+                scannedUserId: scannedData,
+                username: result['username'],
+                profileImage: result['profileImage'],
+              );
+            },
+          );
+        }
+      } else {
+        if (mounted) {
+          showCustomSnackBar(
+              context, "Utilisateur introuvable", SnackBarType.error);
+        }
+      }
     }
   }
 }
