@@ -60,6 +60,8 @@ dependencies:
   confetti: ^0.7.0
   qr_flutter: ^4.1.0
   qr_code_scanner: ^1.0.1
+  firebase_messaging: ^14.7.10
+  firebase_core: ^2.24.2
 
 dev_dependencies:
   flutter_test:
