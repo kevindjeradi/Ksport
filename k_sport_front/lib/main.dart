@@ -1,13 +1,17 @@
 // main.dart
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:k_sport_front/helpers/auth_check.dart';
+import 'package:k_sport_front/helpers/locale_notification_handler.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/provider/auth_provider.dart';
+import 'package:k_sport_front/provider/notification_provider.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/provider/theme_color_scheme_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
-import 'package:k_sport_front/helpers/notification_handler.dart';
 import 'package:k_sport_front/theme/theme_light.dart';
 import 'package:k_sport_front/views/auth/login_page.dart';
 import 'package:k_sport_front/views/auth/register_page.dart';
@@ -23,6 +27,12 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  NotificationProvider.setupNotification();
+  NotificationProvider.registerTopic(topic: "everyone");
 
   await dotenv.load(fileName: ".env");
 
@@ -60,13 +70,13 @@ void main() async {
   _isAndroidPermissionGranted();
 
   final notificationHandler =
-      NotificationHandler(flutterLocalNotificationsPlugin);
+      LocaleNotificationHandler(flutterLocalNotificationsPlugin);
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeColorSchemeProvider()),
-        Provider<NotificationHandler>.value(value: notificationHandler),
+        Provider<LocaleNotificationHandler>.value(value: notificationHandler),
         ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => ScheduleTrainingProvider()),
@@ -76,14 +86,27 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+
+    handleIncomingNotification();
+  }
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeColorSchemeProvider>(context);
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'K Sports',
       theme: themeLight(themeProvider.colorScheme, themeProvider.textTheme),
       themeMode: ThemeMode.light,
@@ -94,6 +117,26 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const Home(),
       },
     );
+  }
+
+  Future<void> handleIncomingNotification() async {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    RemoteMessage? incomingNotification =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (incomingNotification != null) {
+      Log.logger.i(incomingNotification.notification?.body ?? 'empty');
+      handlePushNotificationData(incomingNotification);
+    }
+
+    FirebaseMessaging.onMessageOpenedApp.listen(handlePushNotificationData);
+  }
+
+  void handlePushNotificationData(RemoteMessage notification) {
+    Log.logger.i('handleIncomingNogification -> notification: $notification');
   }
 }
 
