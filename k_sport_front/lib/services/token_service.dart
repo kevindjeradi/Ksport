@@ -1,5 +1,6 @@
 // token_service.dart
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:k_sport_front/helpers/logger.dart';
 
 class TokenService {
   static const _storage = FlutterSecureStorage();
@@ -7,6 +8,7 @@ class TokenService {
   static const String _tokenKey = 'jwt_token';
 
   Future<void> saveToken(String token) async {
+    Log.logger.i(token);
     await _storage.write(key: _tokenKey, value: token);
   }
 

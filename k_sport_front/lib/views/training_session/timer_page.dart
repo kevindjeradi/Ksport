@@ -3,8 +3,8 @@ import 'package:circular_countdown_timer/circular_countdown_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/components/training%20session/rest_timer.dart';
+import 'package:k_sport_front/helpers/locale_notification_handler.dart';
 import 'package:k_sport_front/helpers/logger.dart';
-import 'package:k_sport_front/helpers/notification_handler.dart';
 
 class TimerPage extends StatefulWidget {
   final int restTime;
@@ -13,7 +13,7 @@ class TimerPage extends StatefulWidget {
   final Map<String, dynamic> currentExercise;
   final int totalExercises;
   final int currentExerciseIndex;
-  final NotificationHandler notificationHandler;
+  final LocaleNotificationHandler notificationHandler;
   final List<int> setsPerExercise;
 
   const TimerPage(

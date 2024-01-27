@@ -3,10 +3,10 @@ import 'package:k_sport_front/components/generic/custom_loader.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:k_sport_front/components/training%20session/exercise_info_card.dart';
+import 'package:k_sport_front/helpers/locale_notification_handler.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/completed_training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
-import 'package:k_sport_front/helpers/notification_handler.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/training_service.dart';
 import 'package:k_sport_front/views/training_session/exercise_progress_indicator.dart';
@@ -66,7 +66,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
       final provider =
           Provider.of<ScheduleTrainingProvider>(context, listen: false);
       final notificationHandler =
-          Provider.of<NotificationHandler>(context, listen: false);
+          Provider.of<LocaleNotificationHandler>(context, listen: false);
 
       final exercises = provider.todayWorkouts;
 
