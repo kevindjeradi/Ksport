@@ -130,6 +130,8 @@ class RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Stack(
       children: [
         if (_loading) const Center(child: CustomLoader()),
@@ -154,7 +156,11 @@ class RegisterPageState extends State<RegisterPage> {
                       focusNode: _usernameFocus,
                       onSubmitted: (_) => _passwordFocus.requestFocus(),
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.person),
+                        prefixIconColor: theme.colorScheme.onBackground,
                         labelText: 'Pseudo',
+                        labelStyle:
+                            TextStyle(color: theme.colorScheme.onBackground),
                         errorText: showError &&
                                 _usernameController.text.length < 4 &&
                                 _usernameController.text.isNotEmpty
@@ -173,7 +179,12 @@ class RegisterPageState extends State<RegisterPage> {
                       },
                       obscureText: !_passwordVisible,
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIconColor: theme.colorScheme.onBackground,
+                        prefixIconColor: theme.colorScheme.onBackground,
                         labelText: 'Mot de passe',
+                        labelStyle:
+                            TextStyle(color: theme.colorScheme.onBackground),
                         errorText: showError &&
                                 _passwordController.text.length < 4 &&
                                 _passwordController.text.isNotEmpty
@@ -225,7 +236,9 @@ class RegisterPageState extends State<RegisterPage> {
                           ),
                         );
                       },
-                      child: const Text("Se connecter"),
+                      child: Text("Se connecter",
+                          style:
+                              TextStyle(color: theme.colorScheme.onBackground)),
                     ),
                   ],
                 ),

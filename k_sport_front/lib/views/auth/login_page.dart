@@ -109,6 +109,8 @@ class LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Stack(
       children: [
         if (_loading) const Center(child: CustomLoader()),
@@ -135,7 +137,11 @@ class LoginPageState extends State<LoginPage> {
                       focusNode: _usernameFocus,
                       onSubmitted: (_) => _passwordFocus.requestFocus(),
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.person),
+                        prefixIconColor: theme.colorScheme.onBackground,
                         labelText: 'Pseudo',
+                        labelStyle:
+                            TextStyle(color: theme.colorScheme.onBackground),
                         errorText: showError &&
                                 _usernameController.text.length < 4 &&
                                 _usernameController.text.isNotEmpty
@@ -155,7 +161,12 @@ class LoginPageState extends State<LoginPage> {
                       obscureText: !_passwordVisible,
                       keyboardType: TextInputType.text,
                       decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIconColor: theme.colorScheme.onBackground,
+                        prefixIconColor: theme.colorScheme.onBackground,
                         labelText: 'Mot de passe',
+                        labelStyle:
+                            TextStyle(color: theme.colorScheme.onBackground),
                         errorText: showError &&
                                 _passwordController.text.length < 4 &&
                                 _passwordController.text.isNotEmpty
@@ -207,7 +218,9 @@ class LoginPageState extends State<LoginPage> {
                           ),
                         );
                       },
-                      child: const Text("S'inscrire"),
+                      child: Text("S'inscrire",
+                          style:
+                              TextStyle(color: theme.colorScheme.onBackground)),
                     ),
                   ],
                 ),
