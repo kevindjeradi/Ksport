@@ -24,6 +24,8 @@ class ExerciseInfoCard extends StatelessWidget {
 
   void _updateReps(BuildContext context) {
     TextEditingController controller = TextEditingController();
+    final theme = Theme.of(context);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -47,7 +49,8 @@ class ExerciseInfoCard extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               style: TextButton.styleFrom(foregroundColor: Colors.grey),
-              child: const Text("Annuler"),
+              child: Text("Annuler",
+                  style: TextStyle(color: theme.colorScheme.onBackground)),
             ),
             TextButton(
               onPressed: () {
@@ -63,7 +66,8 @@ class ExerciseInfoCard extends StatelessWidget {
               },
               style: TextButton.styleFrom(
                   foregroundColor: Theme.of(context).primaryColor),
-              child: const Text("Modifier"),
+              child: Text("Modifier",
+                  style: TextStyle(color: theme.colorScheme.onBackground)),
             ),
           ],
         );
