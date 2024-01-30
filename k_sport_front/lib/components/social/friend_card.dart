@@ -38,7 +38,7 @@ class _FriendCardState extends State<FriendCard> {
                   : const CircleAvatar(child: Icon(Icons.person)),
               title: Text(widget.friendData['username'] ?? 'Unknown'),
               subtitle: Text(
-                  'Rejoint le: ${DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.friendData['dateJoined']))}'),
+                  'Compte crée le: ${DateFormat('dd-MM-yyyy').format(DateTime.parse(widget.friendData['dateJoined']))}'),
             ),
           ),
           const Divider(),
@@ -67,7 +67,7 @@ class _FriendCardState extends State<FriendCard> {
                         children: [
                           const Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Text("Liste de ses entraînements :",
+                            child: Text("Liste de ses entraînements",
                                 style: TextStyle(fontSize: 16)),
                           ),
                           const SizedBox(height: 10),
