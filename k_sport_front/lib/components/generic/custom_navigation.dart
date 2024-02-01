@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CustomNavigation {
-  // Animation for push
   static Future<T?> push<T extends Object?>(BuildContext context, Widget page) {
     return Navigator.push(
       context,
@@ -20,7 +19,6 @@ class CustomNavigation {
     );
   }
 
-  // Animation for pushReplacement
   static Future<T?> pushReplacement<T extends Object?, TO extends Object?>(
       BuildContext context, Widget page) {
     return Navigator.pushReplacement(
@@ -28,7 +26,6 @@ class CustomNavigation {
       PageRouteBuilder(
         pageBuilder: (context, animation1, animation2) => page,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          // New page animation
           const beginNewPage = Offset(1.0, 0.0);
           const endNewPage = Offset.zero;
           const curve = Curves.easeInOut;
@@ -36,7 +33,6 @@ class CustomNavigation {
               .chain(CurveTween(curve: curve));
           var offsetAnimationNewPage = animation.drive(tweenNewPage);
 
-          // Current page animation
           const beginCurrentPage = Offset.zero;
           const endCurrentPage = Offset(-1.0, 0.0);
           var tweenCurrentPage =
