@@ -46,7 +46,6 @@ class _TrainingCompletionDialogState extends State<TrainingCompletionDialog>
   void navigateToCompletedTrainingDetail(
       BuildContext context, CompletedTraining completedTraining) async {
     if (mounted) {
-      // Navigate to the detail page of the completed training
       CustomNavigation.push(
           context,
           TrainingDetailPage(
