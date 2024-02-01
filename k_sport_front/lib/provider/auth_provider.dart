@@ -34,7 +34,6 @@ class AuthProvider extends ChangeNotifier {
       }
       return false;
     } catch (e) {
-      // Log error or handle exception
       return false;
     }
   }

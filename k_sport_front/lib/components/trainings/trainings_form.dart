@@ -8,7 +8,7 @@ import 'package:k_sport_front/components/trainings/training_form_input.dart';
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/training.dart';
 import 'package:k_sport_front/services/training_service.dart';
-import 'package:k_sport_front/views/workout_page/muscles_page.dart'; // You should import MusclesPage
+import 'package:k_sport_front/views/workout_page/muscles_page.dart';
 
 class TrainingForm extends StatefulWidget {
   final Training? editingTraining;
