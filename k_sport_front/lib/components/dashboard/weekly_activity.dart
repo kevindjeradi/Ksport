@@ -22,7 +22,6 @@ class WeeklyActivityState extends State<WeeklyActivity> {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final completedTrainings = userProvider.completedTrainings;
 
-    // Assume the week starts on Monday
     final now = DateTime.now();
     final startOfWeek = DateTime(now.year, now.month, now.day)
         .subtract(Duration(days: now.weekday - 1));
@@ -34,7 +33,7 @@ class WeeklyActivityState extends State<WeeklyActivity> {
       final dateCompleted = training.dateCompleted;
       if (dateCompleted.isAfter(startOfWeek) &&
           dateCompleted.isBefore(endOfWeek)) {
-        final dayOfWeek = dateCompleted.weekday - 1; // 0-indexed
+        final dayOfWeek = dateCompleted.weekday - 1;
         setState(() {
           progress[dayOfWeek] = true;
         });

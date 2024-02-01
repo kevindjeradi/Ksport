@@ -26,9 +26,8 @@ class WorkoutCard extends StatelessWidget {
               label,
               style: const TextStyle(
                 color: Colors.white,
-                backgroundColor: Colors
-                    .black54, // This adds a slight background for better readability.
-                fontSize: 18, // Adjust the font size as necessary.
+                backgroundColor: Colors.black54,
+                fontSize: 18,
               ),
             ),
           ),
