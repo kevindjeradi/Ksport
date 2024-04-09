@@ -329,38 +329,31 @@ router.patch('/user/updateTheme', async (req, res) => {
 
 router.post('/user/recordCompletedTraining', async (req, res) => {
     try {
-        const { trainingId, dateCompleted } = req.body;
+        // Destructure all necessary fields from req.body
+        const { trainingId, dateCompleted, name, description, goal, exercises, note } = req.body;
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.userId;
 
+        // Verify user exists
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
 
+        // Validate trainingId format
         if (!mongoose.Types.ObjectId.isValid(trainingId)) {
             return res.status(400).json({ error: 'Invalid trainingId format' });
         }
 
-        const training = await Training.findById(trainingId);
-        if (!training) {
-            return res.status(404).json({ error: 'Training not found' });
-        }
-
-        const newCompletedTraining = { 
+        const newCompletedTraining = {
+            trainingId,
             trainingData: {
-                name: training.name,
-                description: training.description,
-                exercises: training.exercises.map(ex => ({
-                    label: ex.label,
-                    exerciseId: ex.exerciseId,
-                    repetitions: ex.repetitions,
-                    sets: ex.sets,
-                    weight: ex.weight,
-                    restTime: ex.restTime
-                })),
-                goal: training.goal,
+                name,
+                description,
+                goal,
+                exercises,
+                note
             },
             dateCompleted: new Date(dateCompleted)
         };
@@ -374,6 +367,7 @@ router.post('/user/recordCompletedTraining', async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
 
 // PATCH route to update a note for a specific completed training
 router.patch('/user/updateTrainingNote', checkAuth, async (req, res) => {
