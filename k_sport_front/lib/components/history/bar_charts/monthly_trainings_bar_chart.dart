@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class MonthlyTrainingsBarChart extends StatelessWidget {
+class MonthlyTrainingsBarChart extends StatefulWidget {
   final List<BarChartGroupData> monthlyTrainingData;
   final Color textColor;
 
@@ -11,9 +11,38 @@ class MonthlyTrainingsBarChart extends StatelessWidget {
     required this.textColor,
   });
 
+  @override
+  State<MonthlyTrainingsBarChart> createState() =>
+      _MonthlyTrainingsBarChartState();
+}
+
+class _MonthlyTrainingsBarChartState extends State<MonthlyTrainingsBarChart> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   Widget getMonthTitles(double value, TitleMeta meta) {
     final style = TextStyle(
-      color: textColor,
+      color: widget.textColor,
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
@@ -68,7 +97,7 @@ class MonthlyTrainingsBarChart extends StatelessWidget {
 
   Widget leftTitles(double value, TitleMeta meta) {
     final style = TextStyle(
-      color: textColor,
+      color: widget.textColor,
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
@@ -94,6 +123,8 @@ class MonthlyTrainingsBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ThemeData theme = Theme.of(context);
+    double chartWidth = widget.monthlyTrainingData.length *
+        60.0; // Adjust the multiplier as needed
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -109,7 +140,7 @@ class MonthlyTrainingsBarChart extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            monthlyTrainingData.isEmpty
+            widget.monthlyTrainingData.isEmpty
                 ? SizedBox(
                     height: 200,
                     child: Center(
@@ -118,49 +149,74 @@ class MonthlyTrainingsBarChart extends StatelessWidget {
                   )
                 : SizedBox(
                     height: 200,
-                    child: BarChart(
-                      BarChartData(
-                        barTouchData: BarTouchData(
-                          enabled: false,
-                          touchTooltipData: BarTouchTooltipData(
-                            tooltipBgColor: Colors.transparent,
-                            tooltipPadding: EdgeInsets.zero,
-                            tooltipMargin: 8,
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        width: chartWidth,
+                        child: BarChart(
+                          BarChartData(
+                            barTouchData: BarTouchData(
+                              enabled: true,
+                              touchTooltipData: BarTouchTooltipData(
+                                tooltipRoundedRadius: 10,
+                                tooltipPadding: const EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 8),
+                                tooltipBgColor: theme.colorScheme.onBackground,
+                                tooltipHorizontalAlignment:
+                                    FLHorizontalAlignment.center,
+                                tooltipMargin: -60,
+                                getTooltipItem: (
+                                  BarChartGroupData group,
+                                  int groupIndex,
+                                  BarChartRodData rod,
+                                  int rodIndex,
+                                ) {
+                                  return BarTooltipItem(
+                                    '${rod.toY.toInt()}',
+                                    TextStyle(
+                                      color: theme.colorScheme.background,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            titlesData: FlTitlesData(
+                              show: true,
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 38,
+                                  getTitlesWidget: getMonthTitles,
+                                ),
+                              ),
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  reservedSize: 28,
+                                  interval: 1,
+                                  getTitlesWidget: leftTitles,
+                                ),
+                              ),
+                              topTitles: const AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: false,
+                                ),
+                              ),
+                              rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: false,
+                                ),
+                              ),
+                            ),
+                            borderData: FlBorderData(
+                              show: false,
+                            ),
+                            barGroups: widget.monthlyTrainingData,
+                            gridData: const FlGridData(show: false),
                           ),
                         ),
-                        titlesData: FlTitlesData(
-                          show: true,
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 38,
-                              getTitlesWidget: getMonthTitles,
-                            ),
-                          ),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 28,
-                              interval: 1,
-                              getTitlesWidget: leftTitles,
-                            ),
-                          ),
-                          topTitles: const AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: false,
-                            ),
-                          ),
-                          rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: false,
-                            ),
-                          ),
-                        ),
-                        borderData: FlBorderData(
-                          show: false,
-                        ),
-                        barGroups: monthlyTrainingData,
-                        gridData: const FlGridData(show: false),
                       ),
                     ),
                   ),
