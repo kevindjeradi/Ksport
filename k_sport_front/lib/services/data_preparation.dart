@@ -121,64 +121,62 @@ class DataPreparation {
   }
 
   Future<List<BarChartGroupData>> getMonthlyTrainingData() async {
-    final completedTrainings = userProvider.completedTrainings;
-    if (completedTrainings == null || completedTrainings.isEmpty) {
-      return [];
-    }
+    final accountCreationDate = userProvider.dateJoined ?? DateTime.now();
+    final completedTrainings = userProvider.completedTrainings ?? [];
+    DateTime now = DateTime.now();
+    int monthsSinceInscription = (now.year - accountCreationDate.year) * 12 +
+        now.month -
+        accountCreationDate.month;
+
     Map<int, int> monthlyTrainingCounts = {};
     for (var training in completedTrainings) {
-      final month = training.dateCompleted.month;
-      monthlyTrainingCounts[month] = (monthlyTrainingCounts[month] ?? 0) + 1;
+      final monthKey =
+          (training.dateCompleted.year - accountCreationDate.year) * 12 +
+              training.dateCompleted.month -
+              accountCreationDate.month;
+      monthlyTrainingCounts[monthKey] =
+          (monthlyTrainingCounts[monthKey] ?? 0) + 1;
     }
-    return monthlyTrainingCounts.entries.map((entry) {
-      final month = entry.key;
-      final trainingCount = entry.value;
+
+    return List.generate(monthsSinceInscription + 1, (index) {
+      final year = accountCreationDate.year +
+          (accountCreationDate.month + index - 1) ~/ 12;
+      final month = (accountCreationDate.month + index - 1) % 12 + 1;
+      final trainingCount = monthlyTrainingCounts[index] ?? 0;
 
       return BarChartGroupData(
         x: month,
         barRods: [
           BarChartRodData(toY: trainingCount.toDouble(), color: Colors.blue)
         ],
-        showingTooltipIndicators: [0],
+        showingTooltipIndicators: trainingCount > 0 ? [0] : [],
       );
-    }).toList();
+    });
   }
 
   Future<List<BarChartGroupData>> getWeeklyTrainingData() async {
-    final completedTrainings = userProvider.completedTrainings;
-    if (completedTrainings == null || completedTrainings.isEmpty) {
-      return [];
-    }
+    final accountCreationDate = userProvider.dateJoined ?? DateTime.now();
+    final completedTrainings = userProvider.completedTrainings ?? [];
+    DateTime now = DateTime.now();
+    int totalWeeks = now.difference(accountCreationDate).inDays ~/ 7;
 
-    // Determine the date range for the data, adjusting the startDate to the beginning of the week.
-    final startDate = completedTrainings.first.dateCompleted;
-    final startWeekDate = startDate.subtract(Duration(days: startDate.weekday));
-    final endDate = completedTrainings.last.dateCompleted;
-
-    // Determine the total number of weeks between the start and end dates.
-    final totalWeeks = endDate.difference(startWeekDate).inDays ~/ 7;
-
-    // Initialize a map to hold the count of trainings per week.
     Map<int, int> weeklyTrainingCounts = {};
-
-    // Loop through each training session and increment the count for the corresponding week.
     for (var training in completedTrainings) {
-      final weekNumber =
-          training.dateCompleted.difference(startWeekDate).inDays ~/ 7;
+      int weekNumber =
+          training.dateCompleted.difference(accountCreationDate).inDays ~/ 7;
       weeklyTrainingCounts[weekNumber] =
           (weeklyTrainingCounts[weekNumber] ?? 0) + 1;
     }
 
-    // Convert the map of weekly training counts to a list of BarChartGroupData.
-    return List.generate(totalWeeks + 1, (weekNumber) {
-      final trainingCount = weeklyTrainingCounts[weekNumber] ?? 0;
+    return List.generate(totalWeeks + 1, (index) {
+      final trainingCount = weeklyTrainingCounts[index] ?? 0;
 
       return BarChartGroupData(
-        x: weekNumber,
+        x: index,
         barRods: [
           BarChartRodData(toY: trainingCount.toDouble(), color: Colors.blue)
         ],
-        showingTooltipIndicators: [0],
+        showingTooltipIndicators: trainingCount > 0 ? [0] : [],
       );
     });
   }
