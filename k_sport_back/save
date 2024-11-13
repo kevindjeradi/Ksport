@@ -1,0 +1,1 @@
+MONGO_URI=mongodb+srv://kehadj:<password>@cluster1.ph6wf.mongodb.net/KSport?retryWrites=true&w=majority
