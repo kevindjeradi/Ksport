@@ -11,6 +11,7 @@ const exercicesRoutes = require('./routes/exercicesRoutes');
 const trainingRoutes = require('./routes/trainingRoutes');
 const notifRoutes = require('./routes/notifRoutes');
 const userRoutes = require('./routes/userRoutes');
+const cardioRoutes = require('./routes/cardioRoutes');
 
 const app = express();
 const PORT = 3001;
@@ -40,6 +41,7 @@ app.use('/', userRoutes);
 app.use('/', musclesRoutes);
 app.use('/', exercicesRoutes);
 app.use('/', checkAuth, trainingRoutes);
+app.use('/', cardioRoutes);
 app.use('/', notifRoutes);
 
 app.listen(PORT, '0.0.0.0', function() {

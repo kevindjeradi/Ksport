@@ -9,6 +9,7 @@ import 'package:k_sport_front/components/history/pies/muscle_group_repartition_p
 import 'package:k_sport_front/components/navigation/top_app_bar.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:k_sport_front/services/data_preparation.dart';
+import 'package:k_sport_front/views/cardio/cardio_history_page.dart';
 import 'package:k_sport_front/views/history/history_page.dart';
 import 'package:provider/provider.dart';
 
@@ -70,6 +71,30 @@ class ProgressPageState extends State<ProgressPage> {
                           size: 40, color: theme.colorScheme.onSurface),
                       title: Center(
                         child: Text('Voir l\'historique de mes séances',
+                            style: theme.textTheme.headlineMedium),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  CustomNavigation.push(context, const CardioHistoryPage());
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 14.0, horizontal: 16.0),
+                  child: Card(
+                    color: theme.colorScheme.surface,
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: ListTile(
+                      leading: Icon(Icons.directions_run,
+                          size: 40, color: theme.colorScheme.onSurface),
+                      title: Center(
+                        child: Text('Voir l\'historique de mes séances cardio',
                             style: theme.textTheme.headlineMedium),
                       ),
                     ),
@@ -172,7 +197,7 @@ class ProgressPageState extends State<ProgressPage> {
                                 indicatorColor: theme.colorScheme.onBackground,
                               ),
                               SizedBox(
-                                height: 200,
+                                height: 210,
                                 child: TabBarView(
                                   children: [
                                     MuscleGroupRepartitionPie(

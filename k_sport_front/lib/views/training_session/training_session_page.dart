@@ -26,6 +26,7 @@ class TrainingSessionPage extends StatefulWidget {
 
 class TrainingSessionPageState extends State<TrainingSessionPage> {
   int _currentExerciseIndex = 0;
+  bool _isSubmitting = false;
 
   void _goToNextExercise() {
     final provider =
@@ -139,6 +140,12 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   }
 
   void _finishTrainingSession() async {
+    if (_isSubmitting) return;
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
     final provider =
         Provider.of<ScheduleTrainingProvider>(context, listen: false);
     final today = DateTime.now().weekday - 1;
@@ -201,6 +208,12 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
             SnackBarType.error);
       }
       Log.logger.e('Failed to record training: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
     }
   }
 
@@ -272,10 +285,14 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                       ElevatedButton(
                         onPressed: _currentExerciseIndex < exercises.length - 1
                             ? _goToNextExercise
-                            : _finishTrainingSession,
+                            : _isSubmitting
+                                ? null
+                                : _finishTrainingSession,
                         child: _currentExerciseIndex < exercises.length - 1
                             ? const Text('Suivant')
-                            : const Text('Terminer'),
+                            : _isSubmitting
+                                ? const CircularProgressIndicator()
+                                : const Text('Terminer'),
                       ),
                     ],
                   ),
