@@ -1,7 +1,6 @@
-// exercise_fields_list.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
-import 'exercise_card.dart';
+import 'package:k_sport_front/components/trainings/reorderable_exercise_list.dart';
 
 class ExerciseFieldsList extends StatelessWidget {
   final List<Map<String, TextEditingController>> exerciseControllers;
@@ -11,6 +10,7 @@ class ExerciseFieldsList extends StatelessWidget {
   final Function(int) updateWeightControllers;
   final Function(int) updateRestTimeControllers;
   final Function addError;
+  final String? trainingId;
 
   const ExerciseFieldsList({
     super.key,
@@ -21,6 +21,7 @@ class ExerciseFieldsList extends StatelessWidget {
     required this.updateWeightControllers,
     required this.updateRestTimeControllers,
     required this.addError,
+    this.trainingId,
   });
 
   @override
@@ -29,22 +30,15 @@ class ExerciseFieldsList extends StatelessWidget {
 
     return Column(
       children: [
-        ...exerciseControllers.asMap().entries.map((entry) {
-          int idx = entry.key;
-          var controllerMap = entry.value;
-          return ExerciseCard(
-            labelController: controllerMap['label']!,
-            setsController: controllerMap['sets']!,
-            updateRepsControllers: () => updateRepsControllers(idx),
-            repsController: controllerMap['repetitions']!,
-            updateWeightControllers: () => updateWeightControllers(idx),
-            weightController: controllerMap['weight']!,
-            updateRestTimeControllers: () => updateRestTimeControllers(idx),
-            restTimeController: controllerMap['restTime']!,
-            onRemove: () => removeExerciseCallback(idx),
-            addError: addError,
-          );
-        }).toList(),
+        ReorderableExerciseList(
+          exerciseControllers: exerciseControllers,
+          removeExerciseCallback: removeExerciseCallback,
+          updateRepsControllers: updateRepsControllers,
+          updateWeightControllers: updateWeightControllers,
+          updateRestTimeControllers: updateRestTimeControllers,
+          addError: addError,
+          trainingId: trainingId ?? '',
+        ),
         const SizedBox(height: 12.0),
         CustomElevatedButton(
           label: 'Ajouter un exercice',

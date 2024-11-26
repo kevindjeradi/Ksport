@@ -32,6 +32,7 @@ class ExerciseCard extends StatefulWidget {
 }
 
 class _ExerciseCardState extends State<ExerciseCard> {
+  bool isExpanded = false;
   late TextEditingController setsController;
   late List<TextEditingController> repsControllers;
   late List<TextEditingController> weightControllers;
@@ -75,7 +76,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
       });
     }
 
-// Update the parent restTime controller when a restTime controller changes
+    // Update the parent restTime controller when a restTime controller changes
     for (var controller in restTimeControllers) {
       controller.addListener(() {
         widget.restTimeController.text =
@@ -105,46 +106,9 @@ class _ExerciseCardState extends State<ExerciseCard> {
               repsControllers.map((e) => e.text).join(',');
         });
       }
-      if (currentSets != weightControllers.length) {
-        setState(() {
-          if (weightControllers.length < currentSets) {
-            weightControllers.addAll(List.generate(
-                currentSets - weightControllers.length,
-                (index) => TextEditingController(text: '0')
-                  ..addListener(() {
-                    widget.weightController.text =
-                        weightControllers.map((e) => e.text).join(',');
-                  })));
-          } else if (weightControllers.length > currentSets) {
-            weightControllers
-                .sublist(currentSets)
-                .forEach((controller) => controller.dispose());
-            weightControllers = weightControllers.sublist(0, currentSets);
-          }
-          widget.weightController.text =
-              weightControllers.map((e) => e.text).join(',');
-        });
-      }
-      if (currentSets != restTimeControllers.length) {
-        setState(() {
-          if (restTimeControllers.length < currentSets) {
-            restTimeControllers.addAll(List.generate(
-                currentSets - restTimeControllers.length,
-                (index) => TextEditingController(text: '0')
-                  ..addListener(() {
-                    widget.restTimeController.text =
-                        restTimeControllers.map((e) => e.text).join(',');
-                  })));
-          } else if (restTimeControllers.length > currentSets) {
-            restTimeControllers
-                .sublist(currentSets)
-                .forEach((controller) => controller.dispose());
-            restTimeControllers = restTimeControllers.sublist(0, currentSets);
-          }
-          widget.restTimeController.text =
-              restTimeControllers.map((e) => e.text).join(',');
-        });
-      }
+      widget.updateRepsControllers();
+      widget.updateWeightControllers();
+      widget.updateRestTimeControllers();
     });
   }
 
@@ -167,185 +131,135 @@ class _ExerciseCardState extends State<ExerciseCard> {
     ThemeData theme = Theme.of(context);
 
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 12.0),
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
       elevation: 2,
       shadowColor: theme.colorScheme.primary.withOpacity(0.5),
-      child: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Column(
-              children: [
-                TextField(
-                  style: theme.textTheme.headlineSmall,
-                  controller: widget.labelController,
-                  textAlign: TextAlign.center,
-                  decoration: const InputDecoration(
-                    hintText: "Nom de l'exercice",
-                    border: InputBorder.none,
-                  ),
-                ),
-                const SizedBox(height: 12.0),
-                Center(
-                  child: SizedBox(
-                    width: 150,
-                    child: TextFormField(
-                      controller: widget.setsController,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            isExpanded = !isExpanded;
+          });
+        },
+        child: Column(
+          children: [
+            // Header (always visible)
+            SizedBox(
+              width: double.infinity,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Text(
+                      widget.labelController.text,
+                      style: theme.textTheme.titleLarge,
                       textAlign: TextAlign.center,
-                      decoration: const InputDecoration(
-                        alignLabelWithHint: true,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                        labelText: 'Séries',
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          String error =
-                              'Entrez le nombre de séries pour ${widget.labelController.text}';
-                          widget.addError(error);
-                          return error;
-                        }
-                        if (int.tryParse(value) == null ||
-                            int.tryParse(value)! <= 0) {
-                          String error =
-                              'Entrez un nombre valide de séries pour ${widget.labelController.text}';
-                          widget.addError(error);
-                          return error;
-                        }
-                        return null;
-                      },
                     ),
                   ),
-                ),
-                const SizedBox(height: 30),
-                Row(
-                  children: List.generate(repsControllers.length, (index) {
-                    return Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: TextFormField(
-                          controller: repsControllers[index],
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            alignLabelWithHint: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            labelText: 'Reps série ${index + 1}',
-                            border: const OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              String error =
-                                  "Entrez le nombre de répétitions pour la serie ${index + 1}";
-                              widget.addError(error);
-                              return error;
-                            }
-                            if (int.tryParse(value) == null ||
-                                int.tryParse(value)! <= 0) {
-                              String error =
-                                  "Entrez un nombre valide de répétitions pour la serie ${index + 1}";
-                              widget.addError(error);
-                              return error;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-                const SizedBox(height: 30),
-                Row(
-                  children: List.generate(restTimeControllers.length, (index) {
-                    return Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: TextFormField(
-                          controller: restTimeControllers[index],
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            alignLabelWithHint: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            labelText: 'Repos ${index + 1} (sec)',
-                            border: const OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              String error =
-                                  'Entrez un temps de repos pour la serie ${index + 1}';
-                              widget.addError(error);
-                              return error;
-                            }
-                            if (double.tryParse(value) == null ||
-                                int.tryParse(value)! <= 0) {
-                              String error =
-                                  'Entrez un temps de repos valide pour la serie ${index + 1}';
-                              widget.addError(error);
-                              return error;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-                const SizedBox(height: 30),
-                Row(
-                  children: List.generate(weightControllers.length, (index) {
-                    return Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: TextFormField(
-                          controller: weightControllers[index],
-                          textAlign: TextAlign.center,
-                          decoration: InputDecoration(
-                            alignLabelWithHint: true,
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
-                            labelText: 'Poids ${index + 1} (kg)',
-                            border: const OutlineInputBorder(),
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              String error =
-                                  'Entrez le poids pour la serie ${index + 1}';
-                              widget.addError(error);
-                              return error;
-                            }
-                            if (double.tryParse(value) == null ||
-                                int.tryParse(value)! <= 0) {
-                              String error =
-                                  'Entrez un poids valide pour la serie ${index + 1}';
-                              widget.addError(error);
-                              return error;
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              ],
+                  Positioned(
+                    right: 4,
+                    child: IconButton(
+                      icon: Icon(Icons.delete, color: theme.colorScheme.error),
+                      onPressed: widget.onRemove,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Positioned(
-            top: 4,
-            right: 4,
-            child: IconButton(
-              icon: const Icon(Icons.remove_circle_outline),
-              onPressed: widget.onRemove,
-              tooltip: 'Supprimer',
-            ),
-          ),
-        ],
+            // Expandable content
+            if (isExpanded) ...[
+              const Divider(),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Center(
+                      child: SizedBox(
+                        width: 150,
+                        child: TextFormField(
+                          controller: widget.setsController,
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          decoration: const InputDecoration(
+                            labelText: 'Séries',
+                          ),
+                          onChanged: (_) {
+                            widget.updateRepsControllers();
+                            widget.updateWeightControllers();
+                            widget.updateRestTimeControllers();
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              widget.addError("Le nombre de séries est requis");
+                              return "Le nombre de séries est requis";
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: int.tryParse(setsController.text) ?? 0,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text('Série ${index + 1}'),
+                              SizedBox(
+                                width: 70,
+                                child: TextFormField(
+                                  controller: repsControllers.length > index
+                                      ? repsControllers[index]
+                                      : TextEditingController(),
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Reps',
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 70,
+                                child: TextFormField(
+                                  controller: weightControllers.length > index
+                                      ? weightControllers[index]
+                                      : TextEditingController(),
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Poids',
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 70,
+                                child: TextFormField(
+                                  controller: restTimeControllers.length > index
+                                      ? restTimeControllers[index]
+                                      : TextEditingController(),
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Repos',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

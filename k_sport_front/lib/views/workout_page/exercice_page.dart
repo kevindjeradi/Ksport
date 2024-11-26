@@ -108,11 +108,13 @@ class ExercisesPageState extends State<ExercisesPage> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: theme.colorScheme.secondaryContainer,
-        onPressed: () => _navigateAndDisplayCreation(context),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: widget.isGroup
+          ? null
+          : FloatingActionButton(
+              backgroundColor: theme.colorScheme.secondaryContainer,
+              onPressed: () => _navigateAndDisplayCreation(context),
+              child: const Icon(Icons.add),
+            ),
     );
   }
 }
