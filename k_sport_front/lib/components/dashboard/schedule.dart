@@ -42,32 +42,35 @@ class ScheduleComponentState extends State<ScheduleComponent> {
       int today = DateTime.now().weekday;
 
       // Update the statuses for the week based on the completed trainings.
-      setState(() {
-        weekStatuses = List.generate(7, (index) {
-          // For days in the past, check if a training was completed.
-          if (index < today - 1) {
-            DateTime dayDate =
-                DateTime.now().subtract(Duration(days: today - index - 1));
-            // Check if there is a completed training for this day.
-            bool trainingCompleted = userProvider.completedTrainings?.any(
-                    (completedTraining) =>
-                        completedTraining.dateCompleted.year == dayDate.year &&
-                        completedTraining.dateCompleted.month ==
-                            dayDate.month &&
-                        completedTraining.dateCompleted.day == dayDate.day) ??
-                false;
+      if (context.mounted) {
+        setState(() {
+          weekStatuses = List.generate(7, (index) {
+            // For days in the past, check if a training was completed.
+            if (index < today - 1) {
+              DateTime dayDate =
+                  DateTime.now().subtract(Duration(days: today - index - 1));
+              // Check if there is a completed training for this day.
+              bool trainingCompleted = userProvider.completedTrainings?.any(
+                      (completedTraining) =>
+                          completedTraining.dateCompleted.year ==
+                              dayDate.year &&
+                          completedTraining.dateCompleted.month ==
+                              dayDate.month &&
+                          completedTraining.dateCompleted.day == dayDate.day) ??
+                  false;
 
-            // Return Status.checked if training was completed, otherwise Status.missed.
-            return trainingCompleted ? Status.checked : Status.missed;
-          } else if (index == today - 1) {
-            // Return Status.current for the current day.
-            return Status.current;
-          } else {
-            // Future days remain as Status.coming.
-            return Status.coming;
-          }
+              // Return Status.checked if training was completed, otherwise Status.missed.
+              return trainingCompleted ? Status.checked : Status.missed;
+            } else if (index == today - 1) {
+              // Return Status.current for the current day.
+              return Status.current;
+            } else {
+              // Future days remain as Status.coming.
+              return Status.coming;
+            }
+          });
         });
-      });
+      }
     });
   }
 

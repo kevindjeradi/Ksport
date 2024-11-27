@@ -47,27 +47,31 @@ class ReorderableExerciseListState extends State<ReorderableExerciseList> {
                 child: const Icon(Icons.drag_handle),
               ),
               Expanded(
-                child: ExerciseCard(
-                  labelController: controllers['label']!,
-                  setsController:
-                      isCardio ? TextEditingController() : controllers['sets']!,
-                  repsController: isCardio
-                      ? TextEditingController()
-                      : controllers['repetitions']!,
-                  weightController: isCardio
-                      ? TextEditingController()
-                      : controllers['weight']!,
-                  restTimeController: isCardio
-                      ? TextEditingController()
-                      : controllers['restTime']!,
-                  onRemove: () => widget.removeExerciseCallback(index),
-                  updateRepsControllers: () =>
-                      widget.updateRepsControllers(index),
-                  updateWeightControllers: () =>
-                      widget.updateWeightControllers(index),
-                  updateRestTimeControllers: () =>
-                      widget.updateRestTimeControllers(index),
-                  addError: widget.addError,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ExerciseCard(
+                    labelController: controllers['label']!,
+                    setsController: isCardio
+                        ? TextEditingController()
+                        : controllers['sets']!,
+                    repsController: isCardio
+                        ? TextEditingController()
+                        : controllers['repetitions']!,
+                    weightController: isCardio
+                        ? TextEditingController()
+                        : controllers['weight']!,
+                    restTimeController: isCardio
+                        ? TextEditingController()
+                        : controllers['restTime']!,
+                    onRemove: () => widget.removeExerciseCallback(index),
+                    updateRepsControllers: () =>
+                        widget.updateRepsControllers(index),
+                    updateWeightControllers: () =>
+                        widget.updateWeightControllers(index),
+                    updateRestTimeControllers: () =>
+                        widget.updateRestTimeControllers(index),
+                    addError: widget.addError,
+                  ),
                 ),
               ),
             ],

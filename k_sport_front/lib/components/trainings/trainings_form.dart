@@ -1,4 +1,3 @@
-// trainings_form.dart
 import 'package:flutter/material.dart';
 import 'package:k_sport_front/components/generic/custom_snackbar.dart';
 import 'package:k_sport_front/components/generic/cutom_elevated_button.dart';
@@ -176,11 +175,11 @@ class TrainingFormState extends State<TrainingForm> {
               child: Form(
                 key: _formKey,
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(0.0),
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           children: [
                             TrainingFormInput(
@@ -238,6 +237,7 @@ class TrainingFormState extends State<TrainingForm> {
   }
 
   void _submitForm() async {
+    _formErrors.clear();
     if (_exerciseControllers.isEmpty) {
       showCustomSnackBar(
           context, 'Ajoute au moins un exercice', SnackBarType.error);

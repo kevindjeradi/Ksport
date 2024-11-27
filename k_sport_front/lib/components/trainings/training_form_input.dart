@@ -1,4 +1,3 @@
-// training_form_input
 import 'package:flutter/material.dart';
 
 class TrainingFormInput extends StatelessWidget {
