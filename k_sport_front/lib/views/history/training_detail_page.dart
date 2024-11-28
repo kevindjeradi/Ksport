@@ -1,4 +1,3 @@
-// training_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:k_sport_front/components/history/user_note.dart';
@@ -7,7 +6,6 @@ import 'package:k_sport_front/models/completed_training.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
-// In training_detail_page.dart
 class TrainingDetailPage extends StatelessWidget {
   final CompletedTraining completedTraining;
   final DateTime date;

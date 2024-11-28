@@ -142,6 +142,35 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
   void _finishTrainingSession() async {
     if (_isSubmitting) return;
 
+    // Show warning dialog first
+    bool? confirmFinish = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Terminer l\'entraînement'),
+          content: const Text(
+              'Êtes-vous sûr de vouloir terminer cet entraînement ?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('Non',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text('Oui',
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary)),
+            ),
+          ],
+        );
+      },
+    );
+
+    // Only proceed if user confirmed
+    if (confirmFinish != true) return;
+
     setState(() {
       _isSubmitting = true;
     });
