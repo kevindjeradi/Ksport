@@ -17,6 +17,7 @@ class MuscleGroupRepartitionPie extends StatelessWidget {
       const Color(0xff81c784),
       const Color(0xff64b5f6),
       const Color(0xffffd54f),
+      const Color(0xffba68c8),
     ];
 
     final total = muscleGroupProportions.values.fold(0, (a, b) => a + b);

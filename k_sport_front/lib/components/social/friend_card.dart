@@ -50,7 +50,7 @@ class _FriendCardState extends State<FriendCard> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                      "Il s'est entraîné ${widget.friendData['numberOfTrainings'] ?? '0'} fois",
+                      "Il s'est entraîné ${widget.friendData['history']?['completedTrainings']?.length ?? '0'} fois",
                       style: const TextStyle(fontSize: 16)),
                 ),
                 const SizedBox(height: 10),
@@ -75,14 +75,17 @@ class _FriendCardState extends State<FriendCard> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Text("Liste de ses entraînements",
-                                style: TextStyle(fontSize: 16)),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: Text(
+                                snapshot.data?.isEmpty ?? true
+                                    ? "Aucune séance créée"
+                                    : "Liste de ses séances",
+                                style: const TextStyle(fontSize: 16)),
                           ),
                           const SizedBox(height: 10),
                           SizedBox(
-                            height: 130,
+                            height: snapshot.data?.isEmpty ?? true ? 0 : 150,
                             child: GridView.builder(
                               padding: const EdgeInsets.all(8),
                               shrinkWrap: true,
@@ -104,7 +107,7 @@ class _FriendCardState extends State<FriendCard> {
                                       Align(
                                         alignment: Alignment.center,
                                         child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
+                                          padding: const EdgeInsets.all(0),
                                           child: Column(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
@@ -113,12 +116,17 @@ class _FriendCardState extends State<FriendCard> {
                                             children: <Widget>[
                                               Text(training!.name,
                                                   style: theme
-                                                      .textTheme.headlineSmall),
+                                                      .textTheme.bodyLarge
+                                                      ?.copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold)),
                                               const SizedBox(height: 10),
                                               Text(
                                                 training.description,
                                                 maxLines: 2,
                                                 overflow: TextOverflow.ellipsis,
+                                                style:
+                                                    theme.textTheme.bodyMedium,
                                               ),
                                             ],
                                           ),
@@ -232,34 +240,39 @@ class _FriendCardState extends State<FriendCard> {
           ),
           content: SizedBox(
             width: double.maxFinite,
-            child: widget.friendData['completedTrainings'] != null &&
-                    (widget.friendData['completedTrainings'] as List).isNotEmpty
+            child: widget.friendData['history']?['completedTrainings'] !=
+                        null &&
+                    (widget.friendData['history']['completedTrainings'] as List)
+                        .isNotEmpty
                 ? ListView.builder(
                     shrinkWrap: true,
-                    itemCount: widget.friendData['completedTrainings'].length,
+                    itemCount: widget
+                        .friendData['history']['completedTrainings'].length,
                     itemBuilder: (context, index) {
-                      final training =
-                          widget.friendData['completedTrainings'][index];
+                      final training = widget.friendData['history']
+                          ['completedTrainings'][index];
+
                       return Card(
-                        elevation: 4.0,
+                        elevation: 0,
                         margin: const EdgeInsets.all(8.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        child: Column(
-                          children: [
-                            Text(training['trainingData']['name'],
-                                style: theme.textTheme.headlineSmall),
-                            const SizedBox(height: 16.0),
-                            if (training['trainingData']['description'] !=
-                                null) ...[
-                              Text(training['trainingData']['description']),
-                              const SizedBox(height: 16.0)
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  training['trainingData']['name'] ??
+                                      'Sans nom',
+                                  style: theme.textTheme.headlineSmall),
+                              const SizedBox(height: 16.0),
+                              Text(
+                                'Terminé le ${DateFormat('dd-MM-yyyy').format(DateTime.parse(training['dateCompleted']))}',
+                              ),
                             ],
-                            Text(
-                              'Terminé le: ${DateFormat('dd-MM-yyyy').format(DateTime.parse(training['dateCompleted']))}',
-                            ),
-                          ],
+                          ),
                         ),
                       );
                     },

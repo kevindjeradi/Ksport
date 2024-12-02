@@ -78,7 +78,7 @@ router.get('/user/details', async (req, res) => {
         // Fetch friends' details using uniqueIdentifier
         const friendsDetails = await User.find({
             'uniqueIdentifier': { $in: user.friends }
-        }).select('username dateJoined profileImage numberOfTrainings trainings history.completedTrainings');
+        }).select('username dateJoined profileImage trainings history.completedTrainings');
         // Return the required details
         const userDetails = {
             username: user.username,

@@ -10,11 +10,12 @@ class MuscleGroupList extends StatelessWidget {
     "Bras": "assets/images/muscles/groupes/Bras.png",
     "Dos": "assets/images/muscles/groupes/Dos.png",
     "Torse": "assets/images/muscles/groupes/Torse.png",
+    "Épaules": "assets/images/muscles/groupes/Bras.png",
   };
 
   @override
   Widget build(BuildContext context) {
-    final List<String> groups = ["Jambes", "Bras", "Dos", "Torse"];
+    final List<String> groups = ["Jambes", "Bras", "Dos", "Torse", "Épaules"];
     final theme = Theme.of(context);
 
     return Padding(

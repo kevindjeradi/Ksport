@@ -71,7 +71,7 @@ class DataPreparation {
     }
 
     Map<String, int> emptyMuscleGroupCounts() =>
-        {'Jambes': 0, 'Dos': 0, 'Torse': 0, 'Bras': 0};
+        {'Jambes': 0, 'Dos': 0, 'Torse': 0, 'Bras': 0, 'Épaules': 0};
 
     var allTimeMuscleGroupCounts = emptyMuscleGroupCounts();
     var lastThreeMonthsMuscleGroupCounts = emptyMuscleGroupCounts();
