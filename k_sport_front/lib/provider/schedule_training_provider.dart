@@ -57,6 +57,15 @@ class ScheduleTrainingProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void replaceExerciseInTodayWorkout(
+      int exerciseIndex, Map<String, dynamic> newExercise) {
+    final today = DateTime.now().weekday - 1;
+    if (weekTrainings[today] != null) {
+      weekTrainings[today]!.exercises[exerciseIndex] = newExercise;
+      notifyListeners();
+    }
+  }
+
   fetchAllTrainingsForTheWeek() async {
     try {
       isLoading = true;

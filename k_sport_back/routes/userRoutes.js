@@ -78,8 +78,7 @@ router.get('/user/details', async (req, res) => {
         // Fetch friends' details using uniqueIdentifier
         const friendsDetails = await User.find({
             'uniqueIdentifier': { $in: user.friends }
-        }).select('username dateJoined profileImage numberOfTrainings trainings');
-
+        }).select('username dateJoined profileImage numberOfTrainings trainings history.completedTrainings');
         // Return the required details
         const userDetails = {
             username: user.username,
@@ -310,6 +309,38 @@ router.delete('/user/deleteTrainingForDay/:day', async (req, res) => {
     }
 });
 
+// DELETE a completed training
+router.delete('/user/completedTraining/:id', checkAuth, async (req, res) => {
+    try {
+        const userId = req.userId;
+        const trainingId = req.params.id;
+
+        // Find the user
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Find and remove the completed training from the user's history
+        const trainingIndex = user.history.completedTrainings.findIndex(
+            training => training._id.toString() === trainingId
+        );
+
+        if (trainingIndex === -1) {
+            return res.status(404).json({ message: 'Completed training not found' });
+        }
+
+        // Remove the training from the array
+        user.history.completedTrainings.splice(trainingIndex, 1);
+        await user.save();
+
+        res.status(200).json({ message: 'Completed training deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting completed training:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.patch('/user/updateTheme', async (req, res) => {
     try {
         const token = req.headers.authorization.split(' ')[1];
@@ -327,13 +358,11 @@ router.patch('/user/updateTheme', async (req, res) => {
     }
 });
 
-router.post('/user/recordCompletedTraining', async (req, res) => {
+router.post('/user/recordCompletedTraining', checkAuth, async (req, res) => {
     try {
-        // Destructure all necessary fields from req.body
+        // Extract necessary fields
         const { trainingId, dateCompleted, name, description, goal, exercises, note } = req.body;
-        const token = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.userId;
+        const userId = req.userId;
 
         // Verify user exists
         const user = await User.findById(userId);
@@ -358,16 +387,19 @@ router.post('/user/recordCompletedTraining', async (req, res) => {
             dateCompleted: new Date(dateCompleted)
         };
 
+        // Push the new completed training
         user.history.completedTrainings.push(newCompletedTraining);
         await user.save();
 
-        res.status(200).json({ message: 'Training recorded successfully' });
+        // Get the newly added training with assigned _id
+        const addedTraining = user.history.completedTrainings[user.history.completedTrainings.length - 1];
+
+        res.status(200).json({ message: 'Training recorded successfully', completedTraining: addedTraining });
     } catch (error) {
-        console.log("recordCompletedTraining error: " + error.message)
+        console.log("recordCompletedTraining error: " + error.message);
         res.status(500).json({ error: error.message });
     }
 });
-
 
 // PATCH route to update a note for a specific completed training
 router.patch('/user/updateTrainingNote', checkAuth, async (req, res) => {

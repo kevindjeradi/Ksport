@@ -95,47 +95,62 @@ class _TimerPageState extends State<TimerPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isLastSet = widget.currentExercise['currentSet'] ==
+        widget.setsPerExercise[widget.currentExerciseIndex];
+
+    String getNextExerciseText() {
+      if (isLastSet) {
+        // If it's the last set and there's a next exercise, show "Next exercise: ExerciseName - Set 1"
+        return widget.nextExercise.isNotEmpty
+            ? 'Prochain exercice : ${widget.nextExercise['name']} - Série 1'
+            : '';
+      } else {
+        // If it's not the last set, show "Current exercise - Next set"
+        return 'Prochain exercice : ${widget.currentExercise['name']} - Série ${widget.currentExercise['currentSet'] + 1}';
+      }
+    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: ReturnAppBar(barTitle: widget.currentExercise['name']),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            RestTimer(
-              controller: _controller,
-              restTime: widget.restTime,
-              currentExerciseName: widget.currentExercise['name'],
-              sendScheduledNotif: _sendScheduledNotif,
-              onTimerFinish: () {
-                Navigator.of(context).pop();
-                widget.onTimerFinish();
-              },
-              stopTimer: () {
-                _cancelScheduledNotification(0);
-                Navigator.of(context).pop();
-              },
-              isPaused: _isPaused,
-              toggleTimer: () {
-                _toggleTimer();
-              },
-              skipTimer: () {
-                _skipTimer();
-              },
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                widget.nextExercise.isNotEmpty
-                    ? 'Prochain exercice : ${widget.nextExercise['name']}'
-                    : '',
-                style: theme.textTheme.headlineSmall,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RestTimer(
+                controller: _controller,
+                restTime: widget.restTime,
+                currentExerciseName: widget.currentExercise['name'],
+                currentSet: widget.currentExercise['currentSet'],
+                sendScheduledNotif: _sendScheduledNotif,
+                onTimerFinish: () {
+                  Navigator.of(context).pop();
+                  widget.onTimerFinish();
+                },
+                stopTimer: () {
+                  _cancelScheduledNotification(0);
+                  Navigator.of(context).pop();
+                },
+                isPaused: _isPaused,
+                toggleTimer: () {
+                  _toggleTimer();
+                },
+                skipTimer: () {
+                  _skipTimer();
+                },
               ),
-            )
-          ],
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  getNextExerciseText(),
+                  style: theme.textTheme.headlineSmall,
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

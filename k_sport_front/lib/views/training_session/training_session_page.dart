@@ -8,6 +8,7 @@ import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/models/completed_training.dart';
 import 'package:k_sport_front/provider/schedule_training_provider.dart';
 import 'package:k_sport_front/provider/user_provider.dart';
+import 'package:k_sport_front/services/api.dart';
 import 'package:k_sport_front/services/training_service.dart';
 import 'package:k_sport_front/views/training_session/exercise_progress_indicator.dart';
 import 'package:k_sport_front/views/training_session/timer_page.dart';
@@ -27,6 +28,24 @@ class TrainingSessionPage extends StatefulWidget {
 class TrainingSessionPageState extends State<TrainingSessionPage> {
   int _currentExerciseIndex = 0;
   bool _isSubmitting = false;
+  List<String> exerciseImageUrls = [];
+
+  @override
+  void initState() {
+    super.initState();
+    exerciseImageUrls = widget.exerciseImageUrls;
+  }
+
+  Future<void> updateExerciseImage(int index, String exerciseLabel) async {
+    final exerciseDetails =
+        await Api().fetchExerciseDetailsByLabel(exerciseLabel);
+    if (exerciseDetails != null && mounted) {
+      setState(() {
+        exerciseImageUrls[index] =
+            exerciseDetails['imageUrl'] ?? 'https://via.placeholder.com/150';
+      });
+    }
+  }
 
   void _goToNextExercise() {
     final provider =
@@ -83,7 +102,10 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
           builder: (context) => TimerPage(
             restTime: restTime,
             onTimerFinish: _onTimerFinish,
-            currentExercise: currentExercise,
+            currentExercise: {
+              ...currentExercise,
+              'currentSet': provider.currentSet,
+            },
             nextExercise: nextExercise ?? {},
             totalExercises: exercises.length,
             currentExerciseIndex: _currentExerciseIndex,
@@ -206,6 +228,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
       }).toList();
 
       final CompletedTraining completedTraining = CompletedTraining(
+        id: '',
         trainingId: trainingId,
         dateCompleted: now,
         name: trainingDetails!.name,
@@ -274,8 +297,7 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                   if (exercise != null)
                     ExerciseInfoCard(
                       exercise: exercise,
-                      exerciseImage:
-                          widget.exerciseImageUrls[_currentExerciseIndex],
+                      exerciseImage: exerciseImageUrls[_currentExerciseIndex],
                       startRestTimer: _startRestTimer,
                       currentSet: provider.currentSet,
                       onRepsUpdated: (newReps) {
@@ -295,6 +317,16 @@ class TrainingSessionPageState extends State<TrainingSessionPage> {
                           Log.logger.i(
                               "array -> ${exercises[_currentExerciseIndex]['weight']}\nexercises current exercise currentSet ${exercises[_currentExerciseIndex]['weight'][provider.currentSet - 1]}");
                         });
+                      },
+                      onExerciseReplaced: (newExercise) async {
+                        context
+                            .read<ScheduleTrainingProvider>()
+                            .replaceExerciseInTodayWorkout(
+                              _currentExerciseIndex, // Pass the current exercise index
+                              newExercise,
+                            );
+                        await updateExerciseImage(
+                            _currentExerciseIndex, newExercise['label']);
                       },
                     ),
                   const SizedBox(height: 20),

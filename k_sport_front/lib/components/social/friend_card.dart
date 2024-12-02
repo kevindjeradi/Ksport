@@ -54,6 +54,16 @@ class _FriendCardState extends State<FriendCard> {
                       style: const TextStyle(fontSize: 16)),
                 ),
                 const SizedBox(height: 10),
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.background,
+                    ),
+                    onPressed: () => _showCompletedTrainings(context),
+                    child: const Text("Voir ses entraînements terminés"),
+                  ),
+                ),
+                const SizedBox(height: 10),
                 FutureBuilder(
                   future: _getTrainingDetails(widget.friendData['trainings']),
                   builder: (context, snapshot) {
@@ -207,5 +217,66 @@ class _FriendCardState extends State<FriendCard> {
         Log.logger.e('Error saving the training in training_form -> error: $e');
       }
     }
+  }
+
+  void _showCompletedTrainings(BuildContext context) {
+    final theme = Theme.of(context);
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            "Entraînements terminés de ${widget.friendData['username']}",
+            style: theme.textTheme.titleLarge,
+          ),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: widget.friendData['completedTrainings'] != null &&
+                    (widget.friendData['completedTrainings'] as List).isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: widget.friendData['completedTrainings'].length,
+                    itemBuilder: (context, index) {
+                      final training =
+                          widget.friendData['completedTrainings'][index];
+                      return Card(
+                        elevation: 4.0,
+                        margin: const EdgeInsets.all(8.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(training['trainingData']['name'],
+                                style: theme.textTheme.headlineSmall),
+                            const SizedBox(height: 16.0),
+                            if (training['trainingData']['description'] !=
+                                null) ...[
+                              Text(training['trainingData']['description']),
+                              const SizedBox(height: 16.0)
+                            ],
+                            Text(
+                              'Terminé le: ${DateFormat('dd-MM-yyyy').format(DateTime.parse(training['dateCompleted']))}',
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  )
+                : const Center(
+                    child: Text("Aucun entraînement terminé"),
+                  ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Fermer',
+                  style: TextStyle(color: theme.colorScheme.onBackground)),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

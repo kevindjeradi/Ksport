@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:k_sport_front/components/generic/custom_snackbar.dart';
+import 'package:k_sport_front/components/history/user_note.dart';
 import 'package:k_sport_front/components/navigation/return_app_bar.dart';
 import 'package:intl/intl.dart';
+import 'package:k_sport_front/services/cardio_service.dart';
 
 class CardioHistoryDetailPage extends StatelessWidget {
   final Map<String, dynamic> session;
@@ -12,14 +15,19 @@ class CardioHistoryDetailPage extends StatelessWidget {
     if (value == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: theme.textTheme.titleMedium),
-          Text(value.toString(), style: theme.textTheme.bodyLarge),
-        ],
+    return Card(
+      color: theme.colorScheme.background,
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: theme.textTheme.titleMedium),
+            Text(value.toString(), style: theme.textTheme.bodyLarge),
+          ],
+        ),
       ),
     );
   }
@@ -31,26 +39,37 @@ class CardioHistoryDetailPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
-      appBar: ReturnAppBar(
-        barTitle: 'Détails ${session['exerciseName']}',
-      ),
+      appBar: const ReturnAppBar(barTitle: 'Retour vers mon historique'),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              Text(
+                'Session ${session['exerciseName']} du ${DateFormat('dd-MM-yyyy').format(date)}',
+                style: theme.textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 16),
               Card(
                 color: theme.colorScheme.surface,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  side: BorderSide(
+                      color: theme.colorScheme.onPrimary, width: 0.5),
+                ),
+                elevation: 2,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        DateFormat('dd/MM/yyyy HH:mm').format(date),
-                        style: theme.textTheme.titleLarge,
+                      Center(
+                        child: Text(
+                          "Escaliers",
+                          style: theme.textTheme.titleLarge,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       _buildDetailRow(
@@ -86,18 +105,38 @@ class CardioHistoryDetailPage extends StatelessWidget {
                             'Distance', '${session['distance']} km', context),
                         _buildDetailRow(
                             'Allure moyenne', session['pace'], context),
-                        _buildDetailRow(
-                            'Dénivelé', '${session['elevation']} m', context),
-                      ],
-                      if (session['note'] != null) ...[
-                        const SizedBox(height: 16),
-                        Text('Notes:', style: theme.textTheme.titleMedium),
-                        const SizedBox(height: 8),
-                        Text(session['note'], style: theme.textTheme.bodyLarge),
+                        if (session['elevation'] != null)
+                          _buildDetailRow(
+                              'Dénivelé', '${session['elevation']} m', context),
                       ],
                     ],
                   ),
                 ),
+              ),
+              const SizedBox(height: 16),
+              UserNote(
+                initialNote: session['note'],
+                onSave: (newNote) async {
+                  try {
+                    await CardioService()
+                        .updateCardioNote(session['_id'], newNote);
+                    if (context.mounted) {
+                      showCustomSnackBar(
+                        context,
+                        "Note mise à jour avec succès",
+                        SnackBarType.success,
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      showCustomSnackBar(
+                        context,
+                        "Erreur lors de la mise à jour de la note",
+                        SnackBarType.error,
+                      );
+                    }
+                  }
+                },
               ),
             ],
           ),

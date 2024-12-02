@@ -2,21 +2,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:k_sport_front/helpers/logger.dart';
 import 'package:k_sport_front/services/api.dart';
-import 'package:k_sport_front/services/token_service.dart';
 
 class CardioService {
-  final TokenService _tokenService = TokenService();
+  Future<void> deleteCardioSession(String id) async {
+    final response = await Api().delete('${Api.baseUrl}/cardio-sessions/$id');
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete cardio session');
+    }
+  }
 
   Future<http.Response> saveCardioSession(Map<String, dynamic> data) async {
     try {
-      final token = await _tokenService.getToken();
-      final response = await http.post(
-        Uri.parse('${Api.baseUrl}/cardio-sessions'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode(data),
+      final response = await Api().post(
+        '${Api.baseUrl}/cardio-sessions',
+        data,
       );
       return response;
     } catch (e, s) {
@@ -27,14 +26,7 @@ class CardioService {
 
   Future<List<dynamic>> getCardioSessions() async {
     try {
-      final token = await _tokenService.getToken();
-      final response = await http.get(
-        Uri.parse('${Api.baseUrl}/cardio-sessions'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      );
+      final response = await Api().get('${Api.baseUrl}/cardio-sessions');
 
       if (response.statusCode == 200) {
         return jsonDecode(response.body);
@@ -43,6 +35,25 @@ class CardioService {
       }
     } catch (e, s) {
       Log.logger.e('Error getting cardio sessions: $e\nStack trace: $s');
+      rethrow;
+    }
+  }
+
+  Future<void> updateCardioNote(String sessionId, String newNote) async {
+    try {
+      final response = await Api().patch(
+        '${Api.baseUrl}/cardio/updateNote',
+        {
+          'sessionId': sessionId,
+          'note': newNote,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update note');
+      }
+    } catch (e) {
+      Log.logger.e('Error updating cardio note: $e');
       rethrow;
     }
   }

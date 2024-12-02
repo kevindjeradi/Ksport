@@ -42,7 +42,7 @@ class ScheduleComponentState extends State<ScheduleComponent> {
       int today = DateTime.now().weekday;
 
       // Update the statuses for the week based on the completed trainings.
-      if (context.mounted) {
+      if (mounted) {
         setState(() {
           weekStatuses = List.generate(7, (index) {
             // For days in the past, check if a training was completed.

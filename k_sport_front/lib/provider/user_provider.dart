@@ -41,6 +41,12 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeCompletedTraining(CompletedTraining training) {
+    _completedTrainings =
+        completedTrainings?.where((t) => t.id != training.id).toList();
+    notifyListeners();
+  }
+
   void updateTrainingNote(String trainingId, String newNote) async {
     final trainingIndex =
         _completedTrainings?.indexWhere((t) => t.trainingId == trainingId);

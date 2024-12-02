@@ -25,8 +25,10 @@ class DataPreparation {
 
     for (var completedTraining in completedTrainings) {
       for (var exercise in completedTraining.exercises) {
-        totalWeightLifted +=
-            exercise.weight.fold(0, (total, weight) => total + weight);
+        // For each set, multiply weight by reps
+        for (int i = 0; i < exercise.weight.length; i++) {
+          totalWeightLifted += exercise.weight[i] * exercise.repetitions[i];
+        }
       }
 
       if (lastTrainingDate == null ||

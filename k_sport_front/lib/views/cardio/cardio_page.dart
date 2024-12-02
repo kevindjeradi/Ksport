@@ -35,12 +35,14 @@ class CardioPage extends StatelessWidget {
                   Icon(
                     exercise['icon'],
                     size: 48,
-                    color: theme.colorScheme.primary,
+                    color: theme.colorScheme.onPrimary,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     exercise['name'],
-                    style: theme.textTheme.titleLarge,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                    ),
                   ),
                 ],
               ),
@@ -84,7 +86,11 @@ class CardioPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Annuler'),
+              child: Text(
+                'Annuler',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -99,7 +105,11 @@ class CardioPage extends StatelessWidget {
                   ),
                 );
               },
-              child: const Text('Commencer'),
+              child: Text(
+                'Commencer',
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+              ),
             ),
           ],
         );

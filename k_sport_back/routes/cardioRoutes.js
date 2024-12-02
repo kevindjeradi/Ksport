@@ -80,4 +80,26 @@ router.delete('/cardio-sessions/:id', checkAuth, async (req, res) => {
     }
 });
 
+router.patch('/cardio/updateNote', checkAuth, async (req, res) => {
+    try {
+        const { sessionId, note } = req.body;
+        const userId = req.userId;
+
+        const updatedSession = await Cardio.findOneAndUpdate(
+            { _id: sessionId, userId: userId },
+            { $set: { note: note } },
+            { new: true }
+        );
+
+        if (!updatedSession) {
+            return res.status(404).json({ error: 'Session not found' });
+        }
+
+        res.status(200).json({ message: 'Note updated successfully' });
+    } catch (error) {
+        console.error('Error updating cardio note:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;

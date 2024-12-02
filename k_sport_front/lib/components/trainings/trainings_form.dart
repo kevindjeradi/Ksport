@@ -184,20 +184,29 @@ class TrainingFormState extends State<TrainingForm> {
                           children: [
                             TrainingFormInput(
                               controller: _nameController,
-                              label: "Nom de l'entrainement",
+                              label: "Nom de l'entraînement",
                               icon: Icons.title,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return "Veuillez entrer un nom pour l'entrainement";
+                                  _addError("Entrez un nom d'exercice");
+                                  return "Veuillez entrer un nom pour l'entraînement";
                                 }
                                 return null;
                               },
                             ),
                             const SizedBox(height: 12.0),
                             TrainingFormInput(
-                                controller: _descriptionController,
-                                label: 'Description',
-                                icon: Icons.description),
+                              controller: _descriptionController,
+                              label: 'Description',
+                              icon: Icons.description,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  _addError('Entrez une description');
+                                  return "Veuillez entrer une description pour l'entraînement";
+                                }
+                                return null;
+                              },
+                            ),
                             const SizedBox(height: 12.0),
                             TrainingFormInput(
                                 controller: _goalController,
@@ -226,7 +235,7 @@ class TrainingFormState extends State<TrainingForm> {
             padding: const EdgeInsets.all(10.0),
             child: CustomElevatedButton(
               onPressed: _submitForm,
-              label: "Sauvegarder l'entrainement",
+              label: "Sauvegarder l'entraînement",
               backgroundColor: theme.colorScheme.primary,
               foregroundColor: theme.colorScheme.onPrimary,
             ),
@@ -288,10 +297,22 @@ class TrainingFormState extends State<TrainingForm> {
         } else {
           Log.logger.e(
               'Error saving the training in training_form: ${response.body}');
+          if (mounted) {
+            showCustomSnackBar(
+                context,
+                'Erreur lors de la sauvegarde - Le serveur a retourné une erreur',
+                SnackBarType.error);
+          }
         }
       } catch (e, s) {
         Log.logger.e(
             'Error saving the training in training_form -> error: $e\nStack trace: $s');
+        if (mounted) {
+          showCustomSnackBar(
+              context,
+              "Erreur inattendue lors de la sauvegarde de l'entraînement",
+              SnackBarType.error);
+        }
       }
     } else {
       Log.logger.w('Form validation failed in training_form');

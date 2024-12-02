@@ -22,12 +22,20 @@ class WorkoutCard extends StatelessWidget {
           CustomImage(imagePath: imageUrl),
           Positioned(
             bottom: 0,
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                backgroundColor: Colors.black54,
-                fontSize: 18,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              color: Colors.black54,
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
               ),
             ),
           ),

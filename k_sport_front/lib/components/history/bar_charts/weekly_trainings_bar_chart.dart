@@ -47,7 +47,7 @@ class _WeeklyTrainingsBarChartState extends State<WeeklyTrainingsBarChart> {
       fontWeight: FontWeight.bold,
       fontSize: 14,
     );
-    final text = Text('Sem $weekNumber', style: style);
+    final text = Text('S $weekNumber', style: style);
 
     return SideTitleWidget(
       axisSide: meta.axisSide,

@@ -6,6 +6,7 @@ class RestTimer extends StatelessWidget {
   final CountDownController controller;
   final int restTime;
   final String currentExerciseName;
+  final int currentSet;
   final bool isPaused;
   final Function sendScheduledNotif;
   final Function toggleTimer;
@@ -18,6 +19,7 @@ class RestTimer extends StatelessWidget {
     required this.controller,
     required this.restTime,
     required this.currentExerciseName,
+    required this.currentSet,
     required this.isPaused,
     required this.sendScheduledNotif,
     required this.toggleTimer,
@@ -55,6 +57,16 @@ class RestTimer extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Text(
+            '$currentExerciseName - Série $currentSet',
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+            textAlign: TextAlign.center,
           ),
         ),
         GestureDetector(

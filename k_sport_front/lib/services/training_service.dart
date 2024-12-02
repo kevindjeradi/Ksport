@@ -119,8 +119,27 @@ class TrainingService {
       if (response.statusCode != 200) {
         throw Exception('Failed to record training: ${response.body}');
       }
+
+      final responseData = json.decode(response.body);
+      final completedTrainingData = responseData['completedTraining'];
+      if (completedTrainingData != null) {
+        completedTraining.id = completedTrainingData['_id'];
+      }
     } catch (e, s) {
       Log.logger.e('Error recording completed training: $e\nStack trace: $s');
+      rethrow;
+    }
+  }
+
+  static Future<void> deleteCompletedTraining(String id) async {
+    try {
+      final response =
+          await Api().delete('$baseUrl/user/completedTraining/$id');
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete completed training');
+      }
+    } catch (e, s) {
+      Log.logger.e('Error deleting completed training: $e\nStack trace: $s');
       rethrow;
     }
   }

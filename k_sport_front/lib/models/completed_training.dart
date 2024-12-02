@@ -1,5 +1,6 @@
 // completed_training.dart
 class CompletedTraining {
+  String id;
   final String trainingId;
   final DateTime dateCompleted;
   final String name;
@@ -9,6 +10,7 @@ class CompletedTraining {
   String note;
 
   CompletedTraining({
+    required this.id,
     required this.trainingId,
     required this.dateCompleted,
     required this.name,
@@ -20,7 +22,8 @@ class CompletedTraining {
 
   factory CompletedTraining.fromMap(Map<String, dynamic> map) {
     return CompletedTraining(
-      trainingId: map['_id'] ?? 'default-training-id',
+      id: map['_id'] ?? 'default-id',
+      trainingId: map['trainingId'] ?? 'default-training-id',
       dateCompleted: map['dateCompleted'] != null
           ? DateTime.parse(map['dateCompleted'])
           : DateTime.now(),

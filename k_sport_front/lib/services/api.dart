@@ -25,7 +25,8 @@ class Api {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;
       } else {
-        Log.logger.e('Request failed with status: ${response.statusCode}');
+        Log.logger.e(
+            'Request failed with status: ${response.statusCode} and response: ${response.body}');
         throw Exception('Failed to complete request');
       }
     } catch (e, s) {
@@ -47,6 +48,7 @@ class Api {
 
   Future<http.Response> post(String url, Map<String, dynamic> data) async {
     final token = await _tokenService.getToken();
+    Log.logger.i('POST Request to $url with data: $data');
     return _handleRequest(() => http.post(
           Uri.parse(url),
           headers: {
