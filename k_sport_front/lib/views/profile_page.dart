@@ -130,7 +130,7 @@ class ProfilePageState extends State<ProfilePage> {
                             child: Text(
                               'Pseudo: ${userProvider.username}',
                               style: theme.textTheme.headlineSmall?.copyWith(
-                                color: theme.colorScheme.onSurface,
+                                color: theme.colorScheme.onBackground,
                               ),
                             ),
                           ),
@@ -164,7 +164,7 @@ class ProfilePageState extends State<ProfilePage> {
                           ),
                           const SizedBox(height: 10.0),
                           Text(
-                            "${userProvider.numberOfTrainings} entrainements dans ma liste",
+                            "${userProvider.numberOfTrainings} entraînements dans ma liste",
                             style: theme.textTheme.bodyLarge,
                           ),
                         ],

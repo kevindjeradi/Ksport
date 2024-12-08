@@ -30,6 +30,7 @@ final Map<String, Map<String, CardioFieldConfig>> cardioFieldsConfig = {
     'cadence': const CardioFieldConfig(
       label: 'Cadence moyenne (rpm)',
       helperText: 'Optionnel',
+      isDecimal: true,
     ),
     'averageSpeed': const CardioFieldConfig(
       label: 'Vitesse moyenne (km/h)',

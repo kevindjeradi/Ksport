@@ -81,8 +81,9 @@ class CardioHistoryDetailPage extends StatelessWidget {
                             '${session['averageWatts']} watts', context),
                         _buildDetailRow(
                             'Distance', '${session['distance']} km', context),
-                        _buildDetailRow('Vitesse moyenne',
-                            '${session['averageSpeed']} km/h', context),
+                        if (session['averageSpeed'] != null)
+                          _buildDetailRow('Vitesse moyenne',
+                              '${session['averageSpeed']} km/h', context),
                         _buildDetailRow('Cadence moyenne',
                             '${session['cadence']} rpm', context),
                         _buildDetailRow(

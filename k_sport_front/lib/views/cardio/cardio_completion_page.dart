@@ -71,10 +71,15 @@ class CardioCompletionPageState extends State<CardioCompletionPage> {
           if (entry.value.text.isNotEmpty) {
             final config = cardioFieldsConfig[widget.exerciseName]![entry.key];
             final normalizedValue = _normalizeDecimalNumber(entry.value.text);
-            final value = config?.isDecimal == true
-                ? double.parse(normalizedValue)
-                : int.parse(normalizedValue);
-            data[entry.key] = value;
+            try {
+              final value = config?.isDecimal == true
+                  ? double.parse(normalizedValue)
+                  : int.parse(normalizedValue);
+              data[entry.key] = value;
+            } catch (e) {
+              Log.logger.e('Error parsing value for ${entry.key}: $e');
+              throw Exception('Invalid number format for ${config?.label}');
+            }
           }
         }
 
@@ -151,12 +156,13 @@ class CardioCompletionPageState extends State<CardioCompletionPage> {
                       if (value == null || value.isEmpty) {
                         return 'Ce champ est requis';
                       }
+                      final normalizedValue = _normalizeDecimalNumber(value);
                       if (config.isDecimal) {
-                        if (double.tryParse(value) == null) {
+                        if (double.tryParse(normalizedValue) == null) {
                           return 'Veuillez entrer un nombre valide';
                         }
                       } else {
-                        if (int.tryParse(value) == null) {
+                        if (int.tryParse(normalizedValue) == null) {
                           return 'Veuillez entrer un nombre entier';
                         }
                       }

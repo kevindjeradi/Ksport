@@ -128,7 +128,8 @@ class ExerciseInfoCard extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              style: TextButton.styleFrom(foregroundColor: Colors.grey),
+              style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.onBackground),
               child: const Text("Annuler"),
             ),
             TextButton(
@@ -144,7 +145,7 @@ class ExerciseInfoCard extends StatelessWidget {
                 }
               },
               style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).primaryColor),
+                  foregroundColor: Theme.of(context).colorScheme.onBackground),
               child: const Text("Modifier"),
             ),
           ],
