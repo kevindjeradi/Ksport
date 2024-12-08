@@ -20,6 +20,11 @@ class CardioCompletionPage extends StatefulWidget {
   CardioCompletionPageState createState() => CardioCompletionPageState();
 }
 
+String _normalizeDecimalNumber(String value) {
+  // Replace comma with period for decimal numbers
+  return value.replaceAll(',', '.');
+}
+
 class CardioCompletionPageState extends State<CardioCompletionPage> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
@@ -65,9 +70,10 @@ class CardioCompletionPageState extends State<CardioCompletionPage> {
         for (var entry in _controllers.entries) {
           if (entry.value.text.isNotEmpty) {
             final config = cardioFieldsConfig[widget.exerciseName]![entry.key];
+            final normalizedValue = _normalizeDecimalNumber(entry.value.text);
             final value = config?.isDecimal == true
-                ? double.parse(entry.value.text)
-                : int.parse(entry.value.text);
+                ? double.parse(normalizedValue)
+                : int.parse(normalizedValue);
             data[entry.key] = value;
           }
         }

@@ -12,6 +12,7 @@ const cardioSchema = new mongoose.Schema({
     // Vélo specific fields
     averageWatts: { type: Number },
     distance: { type: Number },
+    cadence: { type: Number },
     averageSpeed: { type: Number },
     averageBpm: { type: Number },
     maxBpm: { type: Number },
